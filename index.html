@@ -1,0 +1,437 @@
+<title>クマクリ Instagram 診断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>:root{
+    --ground:#EEF1F4;
+    --surface:#FFFFFF;
+    --surface-2:#F6F8FA;
+    --ink:#16202B;
+    --ink-soft:#4B5C6B;
+    --ink-faint:#7C8B99;
+    --rule:#D7DFE6;
+    --rule-soft:#E7EDF2;
+    --accent:#1B6B66;
+    --accent-soft:#D6E7E5;
+    --warn:#A63A36;
+    --warn-soft:#F3DEDD;
+    --good:#2A6F52;
+    --shadow:0 1px 2px rgba(22,32,43,.06), 0 8px 24px rgba(22,32,43,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0E141A;
+      --surface:#161E26;
+      --surface-2:#1B242D;
+      --ink:#E4EBF1;
+      --ink-soft:#A3B2BF;
+      --ink-faint:#76858F;
+      --rule:#2A353F;
+      --rule-soft:#212B34;
+      --accent:#57B5AD;
+      --accent-soft:#1E3A38;
+      --warn:#D97B75;
+      --warn-soft:#3A2422;
+      --good:#5FB68C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0E141A;
+    --surface:#161E26;
+    --surface-2:#1B242D;
+    --ink:#E4EBF1;
+    --ink-soft:#A3B2BF;
+    --ink-faint:#76858F;
+    --rule:#2A353F;
+    --rule-soft:#212B34;
+    --accent:#57B5AD;
+    --accent-soft:#1E3A38;
+    --warn:#D97B75;
+    --warn-soft:#3A2422;
+    --good:#5FB68C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    font-size:15px; line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 80px}
+  h1,h2,h3{font-family:"Shippori Mincho","Yu Mincho",serif;text-wrap:balance;letter-spacing:.01em}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+  /* ---- header ---- */
+  header{padding:56px 0 34px;border-bottom:2px solid var(--ink)}
+  .eyebrow{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:14px;
+    font-family:"IBM Plex Mono",monospace;
+  }
+  h1{font-size:40px;line-height:1.35;font-weight:700;margin:0 0 16px}
+  .lede{font-size:16px;color:var(--ink-soft);max-width:62ch;margin:0}
+  .provenance{
+    margin-top:24px;font-size:12.5px;color:var(--ink-faint);
+    display:flex;flex-wrap:wrap;gap:6px 20px;
+  }
+  .provenance span{white-space:nowrap}
+
+  /* ---- verdict ---- */
+  .verdict{
+    margin:38px 0 0;padding:28px 30px;background:var(--surface);
+    border:1px solid var(--rule);border-left:4px solid var(--warn);
+    border-radius:3px;box-shadow:var(--shadow);
+  }
+  .verdict h2{font-size:21px;margin:0 0 14px;font-weight:700}
+  .verdict p{margin:0 0 12px;font-size:15.5px}
+  .verdict p:last-child{margin-bottom:0}
+  b{font-weight:700;color:var(--ink)}
+
+  /* ---- sections ---- */
+  section{margin-top:56px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+  .sec-num{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;
+    color:var(--accent);letter-spacing:.1em;flex:none;padding-top:4px;
+  }
+  h2{font-size:26px;margin:0;font-weight:700;line-height:1.45}
+  .sec-sub{color:var(--ink-soft);margin:6px 0 24px 0;max-width:64ch}
+
+  p{max-width:66ch}
+
+  /* ---- stat row ---- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
+  .stat{background:var(--surface);padding:20px 18px}
+  .stat .k{font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;margin-bottom:8px;line-height:1.5}
+  .stat .v{font-family:"IBM Plex Mono",monospace;font-size:27px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+  .stat .n{font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.55}
+  .v.warn{color:var(--warn)} .v.good{color:var(--good)} .v.acc{color:var(--accent)}
+
+  /* ---- chart ---- */
+  figure{margin:30px 0 0;background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:24px 20px 18px;box-shadow:var(--shadow)}
+  .chart-scroll{overflow-x:auto}
+  figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:14px;padding-top:14px;border-top:1px solid var(--rule-soft);line-height:1.7}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
+  .legend i{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:1px}
+
+  /* ---- table ---- */
+  .tw{overflow-x:auto;margin:26px 0;border:1px solid var(--rule);background:var(--surface);border-radius:3px}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--rule-soft)}
+  thead th{
+    background:var(--surface-2);font-size:11.5px;letter-spacing:.05em;color:var(--ink-faint);
+    font-weight:700;border-bottom:1px solid var(--rule);white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td.num{font-family:"IBM Plex Mono",monospace;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.hi td{background:var(--accent-soft)}
+  tr.lo td{background:var(--warn-soft)}
+
+  /* ---- funnel ---- */
+  .funnel{display:flex;flex-direction:column;gap:2px;margin:26px 0}
+  .fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);padding:14px 18px;flex-wrap:wrap}
+  .fbar{height:26px;background:var(--accent);opacity:.85;flex:none;border-radius:2px;min-width:3px;max-width:100%}
+  .fmeta{flex:1;min-width:0}
+  .fname{font-size:14px;font-weight:500}
+  .fnote{font-size:12px;color:var(--ink-faint);line-height:1.6}
+  .fval{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;flex:none;font-variant-numeric:tabular-nums}
+  .fstep.est{border-style:dashed;opacity:.85}
+  .fstep.est .fbar{background:var(--ink-faint)}
+
+  /* ---- action list ---- */
+  .actions{display:flex;flex-direction:column;gap:16px;margin:26px 0}
+  .act{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:22px 24px;box-shadow:var(--shadow)}
+  .act h3{font-size:18px;margin:0 0 4px;font-weight:700}
+  .act .why{font-size:12.5px;color:var(--accent);font-weight:500;margin:0 0 12px;font-family:"IBM Plex Mono",monospace}
+  .act p{margin:0 0 10px;font-size:14.5px}
+  .act p:last-child{margin-bottom:0}
+  .act ul{margin:10px 0 0;padding-left:1.15em}
+  .act li{margin-bottom:7px;font-size:14.5px;max-width:64ch}
+  .act li:last-child{margin-bottom:0}
+
+  .good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
+  .good-item{background:var(--surface);padding:20px}
+  .good-item h3{font-size:15px;margin:0 0 8px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
+  .good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+
+  .caveat{
+    margin-top:56px;padding:24px 26px;background:var(--surface-2);
+    border:1px solid var(--rule);border-radius:3px;font-size:13px;color:var(--ink-soft);
+  }
+  .caveat h3{font-size:14px;margin:0 0 12px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif;color:var(--ink)}
+  .caveat ul{margin:0;padding-left:1.15em}
+  .caveat li{margin-bottom:8px;max-width:72ch}
+  .caveat li:last-child{margin-bottom:0}
+
+  @media (max-width:640px){
+    h1{font-size:29px}
+    h2{font-size:21px}
+    .wrap{padding:0 16px 60px}
+    header{padding:36px 0 26px}
+    .sec-head{gap:10px}
+  }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Instagram 診断レポート ／ 2026.09.06 更新</div>
+  <h1>リーチは37倍。<br>LINE流入は、増えていない。</h1>
+  <p class="lede">@mohrimakes のリール511本と、過去725日ぶんのアカウント指標をInstagram Graph APIで取得し、集客ファネルまで通して分析しています。<b>毎日自動で更新されます。</b></p>
+  <div class="provenance">
+    <span>リール 511本</span>
+    <span>アカウント日次 725日分</span>
+    <span>フォロワー 16,702人</span>
+    <span>出典: Instagram Graph API</span>
+  </div>
+</header>
+
+<div class="verdict">
+  <h2>結論</h2>
+  <p>直近29日のリーチは<b>1,115,351人</b>。リンククリックが最も多かった時期（2025/12〜）と比べて<b>37倍</b>に増えています。</p>
+  <p>ところが公式LINEへのリンククリックは、その時期の<b>738件から407件へ45%減っています</b>。リーチ1万人あたりのクリック数で見ると<b>66分の1</b>の効率です。</p>
+  <p>同じ期間に、クマ・目元をテーマにした投稿の比率が<b>100%から53%へ下がりました</b>。クマ比率とリンククリック数の相関は<b>+0.55</b>、いっぽうリーチとクリック数の相関は<b>-0.35</b>です。数を増やして間口を広げた結果、来る人が変わっています。</p>
+</div>
+
+<section>
+  <div class="sec-head"><div class="sec-num">01</div><h2>いま起きていること</h2></div>
+  <p class="sec-sub">29日区切りで13期間、リーチとリンククリックを並べたものです。上下で動きが逆になっています。</p>
+
+  <div class="stats">
+    <div class="stat"><div class="k">月間リーチ（直近29日）</div><div class="v good">1,115,351</div><div class="n">過去2年で最大の水準</div></div>
+    <div class="stat"><div class="k">月間リンククリック</div><div class="v warn">407</div><div class="n">ピーク738件から45%減</div></div>
+    <div class="stat"><div class="k">リーチ1万あたりのクリック</div><div class="v warn">3.6</div><div class="n">ピーク時は241.8。<b>66分の1</b></div></div>
+    <div class="stat"><div class="k">クマ・目元の投稿比率</div><div class="v warn">53%</div><div class="n">ピーク時は100%</div></div>
+  </div>
+
+  <figure>
+    <div class="legend">
+      <span><i style="background:var(--warn)"></i>公式LINEへのリンククリック（件／29日）</span>
+      <span><i style="background:var(--accent)"></i>リーチ（人／29日）</span>
+      <span><i style="background:var(--ink-faint)"></i>クマ・目元の投稿比率</span>
+    </div>
+    <div class="chart-scroll"><svg id="chart" viewBox="0 0 880 440" width="880" height="440" role="img" aria-label="リンククリックとリーチの推移"></svg></div>
+    <figcaption>29日ごとの実測値。相関係数は クマ比率×クリック数 +0.55、リーチ×クリック数 -0.35、投稿本数×クリック数 -0.45（n=13）。</figcaption>
+  </figure>
+
+  <div class="tw"><table><thead><tr><th class="">期間</th><th class="num">投稿</th><th class="num">クマ比率</th><th class="num">リーチ</th><th class="num">リンククリック</th><th class="num">リーチ1万/クリック</th></tr></thead><tbody><tr class=""><td>2025/08〜09/23</td><td class="num">8</td><td class="num">88%</td><td class="num">75,255</td><td class="num">545</td><td class="num">72.4</td></tr><tr class=""><td>2025/09〜10/22</td><td class="num">6</td><td class="num">83%</td><td class="num">66,767</td><td class="num">471</td><td class="num">70.5</td></tr><tr class=""><td>2025/10〜11/20</td><td class="num">7</td><td class="num">100%</td><td class="num">24,003</td><td class="num">473</td><td class="num">197.1</td></tr><tr class=""><td>2025/11〜12/19</td><td class="num">7</td><td class="num">86%</td><td class="num">28,301</td><td class="num">667</td><td class="num">235.7</td></tr><tr class="hi"><td>2025/12〜01/17</td><td class="num">8</td><td class="num">100%</td><td class="num">30,524</td><td class="num">738</td><td class="num">241.8</td></tr><tr class=""><td>2026/01〜02/15</td><td class="num">7</td><td class="num">57%</td><td class="num">25,786</td><td class="num">683</td><td class="num">264.9</td></tr><tr class=""><td>2026/02〜03/16</td><td class="num">14</td><td class="num">86%</td><td class="num">56,318</td><td class="num">702</td><td class="num">124.6</td></tr><tr class=""><td>2026/03〜04/14</td><td class="num">16</td><td class="num">88%</td><td class="num">71,829</td><td class="num">585</td><td class="num">81.4</td></tr><tr class=""><td>2026/04〜05/13</td><td class="num">17</td><td class="num">59%</td><td class="num">128,254</td><td class="num">434</td><td class="num">33.8</td></tr><tr class=""><td>2026/05〜06/11</td><td class="num">13</td><td class="num">62%</td><td class="num">92,807</td><td class="num">380</td><td class="num">40.9</td></tr><tr class=""><td>2026/06〜07/10</td><td class="num">17</td><td class="num">59%</td><td class="num">53,743</td><td class="num">369</td><td class="num">68.7</td></tr><tr class=""><td>2026/07〜08/08</td><td class="num">13</td><td class="num">54%</td><td class="num">123,688</td><td class="num">440</td><td class="num">35.6</td></tr><tr class="lo"><td>2026/08〜09/06</td><td class="num">15</td><td class="num">53%</td><td class="num">1,115,351</td><td class="num">407</td><td class="num">3.6</td></tr></tbody></table></div>
+  <p>クマ比率80%以上だった7期間の平均リンククリックは<b>597件／月</b>、65%未満だった6期間は<b>452件／月</b>。同じ本数を投稿しても、中身で<b>32%</b>変わります。</p>
+</section>
+
+<section>
+  <div class="sec-head"><div class="sec-num">02</div><h2>フォロワー16,702人は、資産になっていない</h2></div>
+  <p class="sec-sub">直近29日のリーチを、フォロー有無と投稿種別で分解しました。</p>
+
+  <div class="stats">
+    <div class="stat"><div class="k">フォロワー以外からのリーチ</div><div class="v ">99.2%</div><div class="n">1,105,915人</div></div>
+    <div class="stat"><div class="k">フォロワーからのリーチ</div><div class="v warn">0.8%</div><div class="n">8,494人。フォロワー数にすら届いていない</div></div>
+    <div class="stat"><div class="k">ストーリーの月間リーチ</div><div class="v warn">4,588</div><div class="n">フォロワーの27.5%相当</div></div>
+    <div class="stat"><div class="k">リールが占めるリーチ</div><div class="v acc">99.3%</div><div class="n">1,107,818人。フィード投稿は6,499人</div></div>
+  </div>
+
+  <p>数字が意味しているのは、<b>このアカウントは「フォロワーに届けるメディア」として機能していない</b>ということです。毎回ゼロからアルゴリズムの発見面に賭けている状態で、だから当たり外れが極端になります。直近1年146本のうち1万再生を超えたのは24本（16%）だけ、<b>上位3本が総再生の58%</b>を占めています。</p>
+
+  <p>ストーリーは特に深刻です。1日20本以上投稿しても、届いているのはフォロワーの27.5%相当。<b>ストーリーをLINE導線として使う前提が、そもそも成立していません。</b></p>
+</section>
+
+<section>
+  <div class="sec-head"><div class="sec-num">03</div><h2>1本あたりの力が落ちている</h2></div>
+  <p class="sec-sub">バズを除いた「普段の投稿」の実力＝中央値の推移です。</p>
+
+  <div class="tw"><table><thead><tr><th class="">月</th><th class="num">投稿本数</th><th class="num">中央再生数</th><th class="num">日平均リーチ</th></tr></thead><tbody><tr class=""><td>2026年1月</td><td class="num">7</td><td class="num">4,540</td><td class="num">2,507</td></tr><tr class=""><td>2026年2月</td><td class="num">10</td><td class="num">5,552</td><td class="num">3,617</td></tr><tr class=""><td>2026年3月</td><td class="num">16</td><td class="num">5,782</td><td class="num">4,578</td></tr><tr class=""><td>2026年4月</td><td class="num">16</td><td class="num">3,426</td><td class="num">2,489</td></tr><tr class=""><td>2026年5月</td><td class="num">18</td><td class="num">3,506</td><td class="num">8,326</td></tr><tr class=""><td>2026年6月</td><td class="num">16</td><td class="num">3,658</td><td class="num">3,375</td></tr><tr class="hi"><td>2026年7月</td><td class="num">15</td><td class="num">6,340</td><td class="num">5,563</td></tr><tr class="lo"><td>2026年8月</td><td class="num">16</td><td class="num">4,776</td><td class="num">34,334</td></tr></tbody></table></div>
+
+  <p>直近8か月で最も強かった2026年7月の中央再生6,340に対し、直近の2026年8月は<b>4,776</b>。<b>25%落ちています</b>。投稿本数とリンククリック数の相関は-0.45で、量を増やしたことが1本ごとの評価を下げている可能性があります。</p>
+</section>
+
+<section>
+  <div class="sec-head"><div class="sec-num">04</div><h2>効いている型と、効いていない型</h2></div>
+  <p class="sec-sub">直近1年146本を内容で分類し、保存率（＝後で見返したい＝本気度）とエンゲージ率で比較しました。5本未満の型は除いています。</p>
+
+  <div class="tw"><table><thead><tr><th class="">コンテンツの型</th><th class="num">本数</th><th class="num">中央再生</th><th class="num">保存／千再生</th><th class="num">エンゲージ率</th></tr></thead><tbody><tr class="hi"><td>症状・お悩み解説</td><td class="num">26</td><td class="num">4,511</td><td class="num">2.0</td><td class="num">1.06%</td></tr><tr class=""><td>芸能人・有名人</td><td class="num">22</td><td class="num">5,454</td><td class="num">1.6</td><td class="num">0.92%</td></tr><tr class=""><td>注意喚起・警鐘</td><td class="num">8</td><td class="num">7,854</td><td class="num">1.5</td><td class="num">1.02%</td></tr><tr class="lo"><td>症例ビフォーアフター</td><td class="num">18</td><td class="num">6,746</td><td class="num">1.3</td><td class="num">0.87%</td></tr></tbody></table></div>
+
+  <p>保存率が最も高いのは<b>症状・お悩み解説</b>、最も低いのは<b>症例ビフォーアフター</b>です。「自分ごとの悩みに名前がついた」瞬間に人は保存します。実際、保存率トップは <b>【必見‼️】一般の方が注意しなればならないクマ治療界隈の</b>（18,228再生・保存188／保存率10.3）、<b>目元に打ったら🆖なレーザーと、🆗なレーザーがあります</b>（11,861再生・保存58／保存率4.9） でした。</p>
+
+  <div class="tw"><table><thead><tr><th class="">平均視聴時間（5,000再生以上）</th><th class="num">本数</th><th class="num">中央再生</th><th class="num">保存／千再生</th></tr></thead><tbody><tr class=""><td>〜10秒</td><td class="num">15</td><td class="num">6,603</td><td class="num">1.4</td></tr><tr class=""><td>10〜20秒</td><td class="num">48</td><td class="num">7,881</td><td class="num">1.6</td></tr><tr class="hi"><td>20〜30秒</td><td class="num">8</td><td class="num">30,073</td><td class="num">2.0</td></tr><tr class=""><td>30秒〜</td><td class="num">1</td><td class="num">18,228</td><td class="num">10.3</td></tr></tbody></table></div>
+
+  <p><b>長く見られている動画ほど、再生数も保存も伸びています。</b>短く切って回転数を上げる作り方は、この数字を見る限り逆効果です。</p>
+</section>
+
+<section>
+  <div class="sec-head"><div class="sec-num">05</div><h2>集客ファネルは、ここで詰まっている</h2></div>
+  <p class="sec-sub">直近29日の実測値です。</p>
+
+  <div class="funnel">
+    <div class="fstep"><div class="fbar" style="width:min(560px,58%)"></div><div class="fmeta"><div class="fname">リーチ</div><div class="fnote">実測・直近29日</div></div><div class="fval">1,115,351</div></div>
+    <div class="fstep"><div class="fbar" style="width:min(32px,10%)"></div><div class="fmeta"><div class="fname">プロフィール閲覧</div><div class="fnote">実測・リーチの 0.72%</div></div><div class="fval">8,038</div></div>
+    <div class="fstep"><div class="fbar" style="width:8px;min-width:8px"></div><div class="fmeta"><div class="fname">リンククリック（公式LINEへ）</div><div class="fnote">実測・プロフィール閲覧の 5.1%</div></div><div class="fval">407</div></div>
+    <div class="fstep est"><div class="fbar" style="width:5px;min-width:5px"></div><div class="fmeta"><div class="fname">LINE登録 → 予約 → 来院 → 成約</div><div class="fnote">ここから先はInstagram側で計測できない。社内のKPIシートには予約率・来院率・成約率の実績があるが、Instagram経由が何件かは分からない</div></div><div class="fval">?</div></div>
+  </div>
+
+  <p>ボトルネックは<b>リーチ→プロフィール閲覧の0.72%</b>です。1,115,351人に見られて、プロフィールを見に来たのは8,038人。動画を見た人は「へえ」で終わっていて、この先生に相談しようとは思っていません。</p>
+
+  <p>そしてリンククリックから先が<b>完全な断絶</b>になっています。Instagram側は「407クリック」までしか分からず、LINE側は「登録があった」しか分からない。両者がつながっていないので、<b>どの動画が患者を連れてきたのか誰も答えられません。</b></p>
+</section>
+
+<section>
+  <div class="sec-head"><div class="sec-num">06</div><h2>フォロワーは何本目から増えるのか</h2></div>
+  <p class="sec-sub">APIはリールごとのフォロー獲得数を返しません（Metaがリールだけ除外している）。そこで1日に1本だけ投稿した318日を抜き出し、その日と翌日のフォロワー増加数から推定しました。</p>
+
+  <div class="tw"><table><thead><tr><th class="">その日の再生数</th><th class="num">日数</th><th class="num">フォロワー増（中央値）</th><th class="num">投稿ゼロの日との差</th></tr></thead><tbody><tr class=""><td>〜3,000</td><td class="num">24</td><td class="num">12人</td><td class="num">+2人</td></tr><tr class=""><td>3,000〜1万</td><td class="num">157</td><td class="num">11人</td><td class="num">+1人</td></tr><tr class="lo"><td>1万〜5万</td><td class="num">122</td><td class="num">0人</td><td class="num">-10人</td></tr><tr class="lo"><td>5万〜</td><td class="num">15</td><td class="num">0人</td><td class="num">-10人</td></tr></tbody></table></div>
+
+  <p>再生数とフォロワー増の相関は<b>+0.39</b>。いっぽう<b>投稿がない日でも中央値10人増えています</b>。つまり再生数の低い投稿は、フォロワーをほとんど増やしていません。<b>1万再生を超えて初めて効き始める</b>という線が見えます。</p>
+
+  <p class="sec-sub" style="margin-top:18px">※「投稿ゼロの日」も前日の投稿の余波を含むため、差は少なめに出ている可能性があります。</p>
+</section>
+
+<section>
+  <div class="sec-head"><div class="sec-num">07</div><h2>良い点</h2></div>
+  <p class="sec-sub">壊れているわけではありません。強みははっきりしています。</p>
+
+  <div class="good-list">
+    <div class="good-item"><h3>発見面で戦える力がある</h3><p>リーチの99.3%がリール。アルゴリズムに拾われる作りはできています。</p></div>
+    <div class="good-item"><h3>フォロワーの居住地が合っている</h3><p>東京43.8%、首都圏で<b>65.8%</b>。銀座に通える層が主力です（都市判明分7,739人が母数）。</p></div>
+    <div class="good-item"><h3>年齢層が施術単価と合っている</h3><p>35-44歳 32%、45-54歳 26%、25-34歳 22%。自費の手術を検討できる年齢帯に届いています。</p></div>
+    <div class="good-item"><h3>フォロワーの増加は続いている</h3><p>月間新規フォロワーは2025年8月の8人から、直近は52人。</p></div>
+    <div class="good-item"><h3>「刺さる型」が数字で特定できた</h3><p>症状・お悩み解説が保存率トップ。感覚ではなく実測で型が確定しています。</p></div>
+    <div class="good-item"><h3>先生本人が語れる強み</h3><p>専門知識で答えられる領域の広さが、そのまま再生数になっています。</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><div class="sec-num">08</div><h2>やるべきこと</h2></div>
+  <p class="sec-sub">効果と着手しやすさの順に並べています。</p>
+
+  <div class="actions">
+
+    <div class="act">
+      <h3>1. 計測をつなぐ</h3>
+      <p class="why">効果：大 ／ 工数：半日 ／ これをやらないと以降の判断が全部勘になる</p>
+      <p>プロフィールのリンクを、投稿ごとに識別できるURLに変えます。</p>
+      <ul>
+        <li>リンクにUTMを付ける（例：<span class="mono">?utm_source=ig&amp;utm_medium=reel&amp;utm_campaign=0906_kankansyu</span>）</li>
+        <li>ストーリーのリンクも同様。InstagramのAPIはストーリーのリンククリックを返さないため、GA4側で見るしかない</li>
+        <li>爾今のLINEダッシュボードと突き合わせ、<b>「どの動画から登録したか」</b>を月次で出せる状態にする</li>
+      </ul>
+    </div>
+
+    <div class="act">
+      <h3>2. クマ・目元の比率を80%以上に戻す</h3>
+      <p class="why">効果：大 ／ 工数：企画の方針変更のみ</p>
+      <p>クマ比率80%以上だった期間の平均リンククリックは<b>597件／月</b>、65%未満だった期間は<b>452件／月</b>。同じ本数でも中身で32%変わります。</p>
+      <p>クマ以外を捨てる必要はありません。ただし<b>月1〜2本の広げ役</b>に留め、必ず目元・若見えの文脈に着地させます（SNS投稿提案シートの「幅出しの原則」どおり）。バズった動画の続編を目元の話で作るのが最も効率的です。</p>
+    </div>
+
+    <div class="act">
+      <h3>3. 症例ビフォーアフターの型を作り直す</h3>
+      <p class="why">効果：大 ／ 工数：中 ／ 最大ボリュームの型が最下位という状態を放置しない</p>
+      <ul>
+        <li>冒頭を「症例です」ではなく<b>「この症状、何だと思いますか？」</b>に変える（保存率トップの型）</li>
+        <li>施術名の羅列（表ミッドフェイスリフト法、prp…）を冒頭から外す。患者は術式名で悩んでいない</li>
+        <li>ビフォーの写真ではなく<b>「本人の悩みの言葉」</b>から入る</li>
+      </ul>
+    </div>
+
+    <div class="act">
+      <h3>4. 尺を20〜30秒に寄せる</h3>
+      <p class="why">効果：中 ／ 工数：小</p>
+      <p>平均視聴20〜30秒帯の中央再生が最も高く出ています。短くして本数を稼ぐより、1本を見切らせる作りに寄せます。</p>
+      <p>ただしスキップ率は2025年以降50%前後で高止まりしています。<b>最初の3秒で「これは自分の話だ」と分からせる冒頭</b>が、尺より先に必要です。</p>
+    </div>
+
+    <div class="act">
+      <h3>5. 投稿本数を減らして、1本の質に寄せる</h3>
+      <p class="why">効果：中 ／ 工数：マイナス（作業が減る）</p>
+      <p>投稿本数とリンククリック数の相関は-0.45。本数を増やした期間ほど、中央再生もリンククリックも下がっています。<b>月8〜10本に絞り、企画と撮影に時間を戻す</b>ほうが数字が良かった実績があります。</p>
+    </div>
+
+    <div class="act">
+      <h3>6. ストーリーの役割を見直す</h3>
+      <p class="why">効果：中 ／ 工数：小</p>
+      <ul>
+        <li>本数を絞り、<b>リールを見て来た人の受け皿</b>（症例まとめ・料金・予約導線のハイライト）として設計し直す</li>
+        <li>ストーリーの数字は毎日自動で蓄積中。1か月後に本数と反応の関係を再評価する</li>
+      </ul>
+    </div>
+
+    <div class="act">
+      <h3>7. フォロワーを「見てくれる人」に変える</h3>
+      <p class="why">効果：大 ／ 工数：大 ／ 中長期</p>
+      <p>フォロワー由来のリーチが0.8%というのは、フォローされた後に何も届いていないということです。発見面だけに頼る限り、毎月ゼロからのギャンブルが続きます。コメント返信、質問箱、連続もの（シリーズ化）など、<b>「次も見たい」を作る仕掛け</b>が要ります。</p>
+    </div>
+
+  </div>
+</section>
+
+<div class="caveat">
+  <h3>この数字について</h3>
+  <ul>
+    <li>Instagram Graph APIから毎日自動取得しています。最終更新 2026.09.06。</li>
+    <li><b>リールのフォロー獲得数とプロフィール遷移数はAPIが返しません。</b>フィード投稿とストーリーでは取れるので、Metaがリールだけ除外している仕様です。理由は公表されていません。セクション06はそのための推定です。</li>
+    <li><b>ストーリーのリンククリック数もAPIが返しません。</b>UTM＋GA4で代替する必要があります（施策1）。</li>
+    <li>スキップ率は年によって集計基準が違います（2023年の中央値0.9%に対し2026年は52.1%）。比較は2025年以降に限定しています。</li>
+    <li>ジャンル判定は冒頭2行と【本日の選択肢】欄のみで機械的に行っています（キャプション全文だとハッシュタグで大半がクマ判定になるため）。人の目での再確認の余地があります。</li>
+    <li>相関はn=13の期間データによるもので、因果を証明するものではありません。</li>
+    <li>このページは社外にも見える場所に置いてあるため、社内のKPI（予約率・来院率・成約率・客単価）の実数は伏せています。突き合わせる際は「Kuma CLI様_マーケティングKPIシート」を参照してください。</li>
+  </ul>
+</div>
+
+</div>
+
+<script>
+(function(){
+  var svg=document.getElementById('chart'); if(!svg) return;
+  var D={"labels": ["25/9", "25/10", "25/11", "25/12", "26/1", "26/2", "26/3", "26/4", "26/5", "26/6", "26/7", "26/8", "26/9"], "clicks": [545, 471, 473, 667, 738, 683, 702, 585, 434, 380, 369, 440, 407], "reach": [75255, 66767, 24003, 28301, 30524, 25786, 56318, 71829, 128254, 92807, 53743, 123688, 1115351], "kuma": [88, 83, 100, 86, 100, 57, 86, 88, 59, 62, 59, 54, 53]};
+  var NS='http://www.w3.org/2000/svg';
+  var L=62,R=24,W=880-L-R,slot=W/D.labels.length,bw=Math.min(30,slot*0.52);
+  function el(n,a){var x=document.createElementNS(NS,n);for(var k in a)x.setAttribute(k,a[k]);return x;}
+  function text(x,y,s,cls,anchor){var t=el('text',{x:x,y:y,'text-anchor':anchor||'middle',class:cls||'lbl'});t.textContent=s;svg.appendChild(t);return t;}
+  var st=el('style',{});
+  st.textContent='#chart .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--ink-faint)}'+
+    '#chart .axis{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink-faint)}'+
+    '#chart .ttl{font-family:"Zen Kaku Gothic New",sans-serif;font-size:12px;fill:var(--ink-soft);font-weight:700}'+
+    '#chart .val{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink-soft)}'+
+    '#chart .grid{stroke:var(--rule-soft);stroke-width:1}';
+  svg.appendChild(st);
+  function nice(mx){var p=Math.pow(10,Math.floor(Math.log10(mx)));return Math.ceil(mx/p)*p;}
+
+  var aTop=30,aH=130,aMax=nice(Math.max.apply(null,D.clicks)*1.15);
+  text(L,aTop-12,'公式LINEへのリンククリック（件／29日）','ttl','start');
+  [0,aMax/2,aMax].forEach(function(v){
+    var y=aTop+aH-v/aMax*aH;
+    svg.appendChild(el('line',{x1:L,y1:y,x2:L+W,y2:y,class:'grid'}));
+    text(L-8,y+3.5,Math.round(v).toLocaleString(),'axis','end');
+  });
+  var cMax=Math.max.apply(null,D.clicks);
+  D.clicks.forEach(function(v,i){
+    var h=v/aMax*aH,x=L+slot*i+(slot-bw)/2,y=aTop+aH-h;
+    svg.appendChild(el('rect',{x:x,y:y,width:bw,height:h,fill:'var(--warn)',rx:1,opacity:(v===cMax?1:0.72)}));
+    if(v===cMax||i===D.clicks.length-1) text(x+bw/2,y-5,v,'val');
+  });
+
+  var bTop=218,bH=130,bMax=nice(Math.max.apply(null,D.reach)*1.1);
+  text(L,bTop-12,'リーチ（人／29日）','ttl','start');
+  [0,bMax/2,bMax].forEach(function(v){
+    var y=bTop+bH-v/bMax*bH;
+    svg.appendChild(el('line',{x1:L,y1:y,x2:L+W,y2:y,class:'grid'}));
+    text(L-8,y+3.5,v===0?'0':(Math.round(v/10000)+'万'),'axis','end');
+  });
+  D.reach.forEach(function(v,i){
+    var h=Math.max(v/bMax*bH,1),x=L+slot*i+(slot-bw)/2,y=bTop+bH-h;
+    svg.appendChild(el('rect',{x:x,y:y,width:bw,height:h,fill:'var(--accent)',rx:1,opacity:(i===D.reach.length-1?1:0.72)}));
+    if(i===D.reach.length-1) text(x+bw/2,y-5,(v>=10000?Math.round(v/10000)+'万':v),'val');
+  });
+
+  var sTop=372,sH=20;
+  text(L,sTop-8,'クマ・目元の投稿比率','ttl','start');
+  D.kuma.forEach(function(v,i){
+    var x=L+slot*i+(slot-bw)/2;
+    svg.appendChild(el('rect',{x:x,y:sTop,width:bw,height:sH,fill:'var(--ink-faint)',opacity:0.18+(v/100)*0.62,rx:1}));
+    text(x+bw/2,sTop+14,v,'axis');
+  });
+  D.labels.forEach(function(s,i){ text(L+slot*i+slot/2,415,s,'lbl'); });
+})();
+</script>
