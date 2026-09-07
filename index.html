@@ -16,7 +16,7 @@
     --warn:#A63A36;
     --warn-soft:#F3DEDD;
     --good:#2A6F52;
-    --shadow:0 1px 2px rgba(22,32,43,.06), 0 8px 24px rgba(22,32,43,.05);
+    --shadow:0 1px 2px rgba(22,32,43,.04);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -33,7 +33,7 @@
       --warn:#D97B75;
       --warn-soft:#3A2422;
       --good:#5FB68C;
-      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+      --shadow:0 1px 2px rgba(0,0,0,.25);
     }
   }
   :root[data-theme="dark"]{
@@ -58,10 +58,11 @@
     background:var(--ground);
     color:var(--ink);
     font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
-    font-size:15px; line-height:1.85;
+    font-size:15.5px; line-height:1.9;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:900px;margin:0 auto;padding:0 20px 80px}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px 96px}
+  :target{scroll-margin-top:20px}
   h1,h2,h3{font-family:"Shippori Mincho","Yu Mincho",serif;text-wrap:balance;letter-spacing:.01em}
   .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
 
@@ -82,104 +83,122 @@
 
   /* ---- verdict ---- */
   .verdict{
-    margin:38px 0 0;padding:28px 30px;background:var(--surface);
+    margin:40px 0 0;padding:30px 32px;background:var(--surface);
     border:1px solid var(--rule);border-left:4px solid var(--warn);
-    border-radius:3px;box-shadow:var(--shadow);
+    border-radius:4px;
   }
   .verdict h2{font-size:21px;margin:0 0 14px;font-weight:700}
-  .verdict p{margin:0 0 12px;font-size:15.5px}
+  .verdict p{margin:0 0 14px;font-size:15.5px;max-width:none}
   .verdict p:last-child{margin-bottom:0}
   b{font-weight:700;color:var(--ink)}
 
   /* ---- summary (at-a-glance) ---- */
   .summary{
-    margin:26px 0 0;border:1px solid var(--rule);border-radius:3px;
-    background:var(--surface);box-shadow:var(--shadow);overflow:hidden;
+    margin:34px 0 0;border:1px solid var(--rule);border-radius:4px;
+    background:var(--surface);overflow:hidden;
   }
   .sum-head{
-    padding:16px 24px;border-bottom:1px solid var(--rule);background:var(--surface-2);
-    font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--accent);font-weight:700;
+    padding:18px 26px 17px;border-bottom:1px solid var(--rule);
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
   }
-  .sum-cols{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule)}
-  .sum-col{background:var(--surface);padding:22px 24px 24px}
-  .sum-col > h3{
-    font-family:"Zen Kaku Gothic New",sans-serif;font-size:13px;font-weight:700;
-    margin:0 0 16px;color:var(--ink-faint);letter-spacing:.04em;
+  .sum-head b{
+    font-family:"Shippori Mincho","Yu Mincho",serif;
+    font-size:19px;font-weight:700;letter-spacing:.02em;
   }
-  .sum-list{list-style:none;margin:0;padding:0}
-  .sum-list li{
-    margin:0 0 14px;padding:0 0 14px;border-bottom:1px solid var(--rule-soft);
-    font-size:14px;line-height:1.7;
+  .sum-head span{font-size:12.5px;color:var(--ink-faint)}
+  .sum-table{width:100%;border-collapse:collapse;min-width:0;font-size:14.5px}
+  .sum-table td{
+    padding:13px 26px;border-bottom:1px solid var(--rule-soft);
+    vertical-align:top;line-height:1.7;
   }
-  .sum-list li:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
-  .sum-list .t{display:block;font-weight:700;font-size:14.5px;margin-bottom:2px}
-  .sum-list .d{display:block;color:var(--ink-soft);font-size:13px;line-height:1.65}
-  .sum-list .fig{
+  .sum-table tr:last-child td{border-bottom:none}
+  .sum-table .c-txt{width:auto}
+  .sum-table .c-fig{
+    width:1%;white-space:nowrap;text-align:right;
     font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
-    font-weight:600;color:var(--warn);
+    font-size:13.5px;font-weight:600;color:var(--ink-soft);padding-left:14px;
   }
-  .sum-list .fig.good{color:var(--good)}
-  .sum-do{counter-reset:doi}
-  .sum-do li{
-    display:flex;gap:11px;align-items:baseline;
-    margin:0 0 11px;padding:0 0 11px;
+  .sum-table .t{font-weight:700}
+  .sum-table .d{display:block;color:var(--ink-soft);font-size:13px;line-height:1.65;margin-top:1px}
+  .sum-table a{color:inherit;text-decoration:none}
+  .sum-table a:hover .t{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+
+  /* 区分の見出し行 */
+  .sum-table tr.grp td{
+    padding:15px 26px 9px;border-bottom:1px solid var(--rule);
+    background:var(--surface-2);
+    font-size:11.5px;font-weight:700;letter-spacing:.12em;
+    font-family:"IBM Plex Mono",monospace;color:var(--ink-faint);
   }
-  .sum-do li::before{
-    counter-increment:doi;content:counter(doi);
-    font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;
-    color:var(--accent);background:var(--accent-soft);
-    width:19px;height:19px;line-height:19px;text-align:center;border-radius:50%;
-    flex:none;position:relative;top:2px;
+  .sum-table tr.grp .tag{
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    margin-right:9px;vertical-align:1px;
   }
-  .sum-do .t{margin-bottom:0}
-  .sum-do .eff{
-    font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);
-    display:block;margin-top:1px;
+  .sum-table tr.grp.g .tag{background:var(--good)}
+  .sum-table tr.grp.b .tag{background:var(--warn)}
+  .sum-table tr.grp.d .tag{background:var(--accent)}
+  .sum-table tr.grp.g td{color:var(--good)}
+  .sum-table tr.grp.b td{color:var(--warn)}
+  .sum-table tr.grp.d td{color:var(--accent)}
+  .sum-table .fig-g{color:var(--good)}
+  .sum-table .fig-b{color:var(--warn)}
+  .sum-do-n{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);
+    margin-right:9px;font-weight:600;
   }
-  .summary a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule)}
-  .summary a:hover{border-bottom-color:var(--accent);color:var(--accent)}
 
   @media (max-width:640px){
-    .sum-cols{grid-template-columns:1fr}
+    .sum-table td{padding:12px 16px}
+    .sum-table tr.grp td{padding:14px 16px 8px}
+    .sum-table .c-fig{
+      width:auto;white-space:normal;text-align:left;
+      padding:0 16px 12px;border-bottom:1px solid var(--rule-soft);
+    }
+    .sum-table .c-txt{display:block;border-bottom:none;padding-bottom:3px}
+    .sum-table tr:not(.grp){display:block}
+    .sum-table tr:not(.grp) td{display:block}
+    .sum-head{padding:16px}
   }
 
   /* ---- sections ---- */
-  section{margin-top:56px}
-  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+  section{margin-top:76px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:10px;
+    padding-top:22px;border-top:1px solid var(--rule)}
   .sec-num{
     font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;
     color:var(--accent);letter-spacing:.1em;flex:none;padding-top:4px;
   }
-  h2{font-size:26px;margin:0;font-weight:700;line-height:1.45}
-  .sec-sub{color:var(--ink-soft);margin:6px 0 24px 0;max-width:64ch}
+  h2{font-size:25px;margin:0;font-weight:700;line-height:1.5}
+  .sec-sub{color:var(--ink-soft);margin:10px 0 28px 0;max-width:62ch;font-size:15px}
 
-  p{max-width:66ch}
+  p{max-width:64ch;margin:0 0 20px}
 
   /* ---- stat row ---- */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
-  .stat{background:var(--surface);padding:20px 18px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:28px 0;border-radius:4px;overflow:hidden}
+  .stat{background:var(--surface);padding:22px 20px}
   .stat .k{font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;margin-bottom:8px;line-height:1.5}
   .stat .v{font-family:"IBM Plex Mono",monospace;font-size:27px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
   .stat .n{font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.55}
   .v.warn{color:var(--warn)} .v.good{color:var(--good)} .v.acc{color:var(--accent)}
 
   /* ---- chart ---- */
-  figure{margin:30px 0 0;background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:24px 20px 18px;box-shadow:var(--shadow)}
+  figure{margin:30px 0;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:26px 22px 20px}
   .chart-scroll{overflow-x:auto}
   figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:14px;padding-top:14px;border-top:1px solid var(--rule-soft);line-height:1.7}
   .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
   .legend i{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:1px}
 
   /* ---- table ---- */
-  .tw{overflow-x:auto;margin:26px 0;border:1px solid var(--rule);background:var(--surface);border-radius:3px}
-  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
-  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--rule-soft)}
+  .tw{overflow-x:auto;margin:28px 0;border:1px solid var(--rule);background:var(--surface);border-radius:4px}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px;line-height:1.6}
+  th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--rule-soft)}
   thead th{
     background:var(--surface-2);font-size:11.5px;letter-spacing:.05em;color:var(--ink-faint);
     font-weight:700;border-bottom:1px solid var(--rule);white-space:nowrap;
   }
   tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:var(--surface-2)}
+  tr.hi:hover td,tr.lo:hover td{filter:brightness(.985)}
   td.num{font-family:"IBM Plex Mono",monospace;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   tr.hi td{background:var(--accent-soft)}
   tr.lo td{background:var(--warn-soft)}
@@ -196,9 +215,9 @@
   .fstep.est .fbar{background:var(--ink-faint)}
 
   /* ---- action list ---- */
-  .actions{display:flex;flex-direction:column;gap:16px;margin:26px 0}
-  .act{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:22px 24px;box-shadow:var(--shadow)}
-  .act h3{font-size:18px;margin:0 0 4px;font-weight:700}
+  .actions{display:flex;flex-direction:column;gap:14px;margin:28px 0}
+  .act{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:24px 26px}
+  .act h3{font-size:18px;margin:0 0 5px;font-weight:700;line-height:1.5}
   .act .why{font-size:12.5px;color:var(--accent);font-weight:500;margin:0 0 12px;font-family:"IBM Plex Mono",monospace}
   .act p{margin:0 0 10px;font-size:14.5px}
   .act p:last-child{margin-bottom:0}
@@ -212,7 +231,7 @@
   .good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
 
   .caveat{
-    margin-top:56px;padding:24px 26px;background:var(--surface-2);
+    margin-top:72px;padding:24px 26px;background:var(--surface-2);
     border:1px solid var(--rule);border-radius:3px;font-size:13px;color:var(--ink-soft);
   }
   .caveat h3{font-size:14px;margin:0 0 12px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif;color:var(--ink)}
@@ -243,48 +262,41 @@
   </div>
 </header>
 
+<div class="summary">
+  <div class="sum-head"><b>概要</b><span>この表だけで要点は足ります。行をクリックすると根拠のセクションに飛びます。</span></div>
+  <table class="sum-table">
+
+    <tr class="grp g"><td colspan="2"><span class="tag"></span>いい点 ／ このまま続けること</td></tr>
+    <tr><td class="c-txt"><a href="#s07"><span class="t">リールは発見面で戦えている</span><span class="d">アルゴリズムに拾われる作りはできている。ここは崩さない。</span></a></td><td class="c-fig fig-g">リーチの99.3%</td></tr>
+    <tr><td class="c-txt"><a href="#s07"><span class="t">届いている人の住んでいる場所が合っている</span><span class="d">銀座に通える層が主力。広く当てているだけではない。</span></a></td><td class="c-fig fig-g">首都圏 65.8%</td></tr>
+    <tr><td class="c-txt"><a href="#s07"><span class="t">年齢層も施術と噛み合っている</span><span class="d">35-44歳 32%、45-54歳 26%、25-34歳 22%。自費の手術を検討できる帯に届いている。</span></a></td><td class="c-fig fig-g">35-44歳が最多</td></tr>
+    <tr><td class="c-txt"><a href="#s07"><span class="t">フォロワーは増え続けている</span><span class="d">直近の満了月（2026年8月）の新規フォロワー。減っていない。</span></a></td><td class="c-fig fig-g">月 502人</td></tr>
+    <tr><td class="c-txt"><a href="#s04"><span class="t">刺さる型が実測で特定できた</span><span class="d">保存率トップは「症状・お悩み解説」。感覚ではなく数字で確定している。</span></a></td><td class="c-fig fig-g">保存 2.0／千再生</td></tr>
+
+    <tr class="grp b"><td colspan="2"><span class="tag"></span>課題 ／ いま起きていること</td></tr>
+    <tr><td class="c-txt"><a href="#s01"><span class="t">リーチは増えたのに、LINEへのクリックは減った</span><span class="d">リーチ1,141,241人に対しクリック413件。効率はピークの67分の1。</span></a></td><td class="c-fig fig-b">クリック 44%減</td></tr>
+    <tr><td class="c-txt"><a href="#s02"><span class="t">フォロワー16,704人に、届いていない</span><span class="d">毎回ゼロから発見面に賭けている状態。当たり外れが極端になる。</span></a></td><td class="c-fig fig-b">フォロワー由来 0.7%</td></tr>
+    <tr><td class="c-txt"><a href="#s03"><span class="t">1本あたりの力が落ちている</span><span class="d">バズを除いた「普段の投稿」の中央再生。本数を増やした時期ほど下がっている。</span></a></td><td class="c-fig fig-b">中央再生 25%減</td></tr>
+    <tr><td class="c-txt"><a href="#s05"><span class="t">詰まっているのは入口</span><span class="d">見た人がプロフィールまで来ない。さらにクリックから先はLINE側とつながっておらず追えない。</span></a></td><td class="c-fig fig-b">プロフィール到達 0.72%</td></tr>
+    <tr><td class="c-txt"><a href="#s09"><span class="t">他院との差は、テーマではなく作り方</span><span class="d">同じクマ・目元の投稿だけで比べても中央再生に差がある。自院は投稿数もクマ率も最上位。</span></a></td><td class="c-fig fig-b">中央再生 5.1倍の差</td></tr>
+
+    <tr class="grp d"><td colspan="2"><span class="tag"></span>改善点 ／ やること</td></tr>
+    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">1</span>計測をつなぐ</span><span class="d">どの動画からLINE登録が来たかを追えるようにする。これがないと以降の判断が全部勘になる。</span></a></td><td class="c-fig">効果 大 ／ 半日</td></tr>
+    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">2</span>クマ・目元の比率を80%以上に戻す</span><span class="d">クマ比率が高い時期のほうがクリックは多い（597件 対 470件）。</span></a></td><td class="c-fig">効果 大 ／ 方針変更のみ</td></tr>
+    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">3</span>症例ビフォーアフターの型を作り直す</span><span class="d">本数が最も多い型なのに保存率は最下位。冒頭を「問い」に変える。</span></a></td><td class="c-fig">効果 大 ／ 工数 中</td></tr>
+    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">4</span>表紙と冒頭10秒を作り直す</span><span class="d">どの尺で作っても7〜15秒で切られている。尺ではなく冒頭の問題。</span></a></td><td class="c-fig">効果 大 ／ 工数 中</td></tr>
+    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">5</span>投稿本数を減らして、1本の質に寄せる</span><span class="d">月8〜10本に絞り、企画と撮影に時間を戻す。作業はむしろ減る。</span></a></td><td class="c-fig">効果 中 ／ 工数 −</td></tr>
+    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">6</span>ストーリーの役割を見直す</span><span class="d">LINE導線ではなく、リールを見て来た人の受け皿として設計し直す。</span></a></td><td class="c-fig">効果 中 ／ 工数 小</td></tr>
+    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">7</span>フォロワーを「見てくれる人」に変える</span><span class="d">シリーズ化・コメント返信など「次も見たい」を作る。中長期。</span></a></td><td class="c-fig">効果 大 ／ 中長期</td></tr>
+
+  </table>
+</div>
+
 <div class="verdict">
   <h2>結論</h2>
   <p>直近29日のリーチは<b>1,141,241人</b>。リンククリックが最も多かった時期（2025/12〜）と比べて<b>37倍</b>に増えています。</p>
   <p>ところが公式LINEへのリンククリックは、その時期の<b>738件から413件へ44%減っています</b>。リーチ1万人あたりのクリック数で見ると<b>67分の1</b>の効率です。</p>
   <p>同じ期間に、クマ・目元をテーマにした投稿の比率が<b>100%から53%へ下がりました</b>。クマ比率とリンククリック数の相関は<b>+0.58</b>、いっぽうリーチとクリック数の相関は<b>-0.33</b>です。数を増やして間口を広げた結果、来る人が変わっています。</p>
-</div>
-
-<div class="summary">
-  <div class="sum-head">概要 ／ この先を読まなくても要点はここ</div>
-  <div class="sum-cols">
-
-    <div class="sum-col">
-      <h3>わかったこと</h3>
-      <ul class="sum-list">
-        <li><a href="#s01"><span class="t">リーチは増えたが、LINEへのクリックは減った</span></a>
-          <span class="d">リーチ <span class="fig good">1,141,241</span> に対しクリック <span class="fig">413件</span>（ピーク比 44%減）。効率はピークの <span class="fig">67分の1</span>。</span></li>
-        <li><a href="#s02"><span class="t">フォロワー16,704人に、届いていない</span></a>
-          <span class="d">リーチのうちフォロワー由来は <span class="fig">0.7%</span>。毎回ゼロから発見面に賭けている状態。</span></li>
-        <li><a href="#s03"><span class="t">1本あたりの力が落ちている</span></a>
-          <span class="d">中央再生は直近 <span class="fig">4,791</span>、ピーク月から <span class="fig">25%減</span>。本数×クリックの相関は -0.45。</span></li>
-        <li><a href="#s05"><span class="t">詰まっているのは入口</span></a>
-          <span class="d">リーチ→プロフィール閲覧が <span class="fig">0.72%</span>。さらにクリックから先はLINE側とつながっておらず追えない。</span></li>
-        <li><a href="#s04"><span class="t">効く型と効かない型は特定できた</span></a>
-          <span class="d">保存率トップは <b>症状・お悩み解説</b>、最下位は <b>症例ビフォーアフター</b>。感覚ではなく実測で確定。</span></li>
-        <li><a href="#s09"><span class="t">差はテーマではなく「作り方」</span></a><span class="d">同じクマ・目元の投稿だけで比べても他院と中央再生で差がある。自院は投稿数もクマ率も最上位。</span></li>
-      </ul>
-    </div>
-
-    <div class="sum-col">
-      <h3>改善点（やること）</h3>
-      <ul class="sum-list sum-do">
-        <li><a href="#s10"><span class="t">計測をつなぐ</span><span class="eff">効果：大 ／ 半日</span></a></li>
-        <li><a href="#s10"><span class="t">クマ・目元の比率を80%以上に戻す</span><span class="eff">効果：大 ／ 方針変更のみ</span></a></li>
-        <li><a href="#s10"><span class="t">症例ビフォーアフターの型を作り直す</span><span class="eff">効果：大 ／ 工数：中</span></a></li>
-        <li><a href="#s10"><span class="t">表紙と冒頭10秒を作り直す</span><span class="eff">効果：大 ／ 工数：中</span></a></li>
-        <li><a href="#s10"><span class="t">投稿本数を減らし、1本の質に寄せる</span><span class="eff">効果：中 ／ 作業は減る</span></a></li>
-        <li><a href="#s10"><span class="t">ストーリーの役割を見直す</span><span class="eff">効果：中 ／ 工数：小</span></a></li>
-        <li><a href="#s10"><span class="t">フォロワーを「見てくれる人」に変える</span><span class="eff">効果：大 ／ 中長期</span></a></li>
-      </ul>
-    </div>
-
-  </div>
 </div>
 
 <section id="s01">
@@ -379,16 +391,16 @@
 
 <section id="s07">
   <div class="sec-head"><div class="sec-num">07</div><h2>良い点</h2></div>
-  <p class="sec-sub">壊れているわけではありません。強みははっきりしています。</p>
+  <p class="sec-sub">壊れているわけではありません。ここは崩さずに続けます。</p>
 
-  <div class="good-list">
-    <div class="good-item"><h3>発見面で戦える力がある</h3><p>リーチの99.3%がリール。アルゴリズムに拾われる作りはできています。</p></div>
-    <div class="good-item"><h3>フォロワーの居住地が合っている</h3><p>東京43.9%、首都圏で<b>65.8%</b>。銀座に通える層が主力です（都市判明分7,740人が母数）。</p></div>
-    <div class="good-item"><h3>年齢層が施術単価と合っている</h3><p>35-44歳 32%、45-54歳 26%、25-34歳 22%。自費の手術を検討できる年齢帯に届いています。</p></div>
-    <div class="good-item"><h3>フォロワーの増加は続いている</h3><p>月間新規フォロワーは2025年9月の220人に対し、直近の満了月（2026年8月）は502人。</p></div>
-    <div class="good-item"><h3>「刺さる型」が数字で特定できた</h3><p>症状・お悩み解説が保存率トップ。感覚ではなく実測で型が確定しています。</p></div>
-    <div class="good-item"><h3>先生本人が語れる強み</h3><p>専門知識で答えられる領域の広さが、そのまま再生数になっています。</p></div>
-  </div>
+  <div class="tw"><table><thead><tr><th>続けること</th><th class="num">数字</th><th>なぜ効いているか</th></tr></thead><tbody>
+    <tr><td><b>発見面で戦える力がある</b></td><td class="num">リーチの99.3%</td><td>リールがリーチのほぼ全部。アルゴリズムに拾われる作りはできている。</td></tr>
+    <tr><td><b>届く相手の住所が合っている</b></td><td class="num">首都圏 65.8%</td><td>東京43.9%。銀座に通える層が主力（都市判明分7,740人が母数）。</td></tr>
+    <tr><td><b>年齢層が施術と噛み合っている</b></td><td class="num">35-44歳が最多</td><td>35-44歳 32%、45-54歳 26%、25-34歳 22%。自費の手術を検討できる年齢帯に届いている。</td></tr>
+    <tr><td><b>フォロワーは増え続けている</b></td><td class="num">月 502人</td><td>2025年9月は220人。直近の満了月（2026年8月）まで伸び続けている。</td></tr>
+    <tr class="hi"><td><b>刺さる型が数字で特定できた</b></td><td class="num">保存 2.0／千再生</td><td>「症状・お悩み解説」が保存率トップ。感覚ではなく実測で型が確定している。</td></tr>
+    <tr><td><b>先生本人が語れる幅がある</b></td><td class="num">—</td><td>専門知識で答えられる領域の広さが、そのまま再生数になっている。</td></tr>
+  </tbody></table></div>
 </section>
 
 
