@@ -91,6 +91,59 @@
   .verdict p:last-child{margin-bottom:0}
   b{font-weight:700;color:var(--ink)}
 
+  /* ---- summary (at-a-glance) ---- */
+  .summary{
+    margin:26px 0 0;border:1px solid var(--rule);border-radius:3px;
+    background:var(--surface);box-shadow:var(--shadow);overflow:hidden;
+  }
+  .sum-head{
+    padding:16px 24px;border-bottom:1px solid var(--rule);background:var(--surface-2);
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);font-weight:700;
+  }
+  .sum-cols{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule)}
+  .sum-col{background:var(--surface);padding:22px 24px 24px}
+  .sum-col > h3{
+    font-family:"Zen Kaku Gothic New",sans-serif;font-size:13px;font-weight:700;
+    margin:0 0 16px;color:var(--ink-faint);letter-spacing:.04em;
+  }
+  .sum-list{list-style:none;margin:0;padding:0}
+  .sum-list li{
+    margin:0 0 14px;padding:0 0 14px;border-bottom:1px solid var(--rule-soft);
+    font-size:14px;line-height:1.7;
+  }
+  .sum-list li:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+  .sum-list .t{display:block;font-weight:700;font-size:14.5px;margin-bottom:2px}
+  .sum-list .d{display:block;color:var(--ink-soft);font-size:13px;line-height:1.65}
+  .sum-list .fig{
+    font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+    font-weight:600;color:var(--warn);
+  }
+  .sum-list .fig.good{color:var(--good)}
+  .sum-do{counter-reset:doi}
+  .sum-do li{
+    display:flex;gap:11px;align-items:baseline;
+    margin:0 0 11px;padding:0 0 11px;
+  }
+  .sum-do li::before{
+    counter-increment:doi;content:counter(doi);
+    font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;
+    color:var(--accent);background:var(--accent-soft);
+    width:19px;height:19px;line-height:19px;text-align:center;border-radius:50%;
+    flex:none;position:relative;top:2px;
+  }
+  .sum-do .t{margin-bottom:0}
+  .sum-do .eff{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-faint);
+    display:block;margin-top:1px;
+  }
+  .summary a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule)}
+  .summary a:hover{border-bottom-color:var(--accent);color:var(--accent)}
+
+  @media (max-width:640px){
+    .sum-cols{grid-template-columns:1fr}
+  }
+
   /* ---- sections ---- */
   section{margin-top:56px}
   .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
@@ -197,7 +250,44 @@
   <p>同じ期間に、クマ・目元をテーマにした投稿の比率が<b>100%から53%へ下がりました</b>。クマ比率とリンククリック数の相関は<b>+0.58</b>、いっぽうリーチとクリック数の相関は<b>-0.33</b>です。数を増やして間口を広げた結果、来る人が変わっています。</p>
 </div>
 
-<section>
+<div class="summary">
+  <div class="sum-head">概要 ／ この先を読まなくても要点はここ</div>
+  <div class="sum-cols">
+
+    <div class="sum-col">
+      <h3>わかったこと</h3>
+      <ul class="sum-list">
+        <li><a href="#s01"><span class="t">リーチは増えたが、LINEへのクリックは減った</span></a>
+          <span class="d">リーチ <span class="fig good">1,141,241</span> に対しクリック <span class="fig">413件</span>（ピーク比 44%減）。効率はピークの <span class="fig">67分の1</span>。</span></li>
+        <li><a href="#s02"><span class="t">フォロワー16,704人に、届いていない</span></a>
+          <span class="d">リーチのうちフォロワー由来は <span class="fig">0.7%</span>。毎回ゼロから発見面に賭けている状態。</span></li>
+        <li><a href="#s03"><span class="t">1本あたりの力が落ちている</span></a>
+          <span class="d">中央再生は直近 <span class="fig">4,791</span>、ピーク月から <span class="fig">25%減</span>。本数×クリックの相関は -0.45。</span></li>
+        <li><a href="#s05"><span class="t">詰まっているのは入口</span></a>
+          <span class="d">リーチ→プロフィール閲覧が <span class="fig">0.72%</span>。さらにクリックから先はLINE側とつながっておらず追えない。</span></li>
+        <li><a href="#s04"><span class="t">効く型と効かない型は特定できた</span></a>
+          <span class="d">保存率トップは <b>症状・お悩み解説</b>、最下位は <b>症例ビフォーアフター</b>。感覚ではなく実測で確定。</span></li>
+        <li><a href="#s09"><span class="t">差はテーマではなく「作り方」</span></a><span class="d">同じクマ・目元の投稿だけで比べても他院と中央再生で差がある。自院は投稿数もクマ率も最上位。</span></li>
+      </ul>
+    </div>
+
+    <div class="sum-col">
+      <h3>改善点（やること）</h3>
+      <ul class="sum-list sum-do">
+        <li><a href="#s10"><span class="t">計測をつなぐ</span><span class="eff">効果：大 ／ 半日</span></a></li>
+        <li><a href="#s10"><span class="t">クマ・目元の比率を80%以上に戻す</span><span class="eff">効果：大 ／ 方針変更のみ</span></a></li>
+        <li><a href="#s10"><span class="t">症例ビフォーアフターの型を作り直す</span><span class="eff">効果：大 ／ 工数：中</span></a></li>
+        <li><a href="#s10"><span class="t">表紙と冒頭10秒を作り直す</span><span class="eff">効果：大 ／ 工数：中</span></a></li>
+        <li><a href="#s10"><span class="t">投稿本数を減らし、1本の質に寄せる</span><span class="eff">効果：中 ／ 作業は減る</span></a></li>
+        <li><a href="#s10"><span class="t">ストーリーの役割を見直す</span><span class="eff">効果：中 ／ 工数：小</span></a></li>
+        <li><a href="#s10"><span class="t">フォロワーを「見てくれる人」に変える</span><span class="eff">効果：大 ／ 中長期</span></a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<section id="s01">
   <div class="sec-head"><div class="sec-num">01</div><h2>いま起きていること</h2></div>
   <p class="sec-sub">29日区切りで13期間、リーチとリンククリックを並べたものです。上下で動きが逆になっています。</p>
 
@@ -222,7 +312,7 @@
   <p>クマ比率80%以上だった7期間の平均リンククリックは<b>597件／月</b>、65%未満だった5期間は<b>470件／月</b>。同じ本数を投稿しても、中身で<b>27%</b>変わります。</p>
 </section>
 
-<section>
+<section id="s02">
   <div class="sec-head"><div class="sec-num">02</div><h2>フォロワー16,704人は、資産になっていない</h2></div>
   <p class="sec-sub">直近29日のリーチを、フォロー有無と投稿種別で分解しました。</p>
 
@@ -238,7 +328,7 @@
   <p>ストーリーは特に深刻です。1日20本以上投稿しても、1本が届いているのは<b>267人</b>——フォロワー16,704人の1.6%です（蓄積24本の中央値）。<b>ストーリーをLINE導線として使う前提が、そもそも成立していません。</b></p>
 </section>
 
-<section>
+<section id="s03">
   <div class="sec-head"><div class="sec-num">03</div><h2>1本あたりの力が落ちている</h2></div>
   <p class="sec-sub">バズを除いた「普段の投稿」の実力＝中央値の推移です。</p>
 
@@ -247,7 +337,7 @@
   <p>直近8か月で最も強かった2026年7月の中央再生6,353に対し、直近の2026年8月は<b>4,791</b>。<b>25%落ちています</b>。投稿本数とリンククリック数の相関は-0.45で、量を増やしたことが1本ごとの評価を下げている可能性があります。</p>
 </section>
 
-<section>
+<section id="s04">
   <div class="sec-head"><div class="sec-num">04</div><h2>効いている型と、効いていない型</h2></div>
   <p class="sec-sub">直近1年146本を内容で分類し、保存率（＝後で見返したい＝本気度）とエンゲージ率で比較しました。5本未満の型は除いています。</p>
 
@@ -260,7 +350,7 @@
   <p>ただしこの表は<b>因果が逆に見えやすい</b>ので注意が要ります。「長く見せたから伸びた」のではなく「伸びた動画は長く見られる」だけの可能性が高い。実際、競合2院の尺は29秒と76秒でまったく違うのに、どちらも中央再生2万台です（自院は48秒で4,365）。<b>尺は成績を説明しません。</b></p>
 </section>
 
-<section>
+<section id="s05">
   <div class="sec-head"><div class="sec-num">05</div><h2>集客ファネルは、ここで詰まっている</h2></div>
   <p class="sec-sub">直近29日の実測値です。</p>
 
@@ -276,7 +366,7 @@
   <p>そしてリンククリックから先が<b>完全な断絶</b>になっています。Instagram側は「413クリック」までしか分からず、LINE側は「登録があった」しか分からない。両者がつながっていないので、<b>どの動画が患者を連れてきたのか誰も答えられません。</b></p>
 </section>
 
-<section>
+<section id="s06">
   <div class="sec-head"><div class="sec-num">06</div><h2>フォロワーは何本目から増えるのか</h2></div>
   <p class="sec-sub">APIはリールごとのフォロー獲得数を返しません（Metaがリールだけ除外している）。そこで1日に1本だけ投稿した145日を抜き出し、その日と翌日のフォロワー増加数から推定しました。対象は2025-09以降——それ以前はAPIがフォロワー増減を返さないため使えません。</p>
 
@@ -287,7 +377,7 @@
   <p class="sec-sub" style="margin-top:18px">※「投稿ゼロの日」も前日の投稿の余波を含むため、差は少なめに出ている可能性があります。</p>
 </section>
 
-<section>
+<section id="s07">
   <div class="sec-head"><div class="sec-num">07</div><h2>良い点</h2></div>
   <p class="sec-sub">壊れているわけではありません。強みははっきりしています。</p>
 
@@ -302,7 +392,7 @@
 </section>
 
 
-<section>
+<section id="s09">
   <div class="sec-head"><div class="sec-num">09</div><h2>他院と並べると、テーマの問題ではないと分かる</h2></div>
   <p class="sec-sub">同じクマ・目元をやっている医師のアカウントを、公開値（再生数・いいね・投稿日）で取得して横並びにしました。2025-06-28以降・全員にデータがある期間に揃えています。</p>
 
@@ -320,7 +410,7 @@
 </section>
 
 
-<section>
+<section id="s10">
   <div class="sec-head"><div class="sec-num">10</div><h2>やるべきこと</h2></div>
   <p class="sec-sub">効果と着手しやすさの順に並べています。</p>
 
