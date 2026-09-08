@@ -1,8 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>クマクリ Instagram 診断</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
-<style>:root{
+<style>/* ============================================================
+   診断レポート 共通スタイル（x / instagram）
+
+   各媒体の gen_report.py が、このファイル → 媒体の report.css の順に
+   読んで <style> に展開する。順番が意味を持つので入れ替えないこと。
+
+   ここに置いてよいのは「x と instagram で完全に同一」かつ
+   「媒体側のルールを上書きする必要がない」ものだけ。
+   媒体側が後から読まれるので、ここのルールは常に負ける側になる。
+
+   - 余白・フォントサイズ・角丸・box-shadow は媒体ごとに違う → 各 report.css
+   - --shadow は媒体ごとに違うので、ここでは定義しない（各 report.css で3箇所）
+   - @media (max-width:640px) は媒体側のルールを上書きするので各 report.css
+   - .summary 一式は x（.sum-cols/.sum-list）と instagram（.sum-table）で
+     マークアップ自体が別物なので共通化していない
+   - tiktok は配色・変数名・クラス名がまるごと別の設計なので参加していない
+     （詳細は sns/report_audit_2026-09-08.md）
+   ============================================================ */
+
+  :root{
     --ground:#EEF1F4;
     --surface:#FFFFFF;
     --surface-2:#F6F8FA;
@@ -16,7 +41,6 @@
     --warn:#A63A36;
     --warn-soft:#F3DEDD;
     --good:#2A6F52;
-    --shadow:0 1px 2px rgba(22,32,43,.04);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -33,7 +57,6 @@
       --warn:#D97B75;
       --warn-soft:#3A2422;
       --good:#5FB68C;
-      --shadow:0 1px 2px rgba(0,0,0,.25);
     }
   }
   :root[data-theme="dark"]{
@@ -50,19 +73,9 @@
     --warn:#D97B75;
     --warn-soft:#3A2422;
     --good:#5FB68C;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
   }
 
   *{box-sizing:border-box}
-  body{
-    background:var(--ground);
-    color:var(--ink);
-    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
-    font-size:15.5px; line-height:1.9;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:880px;margin:0 auto;padding:0 20px 96px}
-  :target{scroll-margin-top:20px}
   h1,h2,h3{font-family:"Shippori Mincho","Yu Mincho",serif;text-wrap:balance;letter-spacing:.01em}
   .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
 
@@ -81,6 +94,46 @@
   }
   .provenance span{white-space:nowrap}
 
+  /* ---- funnel ---- */
+  .funnel{display:flex;flex-direction:column;gap:2px;margin:26px 0}
+  .fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);padding:14px 18px;flex-wrap:wrap}
+  .fbar{height:26px;background:var(--accent);opacity:.85;flex:none;border-radius:2px;min-width:3px;max-width:100%}
+  .fmeta{flex:1;min-width:0}
+  .fname{font-size:14px;font-weight:500}
+  .fnote{font-size:12px;color:var(--ink-faint);line-height:1.6}
+  .fval{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;flex:none;font-variant-numeric:tabular-nums}
+  .fstep.est{border-style:dashed;opacity:.85}
+  .fstep.est .fbar{background:var(--ink-faint)}
+
+  /* ---- good-list ---- */
+  .good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
+  .good-item{background:var(--surface);padding:20px}
+  .good-item h3{font-size:15px;margin:0 0 8px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
+  .good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+/* Instagram診断レポート 固有スタイル
+
+   sns/report_base.css の "後" に読まれる。基本の配色（CSS変数）と
+   header / funnel / good-list は共通ファイル側にある。
+   ここには Instagram だけの値・レイアウトを置く。
+   後から読まれるので、共通側のルールはここで上書きできる。 */
+
+  /* --shadow だけは媒体ごとに違うので、共通の配色とは別にここで定義する。
+     3つの順番（通常 → OS ダーク → 明示ダーク）は入れ替えないこと。 */
+  :root{ --shadow:0 1px 2px rgba(22,32,43,.04); }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --shadow:0 1px 2px rgba(0,0,0,.25); }
+  }
+  :root[data-theme="dark"]{ --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3); }
+
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    font-size:15.5px; line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px 96px}
+  :target{scroll-margin-top:20px}
   /* ---- verdict ---- */
   .verdict{
     margin:40px 0 0;padding:30px 32px;background:var(--surface);
@@ -203,17 +256,6 @@
   tr.hi td{background:var(--accent-soft)}
   tr.lo td{background:var(--warn-soft)}
 
-  /* ---- funnel ---- */
-  .funnel{display:flex;flex-direction:column;gap:2px;margin:26px 0}
-  .fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);padding:14px 18px;flex-wrap:wrap}
-  .fbar{height:26px;background:var(--accent);opacity:.85;flex:none;border-radius:2px;min-width:3px;max-width:100%}
-  .fmeta{flex:1;min-width:0}
-  .fname{font-size:14px;font-weight:500}
-  .fnote{font-size:12px;color:var(--ink-faint);line-height:1.6}
-  .fval{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;flex:none;font-variant-numeric:tabular-nums}
-  .fstep.est{border-style:dashed;opacity:.85}
-  .fstep.est .fbar{background:var(--ink-faint)}
-
   /* ---- action list ---- */
   .actions{display:flex;flex-direction:column;gap:14px;margin:28px 0}
   .act{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:24px 26px}
@@ -224,11 +266,6 @@
   .act ul{margin:10px 0 0;padding-left:1.15em}
   .act li{margin-bottom:7px;font-size:14.5px;max-width:64ch}
   .act li:last-child{margin-bottom:0}
-
-  .good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
-  .good-item{background:var(--surface);padding:20px}
-  .good-item h3{font-size:15px;margin:0 0 8px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
-  .good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
 
   .caveat{
     margin-top:72px;padding:24px 26px;background:var(--surface-2);
@@ -247,6 +284,8 @@
     .sec-head{gap:10px}
   }
 </style>
+</head>
+<body>
 
 <div class="wrap">
 
@@ -295,7 +334,7 @@
 <div class="verdict">
   <h2>結論</h2>
   <p>直近29日のリーチは<b>1,158,939人</b>。リンククリックが最も多かった時期（2025/12〜）と比べて<b>41倍</b>に増えています。</p>
-  <p>ところが公式LINEへのリンククリックは、その時期の<b>734件から413件へ44%減っています</b>。リーチ1万人あたりのクリック数で見ると<b>72分の1</b>の効率です。</p>
+  <p>ところがその時期の<b>734件から413件へ44%減っています</b>。リーチ1万人あたりのクリック数で見ると<b>72分の1</b>の効率です。</p>
   <p>同じ期間に、クマ・目元をテーマにした投稿の比率が<b>100%から53%へ下がりました</b>。クマ比率とリンククリック数の相関は<b>+0.54</b>、いっぽうリーチとクリック数の相関は<b>-0.33</b>です。数を増やして間口を広げた結果、来る人が変わっています。</p>
 </div>
 
@@ -337,7 +376,7 @@
 
   <p>数字が意味しているのは、<b>このアカウントは「フォロワーに届けるメディア」として機能していない</b>ということです。毎回ゼロからアルゴリズムの発見面に賭けている状態で、だから当たり外れが極端になります。直近1年145本のうち1万再生を超えたのは24本（17%）だけ、<b>上位3本が総再生の58%</b>を占めています。</p>
 
-  <p>ストーリーは特に深刻です。1日20本以上投稿しても、1本が届いているのは<b>256人</b>——フォロワー16,717人の1.5%です（蓄積35本の中央値）。<b>ストーリーをLINE導線として使う前提が、そもそも成立していません。</b></p>
+  <p>ストーリーは特に深刻です。1日11本前後を投稿しても、1本が届いているのは<b>256人</b>——フォロワー16,717人の1.5%です（3日分・35本の中央値）。<b>ストーリーをLINE導線として使う前提が、そもそも成立していません。</b></p>
 </section>
 
 <section id="s03">
@@ -359,7 +398,7 @@
 
   <div class="tw"><table><thead><tr><th class="">平均視聴時間（5,000再生以上）</th><th class="num">本数</th><th class="num">中央再生</th><th class="num">保存／千再生</th></tr></thead><tbody><tr class=""><td>〜10秒</td><td class="num">14</td><td class="num">6,825</td><td class="num">1.4</td></tr><tr class=""><td>10〜20秒</td><td class="num">48</td><td class="num">7,882</td><td class="num">1.6</td></tr><tr class="hi"><td>20〜30秒</td><td class="num">8</td><td class="num">30,206</td><td class="num">2.0</td></tr><tr class=""><td>30秒〜</td><td class="num">1</td><td class="num">18,228</td><td class="num">10.3</td></tr></tbody></table></div>
 
-  <p>ただしこの表は<b>因果が逆に見えやすい</b>ので注意が要ります。「長く見せたから伸びた」のではなく「伸びた動画は長く見られる」だけの可能性が高い。実際、競合2院の尺は29秒と76秒でまったく違うのに、どちらも中央再生2万台です（自院は48秒で4,365）。<b>尺は成績を説明しません。</b></p>
+  <p>ただしこの表は<b>因果が逆に見えやすい</b>ので注意が要ります。「長く見せたから伸びた」のではなく「伸びた動画は長く見られる」だけの可能性が高い。実際、他院の尺はりく先生32秒（中央再生22,306）、則本先生85秒（中央再生19,743）とばらばらです（自院は48秒で4,365）。<b>尺は成績を説明しません。</b></p>
 </section>
 
 <section id="s05">
@@ -418,7 +457,7 @@
 
   <p>差は<b>作り方</b>に出ています。上位動画の表紙を実際に確認したところ、伸びている2院は<b>黒背景・明朝体・文字は3行以内・人物は1人</b>で一致していました。対して自院の表紙は、検索バーのUI・巨大な見出し・医学的な補足2行・英語字幕・医師2人と、要素が6つ競合しています。</p>
 
-  <p>冒頭の言葉も違います。他院は「過剰脱脂の修正」「表ハムラ法とは？」のように短く、術式名を先に出しません。自院は「【目の下のたるみがたわみに変わったら！骨膜下から変える表ハムラ！表ＭＦＬ】」のように術式名から入ります。キャプションの長さも自院624文字に対し他院248〜319文字です。</p>
+  <p>冒頭の言葉も違います。他院は「過剰脱脂の修正」「表ハムラ法とは？」のように短く、術式名を先に出しません。自院は「【目の下のたるみがたわみに変わったら！骨膜下から変える表ハムラ！表ＭＦＬ】」のように術式名から入ります。キャプションの長さも自院624文字に対し他院214〜319文字です。</p>
 </section>
 
 
@@ -442,7 +481,7 @@
     <div class="act">
       <h3>2. 表紙と冒頭10秒を作り直す</h3>
       <p class="why">効果：大 ／ 工数：中 ／ 尺をいじっても解決しない</p>
-      <p>どの尺で作っても<b>7〜15秒で切られています</b>（全体の完走率26%）。48秒の動画を全体の66%作っていて、実際に見られているのは13秒。尺ではなく冒頭の問題です。</p>
+      <p>どの尺で作っても<b>平均12秒で切られています</b>（尺に対して27%）。尺の分かる直近1年104本の中央値は47秒で、うち63%が40秒以上。尺ではなく冒頭の問題です。</p>
       <p>競合2院の表紙は<b>黒背景・明朝体・文字は3行以内・人物は1人</b>で一致していました。自院の表紙は検索バーのUI、巨大な見出し、医学的な補足2行、英語字幕、医師2人と、要素が6つ競合しています。</p>
       <ul>
         <li>表紙の文字は<b>3行・15文字以内</b>まで削る</li>
@@ -499,7 +538,7 @@
     <li>Instagram Graph APIから毎日自動取得しています。最終更新 2026.09.08。</li>
     <li><b>リールのフォロー獲得数とプロフィール遷移数はAPIが返しません。</b>フィード投稿とストーリーでは取れるので、Metaがリールだけ除外している仕様です。理由は公表されていません。セクション06はそのための推定です。</li>
     <li><b>ストーリーのリンククリック数もAPIが返しません。</b>UTM＋GA4で代替する必要があります（施策1）。</li>
-    <li>スキップ率は年によって集計基準が違います（2023年の中央値0.9%に対し2026年は52.1%）。比較は2025年以降に限定しています。</li>
+    <li>スキップ率は年によって集計基準が違います（2023年の中央値0.9%に対し2026年は54.4%）。この指標での比較は直近1年に限定しています。</li>
     <li>ジャンル判定は冒頭2行と【本日の選択肢】欄のみで機械的に行っています（キャプション全文だとハッシュタグで大半がクマ判定になるため）。人の目での再確認の余地があります。</li>
     <li>相関はn=13の期間データによるもので、因果を証明するものではありません。</li>
     <li>他院の数字は公開されている再生数・いいね・コメントのみです。<b>保存数・リーチ・視聴時間はアカウント所有者しか見られない</b>ため比較できません。取得日 2026-09-07（更新は月1回）。</li>
@@ -563,3 +602,5 @@
   D.labels.forEach(function(s,i){ text(L+slot*i+slot/2,415,s,'lbl'); });
 })();
 </script>
+</body>
+</html>
