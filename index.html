@@ -125,6 +125,17 @@
   }
   :root[data-theme="dark"]{ --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3); }
 
+  /* sns/report_mobile.css は --card / --line という別名で色を参照する。
+     この2つを用意しておかないと、固定した1列目だけが濃紺のまま（フォールバック値）
+     ライトモードに出てしまう。値は共通CSSの変数をそのまま指す。 */
+  :root{ --card:var(--surface); --line:var(--rule); }
+
+  /* --ink-faint は白背景でコントラスト比 3.5:1 しかなく、WCAG AA(4.5:1)に届かない。
+     注記・出典・表のキャプションが全部この色なので、ライトモードだけ濃くする。
+     ダークの定義（:root:not([data-theme="light"]) / :root[data-theme="dark"]）は
+     この :root より詳細度が高いので、暗い側には影響しない。 */
+  :root{ --ink-faint:#5F6E7B; }
+
   body{
     background:var(--ground);
     color:var(--ink);
@@ -133,6 +144,8 @@
     -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:880px;margin:0 auto;padding:0 20px 96px}
+  /* 本文中のリンク（脚注へ飛ぶもの等）。概要表の .sum-table a は詳細度で勝つので影響しない */
+  a{color:var(--accent)}
   :target{scroll-margin-top:20px}
   /* ---- verdict ---- */
   .verdict{
@@ -154,7 +167,9 @@
     padding:18px 26px 17px;border-bottom:1px solid var(--rule);
     display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
   }
-  .sum-head b{
+  /* 子要素の「概要」だけに当てる。子孫セレクタだと、右の説明文中の
+     <b>再生</b> <b>リンククリック</b> まで19pxの明朝になっていた。 */
+  .sum-head > b{
     font-family:"Shippori Mincho","Yu Mincho",serif;
     font-size:19px;font-weight:700;letter-spacing:.02em;
   }
@@ -173,8 +188,15 @@
   }
   .sum-table .t{font-weight:700}
   .sum-table .d{display:block;color:var(--ink-soft);font-size:13px;line-height:1.65;margin-top:1px}
+  /* hover でしか下線が出ないと、指で操作する端末では「押せる」と分からない。
+     常時リンクの見た目にして、矢印で飛び先があることも示す。 */
   .sum-table a{color:inherit;text-decoration:none}
-  .sum-table a:hover .t{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .sum-table a .t{
+    color:var(--accent);text-decoration:underline;
+    text-decoration-color:var(--rule);text-underline-offset:3px;
+  }
+  .sum-table a .t::after{content:" ↓";font-size:11px;opacity:.75}
+  .sum-table a:hover .t,.sum-table a:focus-visible .t{text-decoration-color:var(--accent)}
 
   /* 区分の見出し行 */
   .sum-table tr.grp td{
@@ -236,7 +258,6 @@
 
   /* ---- chart ---- */
   figure{margin:30px 0;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:26px 22px 20px}
-  .chart-scroll{overflow-x:auto}
   figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:14px;padding-top:14px;border-top:1px solid var(--rule-soft);line-height:1.7}
   .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
   .legend i{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:1px}
@@ -283,6 +304,169 @@
     header{padding:36px 0 26px}
     .sec-head{gap:10px}
   }
+
+  /* ---- 目次 ---- */
+  .toc{
+    margin:30px 0 0;border:1px solid var(--rule);border-radius:4px;
+    background:var(--surface);padding:18px 24px 20px;
+  }
+  .toc h2{font-size:15px;margin:0 0 10px;font-family:"Zen Kaku Gothic New",sans-serif}
+  .toc ol{margin:0;padding-left:1.5em;columns:2;column-gap:34px}
+  .toc li{margin:0 0 6px;font-size:14px;break-inside:avoid}
+  .toc a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  @media (max-width:640px){ .toc ol{columns:1} .toc{padding:16px} }
+
+  /* ---- トップへ戻る ---- */
+  .to-top{
+    position:fixed;right:16px;bottom:16px;z-index:20;
+    display:none;align-items:center;gap:6px;
+    padding:9px 14px;border-radius:999px;
+    border:1px solid var(--rule);background:var(--surface);color:var(--ink);
+    font:inherit;font-size:12.5px;line-height:1;cursor:pointer;
+    box-shadow:var(--shadow);text-decoration:none;
+  }
+  .to-top.is-on{display:inline-flex}
+  .to-top:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* ---- 見出しの下に置く「何と比べた◯倍か」 ---- */
+  .h1-note{
+    margin:0 0 18px;max-width:62ch;font-size:14.5px;line-height:1.8;
+    color:var(--ink-soft);border-left:3px solid var(--accent);padding-left:14px;
+  }
+  .h1-note b{color:var(--ink)}
+
+  /* 棒だけを1行占有させて、4段の左端と長さをまっすぐ比べられるようにする。
+     （共通CSSの .fstep は flex-wrap なので、長い棒だけが勝手に単独行になっていた） */
+  .funnel .fbarwrap{flex-basis:100%;width:100%;line-height:0}
+
+  /* ---- ファネルの「◯人に1人」 ---- */
+  .fratio{
+    font-size:12px;color:var(--accent);font-weight:700;
+    font-family:"IBM Plex Mono",monospace;margin-top:2px;
+  }
+
+  /* ---- 施策の効き目ラベル（◎○△×− をやめて日本語にした） ---- */
+  .eff{display:block;font-size:12.5px;line-height:1.75;white-space:nowrap}
+  .eff i{font-style:normal;color:var(--ink-faint);font-weight:400}
+  .eff .up{color:var(--good)} .eff .dn{color:var(--warn)}
+
+  /* ---- 概要表を report_mobile.css の「データ表」ルールから外す ----
+     あちらは1列目固定・nowrap・13px という前提で書かれているが、概要表は
+     スマホで「1行＝1ブロック」に組み替えている別物。詳細度で明示的に戻す。 */
+  .summary .tbl-scroll table.sum-table{min-width:0;font-size:14.5px}
+  .summary .tbl-scroll table.sum-table td{white-space:normal;padding:13px 26px}
+  .summary .tbl-scroll table.sum-table td.c-fig{white-space:nowrap}
+  .summary .tbl-scroll table.sum-table tr:not(.grp) td:first-child{
+    position:static;background:none;box-shadow:none;
+  }
+  .summary .tbl-scroll table.sum-table tr.grp td{position:static;box-shadow:none;padding:15px 26px 9px}
+  @media (max-width:640px){
+    .summary .tbl-scroll table.sum-table td{padding:12px 16px}
+    .summary .tbl-scroll table.sum-table td.c-fig{white-space:normal;padding:0 16px 12px}
+    .summary .tbl-scroll table.sum-table tr.grp td{padding:14px 16px 8px}
+  }
+
+  /* 見出しの中で「2025年11月〜12月」が行またぎで割れるのを防ぐ */
+  .nb{white-space:nowrap}
+/* 狭い画面で表とグラフが「切れていることに気づけない」問題を消す共通部品。
+   report_mobile.js と対で使う。各媒体の gen_report.py がインライン展開する。
+
+   背景: スマホ(343px)に min-width:560px の表を入れているため右半分が画面外に出る。
+   横スクロールはできるが、影も矢印も無いので「切れている」と分からない。
+   数字の桁の途中で切れるため 5,362 が 5 に見えるなど、誤読も起きていた。 */
+
+/* JS が各 table / 横長SVG をこれで包む */
+.tbl-scroll{
+  position:relative;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  /* 右端にフェードを出して「まだ続きがある」と分かるようにする。スクロールしきると消える（JSが is-end を付ける） */
+}
+.tbl-scroll::after{
+  content:"";
+  position:absolute; top:0; right:0; bottom:0; width:34px;
+  pointer-events:none;
+  background:linear-gradient(to right, transparent, var(--ground, #0E141A));
+  opacity:1; transition:opacity .18s;
+}
+.tbl-scroll.is-end::after{opacity:0}
+.tbl-scroll:not(.is-scrollable)::after{opacity:0}
+
+/* 「→ 横にスクロールできます」の案内。はみ出している時だけ出す */
+.tbl-hint{
+  display:none;
+  font-size:12.5px; line-height:1.6;
+  margin:.1rem 0 .45rem;
+  color:var(--ink-soft, #9BA9B6);
+}
+.tbl-scroll.is-scrollable + .tbl-hint,
+.tbl-hint.is-on{display:block}
+.tbl-hint::before{content:"→ "; font-weight:700}
+
+/* 横に振っても「どの行か」を見失わないように1列目を固定 */
+@media (max-width:640px){
+  .tbl-scroll table th:first-child,
+  .tbl-scroll table td:first-child{
+    position:sticky; left:0; z-index:2;
+    background:var(--surface, var(--card, #131B23));
+    /* 固定列と本体の境目 */
+    box-shadow:1px 0 0 var(--rule, var(--line, #243039));
+  }
+  .tbl-scroll table thead th{
+    position:sticky; top:0; z-index:3;
+    background:var(--surface, var(--card, #131B23));
+  }
+  .tbl-scroll table thead th:first-child{z-index:4}
+
+  /* 最小文字サイズの底上げ。10〜11px が多用されていて読めなかった */
+  .tbl-scroll table{font-size:13px}
+  .tbl-scroll table th,
+  .tbl-scroll table td{padding:.5rem .55rem; white-space:nowrap}
+}
+
+/* 型名などが1文字ずつ縦に割れるのを防ぐ（「症状の見分け・雑学」が9行になっていた） */
+.tbl-scroll table td:first-child,
+.tbl-scroll table th:first-child{white-space:nowrap}
+
+/* 横長SVGが縮んで軸ラベルが3〜4pxになる問題。縮めずに横スクロールさせる */
+.svg-scroll{position:relative; overflow-x:auto; -webkit-overflow-scrolling:touch}
+.svg-scroll > svg{max-width:none}   /* width:100% による強制縮小をやめる */
+
+@media (max-width:640px){
+  /* グラフは縮小せず、実寸のまま横に送る */
+  .svg-scroll > svg{height:auto}
+}
+
+/* 冒頭の用語ボックス（report_terms.glossary_html が出すHTML） */
+.glossary{
+  border:1px solid var(--rule, var(--line, #243039));
+  border-radius:10px;
+  padding:1rem 1.1rem 1.15rem;
+  margin:1.4rem 0 1.8rem;
+  background:var(--surface, var(--card, #131B23));
+}
+.glossary h2{font-size:15px; margin:0 0 .2rem}
+.glossary .g-lead{
+  font-size:12.5px; margin:0 0 .8rem;
+  color:var(--ink-soft, #9BA9B6);
+}
+.glossary dl{margin:0}
+.glossary .g-row{
+  display:grid; grid-template-columns:9.5rem 1fr;
+  gap:.3rem .9rem; padding:.42rem 0;
+  border-top:1px solid var(--rule, var(--line, #243039));
+}
+.glossary .g-row:first-child{border-top:0}
+.glossary dt{font-weight:700; font-size:14px}
+.glossary dd{margin:0; font-size:14px; line-height:1.7}
+.glossary .g-note{
+  display:block; font-size:12.5px; margin-top:.12rem;
+  color:var(--ink-soft, #9BA9B6);
+}
+@media (max-width:640px){
+  .glossary .g-row{grid-template-columns:1fr; gap:.1rem}
+  .glossary dt{font-size:13.5px}
+}
 </style>
 </head>
 <body>
@@ -291,8 +475,9 @@
 
 <header>
   <div class="eyebrow">Instagram 診断レポート ／ 2026.09.11 更新</div>
-  <h1>リーチは39倍。<br>LINE流入は、増えていない。</h1>
-  <p class="lede">@mohrimakes のリール513本と、過去729日ぶんのアカウント指標をInstagram Graph APIで取得し、集客ファネルまで通して分析しています。<b>毎日自動で更新されます。</b></p>
+  <h1>見られた人数は、<span class="nb">2025年11月〜12月</span>の39倍。<br>でも、LINEへのクリックは増えていない。</h1>
+  <p class="h1-note">この「39倍」は、<b>公式LINEへのクリックがいちばん多かった2025年11月〜12月と比べた数字</b>です。ひとつ前の29日（2026年7月〜8月）と比べると9.3倍です。そしてこの増え方は、<b>8月25日に出た動画1本</b>（「指の横にできる「猛烈に痒いブツブツ」の正体⚡️」）でほぼ説明がつきます——直近29日に届いた1,247,146人のうち<b>93%がこの1本</b>です。この1本を外すと残りは90,685人で、2025年11月〜12月の2.9倍にとどまります。<b>アカウント全体が39倍強くなった、という意味ではありません。</b></p>
+  <p class="lede">@mohrimakes のリール513本と、過去729日ぶんのアカウントの数字をInstagram Graph APIから取り出し、「動画を見た人が公式LINEに来るまで」を通して見ています。<b>毎日自動で更新されます。</b></p>
   <div class="provenance">
     <span>リール 513本</span>
     <span>アカウント日次 729日分</span>
@@ -301,41 +486,47 @@
   </div>
 </header>
 
-<div class="summary">
-  <div class="sum-head"><b>概要</b><span>この表だけで要点は足ります。目標は<b>再生</b>と<b>リンククリック</b>の2つ。行をクリックすると根拠のセクションに飛びます。</span></div>
+<section class='glossary'><h2>このページで使う言葉</h2><p class='g-lead'>この3〜5語だけ押さえれば、以下は読めます。</p><dl><div class='g-row'><dt>リーチ</dt><dd>動画が届いた人の数<span class='g-note'>同じ人が2回見ても1人と数える。「何人に届いたか」</span></dd></div><div class='g-row'><dt>リンククリック</dt><dd>プロフィールのリンクが押された回数<span class='g-note'>ここではLINEへの入口。ここが増えないと来院に繋がらない</span></dd></div><div class='g-row'><dt>中央値</dt><dd>ちょうど真ん中の1本の数字<span class='g-note'>本数ぶんを良い順に並べて真ん中を採る。大当たり1本に引っ張られないので、平均より「普段の実力」に近い</span></dd></div><div class='g-row'><dt>保存率</dt><dd>後でまた見たいと思われた割合<span class='g-note'>「良かった」より本気度が高い反応とされる</span></dd></div><div class='g-row'><dt>ファネル</dt><dd>見た人が予約までたどる道のり<span class='g-note'>見た → プロフィールを見た → リンクを押した → 予約した、と各段階で人数が減っていく</span></dd></div></dl></section>
+
+<nav class="toc" id="toc"><h2>このページの中身</h2><ol><li><a href="#summary">概要（この表だけで要点は足ります）</a></li><li><a href="#verdict">結論</a></li><li><a href="#s01">01 いま起きていること</a></li><li><a href="#s02">02 フォロワー16,728人は、資産になっていない</a></li><li><a href="#s03">03 1本あたりの力が落ちている</a></li><li><a href="#s04">04 効いている型と、効いていない型</a></li><li><a href="#s05">05 予約までの道のりは、どこで詰まっているか</a></li><li><a href="#s06">06 フォロワーは何本目から増えるのか</a></li><li><a href="#s07">07 他院と並べて分かること</a></li><li><a href="#s08">08 やるべきこと（7つ）</a></li><li><a href="#caveat">この数字について（注意書き）</a></li></ol></nav>
+
+<div class="summary" id="summary">
+  <div class="sum-head"><b>概要</b><span>この表だけで要点は足ります。目標は<b>再生</b>と<b>リンククリック</b>の2つ。緑の下線がある見出しを押すと、その根拠のセクションに飛びます。</span></div>
   <table class="sum-table">
 
     <tr class="grp g"><td colspan="2"><span class="tag"></span>いい点 ／ このまま続けること</td></tr>
-    <tr><td class="c-txt"><a href="#s07"><span class="t">届く経路はリールに一本化できている</span><span class="d">発見面に載る作りはできている。ただし<b>1本あたりの強さは別問題</b>——他院とは差がある（下の課題）。</span></a></td><td class="c-fig fig-g">リーチの99.4%</td></tr>
-    <tr><td class="c-txt"><a href="#s07"><span class="t">フォロワーの住んでいる場所が合っている</span><span class="d">銀座に通える層が主力。ただしこれは<b>フォロワーの</b>属性で、リーチした1,247,146人の属性は分からない。</span></a></td><td class="c-fig fig-g">首都圏 66.9%</td></tr>
-    <tr><td class="c-txt"><a href="#s07"><span class="t">年齢層も施術と噛み合っている</span><span class="d">35-44歳 32%、45-54歳 26%、25-34歳 22%。自費の手術を検討できる帯に届いている。</span></a></td><td class="c-fig fig-g">35-44歳が最多</td></tr>
-    <tr><td class="c-txt"><a href="#s07"><span class="t">フォロワーは増え続けている</span><span class="d">直近の満了月（2026年8月）の新規フォロワー。<b>ただし増えた人には届いていない</b>（下の課題）。</span></a></td><td class="c-fig fig-g">月 502人</td></tr>
+    <tr><td class="c-txt"><a href="#s02"><span class="t">届く経路はリールに一本化できている</span><span class="d">おすすめ欄・検索結果（フォローしていない人に表示される場所）に載る作りはできている。ただしこれは<b>割合</b>であって強さの証明ではない（フィード投稿とストーリーが弱いぶん、相対的に高く出る）。<b>1本あたりの強さは別問題</b>——他院とは差がある（下の課題）。</span></a></td><td class="c-fig fig-g">リーチの99.4%</td></tr>
+    <tr><td class="c-txt"><span class="t">フォロワーの住んでいる場所が合っている</span><span class="d">東京43.9%を含めて首都圏が66.9%。銀座に通える層が主力（住んでいる街が分かった7,763人ぶんの割合）。ただしこれは<b>フォロワーの</b>属性で、直近29日に届いた1,247,146人の属性は分からない。</span></td><td class="c-fig fig-g">首都圏 66.9%</td></tr>
+    <tr><td class="c-txt"><span class="t">年齢層も施術と噛み合っている</span><span class="d">35-44歳 32%、45-54歳 26%、25-34歳 22%。自費の手術を検討できる年齢の人に届いている。</span></td><td class="c-fig fig-g">35-44歳が最多</td></tr>
+    <tr><td class="c-txt"><a href="#s06"><span class="t">フォロワーは増え続けている</span><span class="d">2025年9月は月203人。直近のまるまる1か月ぶんが揃っている月（2026年8月）まで伸び続けている。<b>ただし増えた人には届いていない</b>（下の課題）。</span></a></td><td class="c-fig fig-g">月 502人</td></tr>
     <tr><td class="c-txt"><a href="#s04"><span class="t">刺さる型が実測で特定できた</span><span class="d">保存率トップは「症状・お悩み解説」。感覚ではなく数字で確定している。</span></a></td><td class="c-fig fig-g">保存 1.9／千再生</td></tr>
+    <tr><td class="c-txt"><span class="t">先生本人が語れる幅がある</span><span class="d">専門知識で答えられる領域の広さが、そのまま再生数になっている。</span></td><td class="c-fig fig-g">数字では測れない</td></tr>
 
     <tr class="grp b"><td colspan="2"><span class="tag"></span>課題 ／ いま起きていること</td></tr>
     <tr><td class="c-txt"><a href="#s01"><span class="t">リーチは増えたのに、LINEへのクリックは減った</span><span class="d">リーチ1,247,146人に対しクリック415件。効率はピークの70分の1。</span></a></td><td class="c-fig fig-b">クリック 44%減</td></tr>
-    <tr><td class="c-txt"><a href="#s02"><span class="t">フォロワー16,728人に、届いていない</span><span class="d">毎回ゼロから発見面に賭けている状態。当たり外れが極端になる。</span></a></td><td class="c-fig fig-b">フォロワー由来 0.7%</td></tr>
+    <tr><td class="c-txt"><a href="#s02"><span class="t">フォロワー16,728人に、届いていない</span><span class="d">毎回ゼロから、おすすめ欄や検索結果に載るかどうかの運に賭けている状態。当たり外れが極端になる。</span></a></td><td class="c-fig fig-b">フォロワー由来 0.7%</td></tr>
     <tr><td class="c-txt"><a href="#s03"><span class="t">1本あたりの力が落ちている</span><span class="d">バズを除いた「普段の投稿」の中央再生。本数を増やした時期ほど下がっている。</span></a></td><td class="c-fig fig-b">中央再生 25%減</td></tr>
     <tr><td class="c-txt"><a href="#s05"><span class="t">詰まっているのは入口</span><span class="d">見た人がプロフィールまで来ない。さらにクリックから先はLINE側とつながっておらず追えない。</span></a></td><td class="c-fig fig-b">プロフィール到達 0.66%</td></tr>
-    <tr><td class="c-txt"><a href="#s09"><span class="t">他院との差は、テーマではなく作り方</span><span class="d">同じクマ・目元の投稿だけで比べても中央再生に差がある。自院は投稿数もクマ率も最上位。</span></a></td><td class="c-fig fig-b">中央再生 5.1倍の差</td></tr>
+    <tr><td class="c-txt"><a href="#s07"><span class="t">他院との差は、テーマではなく作り方</span><span class="d">同じクマ・目元の投稿だけで比べても中央再生に差がある。自院は投稿数もクマ率も最上位。</span></a></td><td class="c-fig fig-b">中央再生 5.1倍の差</td></tr>
 
     <tr class="grp d"><td colspan="2"><span class="tag"></span>改善点 ／ やること（再生とクリックの両方に効く順）</td></tr>
-    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">1</span>計測をつなぐ</span><span class="d">どの動画からLINE登録が来たかを追えるようにする。これがないと以降の判断が全部勘になる。</span></a></td><td class="c-fig">再生— ／ クリック◎ ／ 半日</td></tr>
-    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">2</span>表紙と冒頭10秒を作り直す</span><span class="d">どの尺で作っても7〜15秒で切られている。尺ではなく冒頭の問題。<b>再生とクリックの両方に効く唯一の打ち手。</b></span></a></td><td class="c-fig">再生◎ ／ クリック◎ ／ 工数 中</td></tr>
-    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">3</span>症例ビフォーアフターの型を作り直す</span><span class="d">本数が最も多い型なのに保存率は最下位。冒頭を「問い」に変える。</span></a></td><td class="c-fig">再生◎ ／ クリック◯ ／ 工数 中</td></tr>
-    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">4</span>クマ・目元は「戻す」より「広げすぎない」</span><span class="d"><b>ここは注意が要ります。</b>クマ比率を上げるとクリックは増えそうに見えますが、<b>再生はむしろ下がります</b>（クマ4,564 対 クマ以外5,420）。単独の打ち手にはしません。</span></a></td><td class="c-fig">再生✕ ／ クリック△ ／ 方針のみ</td></tr>
-    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">5</span>投稿本数を減らして、1本の質に寄せる</span><span class="d">月8〜10本に絞り、企画と撮影に時間を戻す。作業はむしろ減る。</span></a></td><td class="c-fig">再生◯ ／ クリック◯ ／ 工数 −</td></tr>
-    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">6</span>ストーリーの役割を見直す</span><span class="d">LINE導線ではなく、リールを見て来た人の受け皿として設計し直す。</span></a></td><td class="c-fig">再生— ／ クリック◯ ／ 工数 小</td></tr>
-    <tr><td class="c-txt"><a href="#s10"><span class="t"><span class="sum-do-n">7</span>フォロワーを「見てくれる人」に変える</span><span class="d">シリーズ化・コメント返信など「次も見たい」を作る。中長期。</span></a></td><td class="c-fig">再生◎ ／ クリック◯ ／ 中長期</td></tr>
+    <tr><td class="c-txt"><a href="#s08"><span class="t"><span class="sum-do-n">1</span>計測をつなぐ</span><span class="d">どの動画からLINE登録が来たかを追えるようにする。これがないと以降の判断が全部勘になる。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><i>なし</i></span><span class="eff"><i>クリックへの効果：</i><b class="up">大</b></span><span class="eff"><i>手間：</i><b>半日</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s08"><span class="t"><span class="sum-do-n">2</span>表紙と冒頭10秒を作り直す</span><span class="d">尺（動画の長さ）に関係なく、どれも7〜15秒で見るのをやめられている。長さではなく冒頭の問題。<b>再生とクリックの両方に効く唯一の打ち手。</b></span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b class="up">大</b></span><span class="eff"><i>クリックへの効果：</i><b class="up">大</b></span><span class="eff"><i>手間：</i><b>中</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s08"><span class="t"><span class="sum-do-n">3</span>症例ビフォーアフターの型を作り直す</span><span class="d">本数が最も多い型なのに保存率は最下位。冒頭を「問い」に変える。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b class="up">大</b></span><span class="eff"><i>クリックへの効果：</i><b>中</b></span><span class="eff"><i>手間：</i><b>中</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s08"><span class="t"><span class="sum-do-n">4</span>クマ・目元は「戻す」より「広げすぎない」</span><span class="d"><b>ここは注意が要ります。</b>クマ比率を上げるとクリックは増えそうに見えますが、<b>再生はむしろ下がります</b>（クマ4,564 対 クマ以外5,420）。単独の打ち手にはしません。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b class="dn">逆効果</b></span><span class="eff"><i>クリックへの効果：</i><b>小</b></span><span class="eff"><i>手間：</i><b>方針を決めるだけ</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s08"><span class="t"><span class="sum-do-n">5</span>投稿本数を減らして、1本の質に寄せる</span><span class="d">月8〜10本に絞り、企画と撮影に時間を戻す。作業はむしろ減る。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b>中</b></span><span class="eff"><i>クリックへの効果：</i><b>中</b></span><span class="eff"><i>手間：</i><b class="up">減る</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s08"><span class="t"><span class="sum-do-n">6</span>ストーリーの役割を見直す</span><span class="d">LINEへの入口ではなく、リールを見て来た人の受け皿として設計し直す。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><i>なし</i></span><span class="eff"><i>クリックへの効果：</i><b>中</b></span><span class="eff"><i>手間：</i><b>小</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s08"><span class="t"><span class="sum-do-n">7</span>フォロワーを「見てくれる人」に変える</span><span class="d">シリーズ化・コメント返信など「次も見たい」を作る。数か月がかり。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b class="up">大</b></span><span class="eff"><i>クリックへの効果：</i><b>中</b></span><span class="eff"><i>手間：</i><b>大（数か月）</b></span></td></tr>
 
   </table>
 </div>
 
-<div class="verdict">
+<div class="verdict" id="verdict">
   <h2>結論</h2>
-  <p>直近29日のリーチは<b>1,247,146人</b>。リンククリックが最も多かった時期（2025/11〜）と比べて<b>39倍</b>に増えています。</p>
+  <p>直近29日に動画が届いた人数は<b>1,247,146人</b>。公式LINEへのクリックが最も多かった2025年11月〜12月と比べて<b>39倍</b>に増えています。</p>
   <p>ところがその時期の<b>739件から415件へ44%減っています</b>。リーチ1万人あたりのクリック数で見ると<b>70分の1</b>の効率です。</p>
-  <p>同じ期間に、クマ・目元をテーマにした投稿の比率が<b>88%から47%へ下がりました</b>。クマ比率とリンククリック数の相関は<b>+0.51</b>、いっぽうリーチとクリック数の相関は<b>-0.30</b>です。数を増やして間口を広げた結果、来る人が変わっています。</p>
+  <p>同じ期間に、クマ・目元をテーマにした投稿の比率が<b>88%から47%へ下がりました</b>。集計した13期間を並べると、<b>クマ・目元の比率が高かった時期のほうが、公式LINEへのクリックは多い</b>という並びになっています（比率80%以上だった7期間は平均598件／月、65%未満だった5期間は467件／月）。</p>
+  <p><b>ただし、これは「クマを増やせばクリックが増える」という意味ではありません。</b>クマ比率もクリック数も、<b>どちらも時間とともに下がってきているだけ</b>、という可能性が残るからです。どちらが原因かは、この数字だけでは決められません。計算の中身は<a href="#caveat">末尾の注意書き</a>に置きました。</p>
 </div>
 
 <section id="s01">
@@ -351,15 +542,15 @@
 
   <figure>
     <div class="legend">
-      <span><i style="background:var(--warn)"></i>公式LINEへのリンククリック（件／29日）</span>
-      <span><i style="background:var(--accent)"></i>リーチ（人／29日）</span>
+      <span><i style="background:var(--warn)"></i>公式LINEへのリンクを押した人（件／29日）</span>
+      <span><i style="background:var(--accent)"></i>動画が届いた人数（人／29日）</span>
       <span><i style="background:var(--ink-faint)"></i>クマ・目元の投稿比率</span>
     </div>
-    <div class="chart-scroll"><svg id="chart" viewBox="0 0 880 440" width="880" height="440" role="img" aria-label="リンククリックとリーチの推移"></svg></div>
-    <figcaption>29日ごとの実測値。相関係数は クマ比率×クリック数 +0.51、リーチ×クリック数 -0.30、投稿本数×クリック数 -0.47（n=13）。</figcaption>
+    <svg id="chart" viewBox="0 0 780 436" width="780" height="436" role="img" aria-label="公式LINEへのクリック数と、動画が届いた人数の13期間ぶんの推移"></svg>
+    <figcaption><b>まん中の段だけ、目盛の取り方が違います。</b>バズった1本で人数が一気に10倍以上になり、ふつうの目盛だと他の12期間が全部ゼロに見えてしまうため、<b>上に1目盛で10倍（1万→10万→100万）</b>にしています。<b>棒の上の数字が実際の人数です。</b>数字はすべて29日ごとの実測値。2つの数字がどれだけ一緒に動いたかの計算は<a href="#caveat">末尾の注意書き</a>にまとめました。</figcaption>
   </figure>
 
-  <div class="tw"><table><thead><tr><th class="">期間</th><th class="num">投稿</th><th class="num">クマ比率</th><th class="num">リーチ</th><th class="num">リンククリック</th><th class="num">リーチ1万/クリック</th></tr></thead><tbody><tr class=""><td>2025/08〜09/28</td><td class="num">8</td><td class="num">88%</td><td class="num">74,292</td><td class="num">572</td><td class="num">77.0</td></tr><tr class=""><td>2025/09〜10/27</td><td class="num">7</td><td class="num">86%</td><td class="num">59,030</td><td class="num">460</td><td class="num">77.9</td></tr><tr class=""><td>2025/10〜11/25</td><td class="num">6</td><td class="num">100%</td><td class="num">24,161</td><td class="num">449</td><td class="num">185.8</td></tr><tr class="hi"><td>2025/11〜12/24</td><td class="num">8</td><td class="num">88%</td><td class="num">31,642</td><td class="num">739</td><td class="num">233.6</td></tr><tr class=""><td>2025/12〜01/22</td><td class="num">7</td><td class="num">100%</td><td class="num">28,586</td><td class="num">727</td><td class="num">254.3</td></tr><tr class=""><td>2026/01〜02/20</td><td class="num">9</td><td class="num">56%</td><td class="num">26,021</td><td class="num">672</td><td class="num">258.3</td></tr><tr class=""><td>2026/02〜03/21</td><td class="num">14</td><td class="num">93%</td><td class="num">70,575</td><td class="num">692</td><td class="num">98.1</td></tr><tr class=""><td>2026/03〜04/19</td><td class="num">15</td><td class="num">87%</td><td class="num">60,895</td><td class="num">547</td><td class="num">89.8</td></tr><tr class=""><td>2026/04〜05/18</td><td class="num">17</td><td class="num">53%</td><td class="num">151,278</td><td class="num">458</td><td class="num">30.3</td></tr><tr class=""><td>2026/05〜06/16</td><td class="num">15</td><td class="num">60%</td><td class="num">68,101</td><td class="num">356</td><td class="num">52.3</td></tr><tr class=""><td>2026/06〜07/15</td><td class="num">16</td><td class="num">69%</td><td class="num">48,937</td><td class="num">385</td><td class="num">78.7</td></tr><tr class=""><td>2026/07〜08/13</td><td class="num">13</td><td class="num">54%</td><td class="num">134,139</td><td class="num">434</td><td class="num">32.4</td></tr><tr class="lo"><td>2026/08〜09/11</td><td class="num">15</td><td class="num">47%</td><td class="num">1,247,146</td><td class="num">415</td><td class="num">3.3</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th class="">29日ごとの期間</th><th class="num">投稿</th><th class="num">クマ比率</th><th class="num">届いた人数</th><th class="num">LINEへのクリック</th><th class="num">届いた1万人あたりのクリック</th></tr></thead><tbody><tr class=""><td>2025/8/30〜9/28</td><td class="num">8</td><td class="num">88%</td><td class="num">74,292</td><td class="num">572</td><td class="num">77.0</td></tr><tr class=""><td>2025/9/28〜10/27</td><td class="num">7</td><td class="num">86%</td><td class="num">59,030</td><td class="num">460</td><td class="num">77.9</td></tr><tr class=""><td>2025/10/27〜11/25</td><td class="num">6</td><td class="num">100%</td><td class="num">24,161</td><td class="num">449</td><td class="num">185.8</td></tr><tr class="hi"><td>2025/11/25〜12/24</td><td class="num">8</td><td class="num">88%</td><td class="num">31,642</td><td class="num">739</td><td class="num">233.6</td></tr><tr class=""><td>2025/12/24〜1/22</td><td class="num">7</td><td class="num">100%</td><td class="num">28,586</td><td class="num">727</td><td class="num">254.3</td></tr><tr class=""><td>2026/1/22〜2/20</td><td class="num">9</td><td class="num">56%</td><td class="num">26,021</td><td class="num">672</td><td class="num">258.3</td></tr><tr class=""><td>2026/2/20〜3/21</td><td class="num">14</td><td class="num">93%</td><td class="num">70,575</td><td class="num">692</td><td class="num">98.1</td></tr><tr class=""><td>2026/3/21〜4/19</td><td class="num">15</td><td class="num">87%</td><td class="num">60,895</td><td class="num">547</td><td class="num">89.8</td></tr><tr class=""><td>2026/4/19〜5/18</td><td class="num">17</td><td class="num">53%</td><td class="num">151,278</td><td class="num">458</td><td class="num">30.3</td></tr><tr class=""><td>2026/5/18〜6/16</td><td class="num">15</td><td class="num">60%</td><td class="num">68,101</td><td class="num">356</td><td class="num">52.3</td></tr><tr class=""><td>2026/6/16〜7/15</td><td class="num">16</td><td class="num">69%</td><td class="num">48,937</td><td class="num">385</td><td class="num">78.7</td></tr><tr class=""><td>2026/7/15〜8/13</td><td class="num">13</td><td class="num">54%</td><td class="num">134,139</td><td class="num">434</td><td class="num">32.4</td></tr><tr class="lo"><td>2026/8/13〜9/11</td><td class="num">15</td><td class="num">47%</td><td class="num">1,247,146</td><td class="num">415</td><td class="num">3.3</td></tr></tbody></table></div>
   <p>クマ比率80%以上だった7期間の平均リンククリックは<b>598件／月</b>、65%未満だった5期間は<b>467件／月</b>。同じ本数を投稿しても、中身で<b>28%</b>変わります。</p>
 </section>
 
@@ -374,45 +565,45 @@
     <div class="stat"><div class="k">リールが占めるリーチ</div><div class="v acc">99.4%</div><div class="n">1,239,718人。フィード投稿は6,555人</div></div>
   </div>
 
-  <p>数字が意味しているのは、<b>このアカウントは「フォロワーに届けるメディア」として機能していない</b>ということです。毎回ゼロからアルゴリズムの発見面に賭けている状態で、だから当たり外れが極端になります。直近1年146本のうち1万再生を超えたのは24本（16%）だけ、<b>上位3本が総再生の60%</b>を占めています。</p>
+  <p>数字が意味しているのは、<b>このアカウントは「フォロワーに届けるメディア」として機能していない</b>ということです。毎回ゼロから、おすすめ欄や検索結果（フォローしていない人に表示される場所）に載るかどうかに賭けている状態で、だから当たり外れが極端になります。直近1年146本のうち1万再生を超えたのは24本（16%）だけ、<b>上位3本が総再生の60%</b>を占めています。</p>
 
-  <p>ストーリーは特に深刻です。1日8本前後を投稿しても、1本が届いているのは<b>250人</b>——フォロワー16,728人の1.5%です（6日分・58本の中央値）。<b>ストーリーをLINE導線として使う前提が、そもそも成立していません。</b></p>
+  <p>ストーリーは特に深刻です。1日8本前後を投稿しても、1本が届いているのは<b>250人</b>——フォロワー16,728人の1.5%です（6日分・58本の中央値）。<b>ストーリーをLINEへの入口として使う前提が、そもそも成立していません。</b></p>
 </section>
 
 <section id="s03">
   <div class="sec-head"><div class="sec-num">03</div><h2>1本あたりの力が落ちている</h2></div>
   <p class="sec-sub">バズを除いた「普段の投稿」の実力＝中央値の推移です。</p>
 
-  <div class="tw"><table><thead><tr><th class="">月</th><th class="num">投稿本数</th><th class="num">中央再生数</th><th class="num">日平均リーチ</th></tr></thead><tbody><tr class=""><td>2026年1月</td><td class="num">7</td><td class="num">4,540</td><td class="num">2,507</td></tr><tr class=""><td>2026年2月</td><td class="num">10</td><td class="num">5,552</td><td class="num">3,617</td></tr><tr class=""><td>2026年3月</td><td class="num">16</td><td class="num">5,782</td><td class="num">4,578</td></tr><tr class=""><td>2026年4月</td><td class="num">16</td><td class="num">3,426</td><td class="num">2,489</td></tr><tr class=""><td>2026年5月</td><td class="num">18</td><td class="num">3,508</td><td class="num">8,326</td></tr><tr class=""><td>2026年6月</td><td class="num">16</td><td class="num">3,669</td><td class="num">3,375</td></tr><tr class="hi"><td>2026年7月</td><td class="num">15</td><td class="num">6,455</td><td class="num">5,563</td></tr><tr class="lo"><td>2026年8月</td><td class="num">16</td><td class="num">4,831</td><td class="num">34,334</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th class="">月</th><th class="num">投稿本数</th><th class="num">中央再生数（普段の実力）</th><th class="num">1日あたり平均で届いた人数</th></tr></thead><tbody><tr class=""><td>2026年1月</td><td class="num">7</td><td class="num">4,540</td><td class="num">2,507</td></tr><tr class=""><td>2026年2月</td><td class="num">10</td><td class="num">5,552</td><td class="num">3,617</td></tr><tr class=""><td>2026年3月</td><td class="num">16</td><td class="num">5,782</td><td class="num">4,578</td></tr><tr class=""><td>2026年4月</td><td class="num">16</td><td class="num">3,426</td><td class="num">2,489</td></tr><tr class=""><td>2026年5月</td><td class="num">18</td><td class="num">3,508</td><td class="num">8,326</td></tr><tr class=""><td>2026年6月</td><td class="num">16</td><td class="num">3,669</td><td class="num">3,375</td></tr><tr class="hi"><td>2026年7月</td><td class="num">15</td><td class="num">6,455</td><td class="num">5,563</td></tr><tr class="lo"><td>2026年8月</td><td class="num">16</td><td class="num">4,831</td><td class="num">34,334</td></tr></tbody></table></div>
 
-  <p>直近8か月で最も強かった2026年7月の中央再生6,455に対し、直近の2026年8月は<b>4,831</b>。<b>25%落ちています</b>。投稿本数とリンククリック数の相関は-0.47で、量を増やしたことが1本ごとの評価を下げている可能性があります。</p>
+  <p>直近8か月で最も強かった2026年7月の中央再生6,455に対し、直近の2026年8月は<b>4,831</b>。<b>25%落ちています</b>。本数を増やした時期ほど、公式LINEへのクリックは少なくなっていました。量を増やしたことが、1本ごとの評価を下げている可能性があります（2つの数字がどれだけ一緒に動いたかを表す値は-0.47。詳しくは<a href="#caveat">末尾の注意書き</a>）。</p>
 </section>
 
 <section id="s04">
   <div class="sec-head"><div class="sec-num">04</div><h2>効いている型と、効いていない型</h2></div>
-  <p class="sec-sub">直近1年146本を内容で分類し、保存率（＝後で見返したい＝本気度）とエンゲージ率で比較しました。5本未満の型は除いています。</p>
+  <p class="sec-sub">直近1年146本を内容で分類し、保存率（＝後で見返したい＝本気度）と、エンゲージメント率（反応された割合）で比較しました。5本未満の型は除いています。</p>
 
-  <div class="tw"><table><thead><tr><th class="">コンテンツの型</th><th class="num">本数</th><th class="num">中央再生</th><th class="num">保存／千再生</th><th class="num">エンゲージ率</th></tr></thead><tbody><tr class="hi"><td>症状・お悩み解説</td><td class="num">24</td><td class="num">4,278</td><td class="num">1.9</td><td class="num">1.05%</td></tr><tr class=""><td>芸能人・有名人</td><td class="num">22</td><td class="num">5,454</td><td class="num">1.6</td><td class="num">0.92%</td></tr><tr class=""><td>注意喚起・警鐘</td><td class="num">8</td><td class="num">7,860</td><td class="num">1.5</td><td class="num">1.01%</td></tr><tr class="lo"><td>症例ビフォーアフター</td><td class="num">19</td><td class="num">6,603</td><td class="num">1.5</td><td class="num">0.95%</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th class="">コンテンツの型</th><th class="num">本数</th><th class="num">中央再生（普段の実力）</th><th class="num">保存／千再生</th><th class="num">反応された割合</th></tr></thead><tbody><tr class="hi"><td>症状・お悩み解説</td><td class="num">24</td><td class="num">4,278</td><td class="num">1.9</td><td class="num">1.05%</td></tr><tr class=""><td>芸能人・有名人</td><td class="num">22</td><td class="num">5,454</td><td class="num">1.6</td><td class="num">0.92%</td></tr><tr class=""><td>注意喚起・警鐘</td><td class="num">8</td><td class="num">7,860</td><td class="num">1.5</td><td class="num">1.01%</td></tr><tr class="lo"><td>症例ビフォーアフター</td><td class="num">19</td><td class="num">6,603</td><td class="num">1.5</td><td class="num">0.95%</td></tr></tbody></table></div>
 
   <p>保存率が最も高いのは<b>症状・お悩み解説</b>、最も低いのは<b>症例ビフォーアフター</b>です。「自分ごとの悩みに名前がついた」瞬間に人は保存します。実際、保存率トップは <b>【必見‼️】一般の方が注意しなればならないクマ治療界隈の</b>（18,228再生・保存188／保存率10.3）、<b>目元に打ったら🆖なレーザーと、🆗なレーザーがあります</b>（11,874再生・保存58／保存率4.9） でした。</p>
 
-  <div class="tw"><table><thead><tr><th class="">平均視聴時間（5,000再生以上）</th><th class="num">本数</th><th class="num">中央再生</th><th class="num">保存／千再生</th></tr></thead><tbody><tr class=""><td>〜10秒</td><td class="num">14</td><td class="num">6,825</td><td class="num">1.4</td></tr><tr class=""><td>10〜20秒</td><td class="num">47</td><td class="num">8,090</td><td class="num">1.6</td></tr><tr class="hi"><td>20〜30秒</td><td class="num">8</td><td class="num">30,306</td><td class="num">2.0</td></tr><tr class=""><td>30秒〜</td><td class="num">1</td><td class="num">18,228</td><td class="num">10.3</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th class="">1人あたり平均で何秒見られたか（5,000再生以上）</th><th class="num">本数</th><th class="num">中央再生（普段の実力）</th><th class="num">保存／千再生</th></tr></thead><tbody><tr class=""><td>〜10秒</td><td class="num">14</td><td class="num">6,825</td><td class="num">1.4</td></tr><tr class=""><td>10〜20秒</td><td class="num">47</td><td class="num">8,090</td><td class="num">1.6</td></tr><tr class="hi"><td>20〜30秒</td><td class="num">8</td><td class="num">30,306</td><td class="num">2.0</td></tr><tr class=""><td>30秒〜</td><td class="num">1</td><td class="num">18,228</td><td class="num">10.3</td></tr></tbody></table></div>
 
-  <p>ただしこの表は<b>因果が逆に見えやすい</b>ので注意が要ります。「長く見せたから伸びた」のではなく「伸びた動画は長く見られる」だけの可能性が高い。実際、他院の尺はりく先生32秒（中央再生22,306）、則本先生85秒（中央再生19,743）とばらばらです（自院は48秒で4,365）。<b>尺は成績を説明しません。</b></p>
+  <p>ただしこの表は<b>因果が逆に見えやすい</b>ので注意が要ります。「長く見せたから伸びた」のではなく「伸びた動画は長く見られる」だけの可能性が高い。実際、他院の動画の長さはりく先生32秒（中央再生22,306）、則本先生85秒（中央再生19,743）とばらばらです（自院は48秒で4,365）。<b>長さでは成績を説明できません。</b></p>
 </section>
 
 <section id="s05">
-  <div class="sec-head"><div class="sec-num">05</div><h2>集客ファネルは、ここで詰まっている</h2></div>
-  <p class="sec-sub">直近29日の実測値です。</p>
+  <div class="sec-head"><div class="sec-num">05</div><h2>予約までの道のりは、どこで詰まっているか</h2></div>
+  <p class="sec-sub">動画を見た人が予約にたどりつくまでの道のり（ファネル）を、段ごとに人数で並べたものです。数字はすべて直近29日の実測。<b>棒の長さは、けた（0の数）をそろえて描いています。</b>実数のとおりに描くと下の3段が線になって見えなくなるためです。</p>
 
   <div class="funnel">
-    <div class="fstep"><div class="fbar" style="width:min(560px,58%)"></div><div class="fmeta"><div class="fname">リーチ</div><div class="fnote">実測・直近29日</div></div><div class="fval">1,247,146</div></div>
-    <div class="fstep"><div class="fbar" style="width:min(32px,10%)"></div><div class="fmeta"><div class="fname">プロフィール閲覧</div><div class="fnote">実測・リーチの 0.66%</div></div><div class="fval">8,262</div></div>
-    <div class="fstep"><div class="fbar" style="width:8px;min-width:8px"></div><div class="fmeta"><div class="fname">リンククリック（公式LINEへ）</div><div class="fnote">実測・プロフィール閲覧の 5.0%</div></div><div class="fval">415</div></div>
-    <div class="fstep est"><div class="fbar" style="width:5px;min-width:5px"></div><div class="fmeta"><div class="fname">LINE登録 → 予約 → 来院 → 成約</div><div class="fnote">ここから先はInstagram側で計測できない。社内のKPIシートには予約率・来院率・成約率の実績があるが、Instagram経由が何件かは分からない</div></div><div class="fval">?</div></div>
-  </div>
+    <div class="fstep"><div class="fbarwrap"><div class="fbar" style="width:100.0%"></div></div><div class="fmeta"><div class="fname">動画が届いた人（リーチ）</div><div class="fnote">実測・直近29日</div></div><div class="fval">1,247,146</div></div>
+    <div class="fstep"><div class="fbarwrap"><div class="fbar" style="width:47.4%"></div></div><div class="fmeta"><div class="fname">プロフィールを見に来た人</div><div class="fnote">実測・届いた人の 0.66%</div><div class="fratio">動画を見た 151人に1人</div></div><div class="fval">8,262</div></div>
+    <div class="fstep"><div class="fbarwrap"><div class="fbar" style="width:16.0%"></div></div><div class="fmeta"><div class="fname">公式LINEへのリンクを押した人</div><div class="fnote">実測・プロフィールを見た人の 5.0%</div><div class="fratio">動画を見た 3,005人に1人</div></div><div class="fval">415</div></div>
+    <div class="fstep est"><div class="fbarwrap"><div class="fbar" style="width:6%"></div></div><div class="fmeta"><div class="fname">LINE登録 → 予約 → 来院 → 成約</div><div class="fnote">ここから先はInstagram側で計測できない。社内の目標管理シート（KPIシート）には予約率・来院率・成約率の実績があるが、Instagram経由が何件かは分からない</div></div><div class="fval">?</div></div>
+</div>
 
-  <p>ボトルネックは<b>リーチ→プロフィール閲覧の0.66%</b>です。1,247,146人に見られて、プロフィールを見に来たのは8,262人。動画を見た人は「へえ」で終わっていて、この先生に相談しようとは思っていません。</p>
+  <p>いちばん細くなっているのは<b>「動画が届いた」→「プロフィールを見に来た」の0.66%</b>です。1,247,146人に見られて、プロフィールを見に来たのは8,262人——<b>動画を見た151人に1人</b>。動画を見た人は「へえ」で終わっていて、この先生に相談しようとは思っていません。</p>
 
   <p>そしてリンククリックから先が<b>完全な断絶</b>になっています。Instagram側は「415クリック」までしか分からず、LINE側は「登録があった」しか分からない。両者がつながっていないので、<b>どの動画が患者を連れてきたのか誰も答えられません。</b></p>
 </section>
@@ -421,37 +612,23 @@
   <div class="sec-head"><div class="sec-num">06</div><h2>フォロワーは何本目から増えるのか</h2></div>
   <p class="sec-sub">APIはリールごとのフォロー獲得数を返しません（Metaがリールだけ除外している）。そこで1日に1本だけ投稿した147日を抜き出し、その日と翌日のフォロワー増加数から推定しました。対象は2025-09以降——それ以前はAPIがフォロワー増減を返さないため使えません。</p>
 
-  <div class="tw"><table><thead><tr><th class="">その日の再生数</th><th class="num">日数</th><th class="num">フォロワー増（中央値）</th><th class="num">投稿ゼロの日との差</th></tr></thead><tbody><tr class="lo"><td>〜3,000</td><td class="num">26</td><td class="num">12人</td><td class="num">-3人</td></tr><tr class="lo"><td>3,000〜1万</td><td class="num">97</td><td class="num">15人</td><td class="num">+0人</td></tr><tr class="hi"><td>1万〜5万</td><td class="num">19</td><td class="num">20人</td><td class="num">+5人</td></tr><tr class="hi"><td>5万〜</td><td class="num">5</td><td class="num">23人</td><td class="num">+8人</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th class="">その日の再生数</th><th class="num">日数</th><th class="num">フォロワー増（真ん中の日）</th><th class="num">投稿ゼロの日との差</th></tr></thead><tbody><tr class="lo"><td>〜3,000</td><td class="num">26</td><td class="num">12人</td><td class="num">-3人</td></tr><tr class="lo"><td>3,000〜1万</td><td class="num">97</td><td class="num">15人</td><td class="num">+0人</td></tr><tr class="hi"><td>1万〜5万</td><td class="num">19</td><td class="num">20人</td><td class="num">+5人</td></tr><tr class="hi"><td>5万〜</td><td class="num">5</td><td class="num">23人</td><td class="num">+8人</td></tr></tbody></table></div>
 
-  <p>再生数とフォロワー増の相関は<b>+0.75</b>。いっぽう<b>投稿がない日でも中央値15人増えています</b>。つまり再生数の低い投稿は、フォロワーをほとんど増やしていません。<b>1万再生を超えて初めて効き始める</b>という線が見えます。</p>
+  <p>再生数が多い日ほどフォロワーも増えています（2つの数字がどれだけ一緒に動いたかを表す値は<b>+0.75</b>。+1に近いほど強く連動）。いっぽう<b>投稿がない日でも、真ん中の日で15人増えています</b>。つまり再生数の低い投稿は、フォロワーをほとんど増やしていません。<b>1万再生を超えて初めて効き始める</b>という線が見えます。</p>
 
   <p class="sec-sub" style="margin-top:18px">※「投稿ゼロの日」も前日の投稿の余波を含むため、差は少なめに出ている可能性があります。</p>
 </section>
 
+
 <section id="s07">
-  <div class="sec-head"><div class="sec-num">07</div><h2>良い点</h2></div>
-  <p class="sec-sub">壊れているわけではありません。ここは崩さずに続けます。</p>
-
-  <div class="tw"><table><thead><tr><th>続けること</th><th class="num">数字</th><th>なぜ効いているか</th></tr></thead><tbody>
-    <tr><td><b>届く経路はリールに一本化できている</b></td><td class="num">リーチの99.4%</td><td>発見面に載る作りはできている。ただしこれは<b>構成比</b>であって強さの証明ではない（フィードとストーリーが機能していないため相対的に高く出る）。1本あたりの再生は他院に届いていない。</td></tr>
-    <tr><td><b>フォロワーの住所が合っている</b></td><td class="num">首都圏 66.9%</td><td>東京43.9%。銀座に通える層が主力（都市判明分7,763人が母数）。<b>フォロワーの属性であり、リーチした層の属性ではない。</b></td></tr>
-    <tr><td><b>年齢層が施術と噛み合っている</b></td><td class="num">35-44歳が最多</td><td>35-44歳 32%、45-54歳 26%、25-34歳 22%。自費の手術を検討できる年齢帯に届いている。</td></tr>
-    <tr><td><b>フォロワーは増え続けている</b></td><td class="num">月 502人</td><td>2025年9月は203人。直近の満了月（2026年8月）まで伸び続けている。</td></tr>
-    <tr class="hi"><td><b>刺さる型が数字で特定できた</b></td><td class="num">保存 1.9／千再生</td><td>「症状・お悩み解説」が保存率トップ。感覚ではなく実測で型が確定している。</td></tr>
-    <tr><td><b>先生本人が語れる幅がある</b></td><td class="num">—</td><td>専門知識で答えられる領域の広さが、そのまま再生数になっている。</td></tr>
-  </tbody></table></div>
-</section>
-
-
-<section id="s09">
-  <div class="sec-head"><div class="sec-num">09</div><h2>他院と並べると、テーマの問題ではないと分かる</h2></div>
+  <div class="sec-head"><div class="sec-num">07</div><h2>他院と並べて分かること</h2></div>
   <p class="sec-sub">同じクマ・目元をやっている医師のアカウントを、公開値（再生数・いいね・投稿日）で取得して横並びにしました。2025-06-28以降・全員にデータがある期間に揃えています。</p>
 
-  <div class="tw"><table><thead><tr><th class="">アカウント</th><th class="num">本数</th><th class="num">中央再生</th><th class="num">クマ投稿だけの中央再生</th><th class="num">いいね率</th><th class="num">クマ率</th><th class="num">月間本数</th><th class="num">尺の中央値</th></tr></thead><tbody><tr class="lo"><td>毛利先生（自院）</td><td class="num">120</td><td class="num">4,664</td><td class="num">4,365</td><td class="num">0.73%</td><td class="num">68%</td><td class="num">8.0</td><td class="num">48秒</td></tr><tr class="hi"><td>りく先生</td><td class="num">79</td><td class="num">24,597</td><td class="num">22,306</td><td class="num">0.50%</td><td class="num">51%</td><td class="num">5.3</td><td class="num">32秒</td></tr><tr class=""><td>則本先生</td><td class="num">93</td><td class="num">21,552</td><td class="num">19,743</td><td class="num">0.87%</td><td class="num">42%</td><td class="num">6.6</td><td class="num">85秒</td></tr><tr class=""><td>木下先生</td><td class="num">10</td><td class="num">6,077</td><td class="num">（0本・少なすぎ）</td><td class="num">1.18%</td><td class="num">0%</td><td class="num">1.4</td><td class="num">—</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th class="">アカウント</th><th class="num">本数</th><th class="num">中央再生</th><th class="num">クマ投稿だけの中央再生</th><th class="num">いいね率</th><th class="num">クマ率</th><th class="num">月間本数</th><th class="num">動画の長さ（真ん中の値）</th></tr></thead><tbody><tr class="lo"><td>毛利先生（自院）</td><td class="num">120</td><td class="num">4,664</td><td class="num">4,365</td><td class="num">0.73%</td><td class="num">68%</td><td class="num">8.0</td><td class="num">48秒</td></tr><tr class="hi"><td>りく先生</td><td class="num">79</td><td class="num">24,597</td><td class="num">22,306</td><td class="num">0.50%</td><td class="num">51%</td><td class="num">5.3</td><td class="num">32秒</td></tr><tr class=""><td>則本先生</td><td class="num">93</td><td class="num">21,552</td><td class="num">19,743</td><td class="num">0.87%</td><td class="num">42%</td><td class="num">6.6</td><td class="num">85秒</td></tr><tr class=""><td>木下先生</td><td class="num">10</td><td class="num">6,077</td><td class="num">（0本・少なすぎ）</td><td class="num">1.18%</td><td class="num">0%</td><td class="num">1.4</td><td class="num">—</td></tr></tbody></table></div>
 
   <p>同じ「クマ・目元」の投稿だけで比べても、自院の中央再生は<b>4,365</b>、最も強い院は<b>22,306</b>——<b>5.1倍の差</b>があります。しかも自院は<b>投稿数が最多</b>（月8.0本）で、<b>クマ率も最も高い</b>（68%）。<b>テーマを絞る方向だけでは埋まらない差です。</b></p>
 
-  <p><b>尺も差の説明になりません。</b>上の表のとおり各院の尺はばらばらで、短い院も長い院も自院より上に出ています。</p>
+  <p><b>動画の長さも差の説明になりません。</b>上の表のとおり各院の長さはばらばらで、短い院も長い院も自院より上に出ています。</p>
 
   <div class="tw"><table><thead><tr><th class="">月</th><th class="num">毛利先生（自院）</th><th class="num">りく先生</th><th class="num">則本先生</th><th class="num">木下先生</th></tr></thead><tbody><tr class=""><td>2026-01</td><td class="num">4,540</td><td class="num">22,473</td><td class="num">29,056</td><td class="num">—</td></tr><tr class=""><td>2026-02</td><td class="num">5,544</td><td class="num">18,482</td><td class="num">25,404</td><td class="num">6,630</td></tr><tr class=""><td>2026-03</td><td class="num">5,012</td><td class="num">23,319</td><td class="num">40,872</td><td class="num">—</td></tr><tr class=""><td>2026-04</td><td class="num">3,328</td><td class="num">10,275</td><td class="num">22,205</td><td class="num">57,721</td></tr><tr class=""><td>2026-05</td><td class="num">3,086</td><td class="num">24,947</td><td class="num">11,147</td><td class="num">—</td></tr><tr class=""><td>2026-06</td><td class="num">3,260</td><td class="num">30,895</td><td class="num">14,198</td><td class="num">4,319</td></tr><tr class=""><td>2026-07</td><td class="num">5,139</td><td class="num">32,908</td><td class="num">17,652</td><td class="num">6,163</td></tr><tr class=""><td>2026-08</td><td class="num">3,462</td><td class="num">20,820</td><td class="num">17,677</td><td class="num">4,987</td></tr></tbody></table></div>
 
@@ -461,27 +638,27 @@
 </section>
 
 
-<section id="s10">
-  <div class="sec-head"><div class="sec-num">10</div><h2>やるべきこと</h2></div>
+<section id="s08">
+  <div class="sec-head"><div class="sec-num">08</div><h2>やるべきこと（7つ）</h2></div>
   <p class="sec-sub">目標は2つあります——<b>再生（どれだけ届くか）</b>と<b>リンククリック（LINEに何人来るか）</b>。両方に効くものから順に並べています。片方にしか効かない施策は、その旨を明記しました。</p>
 
   <div class="actions">
 
     <div class="act">
       <h3>1. 計測をつなぐ</h3>
-      <p class="why">効果：大 ／ 工数：半日 ／ これをやらないと以降の判断が全部勘になる</p>
-      <p>プロフィールのリンクを、投稿ごとに識別できるURLに変えます。</p>
+      <p class="why">再生への効果：なし ／ クリックへの効果：大 ／ 手間：半日 ／ これをやらないと以降の判断が全部勘になる</p>
+      <p>いまはプロフィールのリンクが1本しかないので、LINEに登録した人が<b>どの動画を見て来たのか</b>が分かりません。</p>
       <ul>
-        <li>リンクにUTMを付ける（例：<span class="mono">?utm_source=ig&amp;utm_medium=reel&amp;utm_campaign=0906_kankansyu</span>）</li>
-        <li>ストーリーのリンクも同様。InstagramのAPIはストーリーのリンククリックを返さないため、GA4側で見るしかない</li>
-        <li>爾今のLINEダッシュボードと突き合わせ、<b>「どの動画から登録したか」</b>を月次で出せる状態にする</li>
+        <li><b>投稿ごとに違うリンクを使い、どの動画から来たかが分かるようにする。</b>見た目も行き先も同じリンクの末尾に、動画を見分けるための印だけを足すやり方です（この印を「UTMパラメータ」と呼びます）</li>
+        <li>ストーリーのリンクも同じようにする。InstagramのAPIはストーリーのリンククリック数を返さないので、Googleアナリティクス側で見るしかない</li>
+        <li>爾今のLINEダッシュボードと突き合わせ、<b>「どの動画から登録したか」</b>を月に1回出せる状態にする</li>
       </ul>
     </div>
 
     <div class="act">
       <h3>2. 表紙と冒頭10秒を作り直す</h3>
-      <p class="why">効果：大 ／ 工数：中 ／ 尺をいじっても解決しない</p>
-      <p>どの尺で作っても<b>平均12秒で切られています</b>（尺に対して27%）。尺の分かる直近1年104本の中央値は47秒で、うち63%が40秒以上。尺ではなく冒頭の問題です。</p>
+      <p class="why">再生への効果：大 ／ クリックへの効果：大 ／ 手間：中 ／ 動画の長さをいじっても解決しない</p>
+      <p>動画をどれだけ長く作っても<b>平均12秒で見るのをやめられています</b>（動画の長さに対して27%）。長さの分かる直近1年104本の真ん中の値は47秒、うち63%が40秒以上。長さではなく冒頭の問題です。</p>
       <p>競合2院の表紙は<b>黒背景・明朝体・文字は3行以内・人物は1人</b>で一致していました。自院の表紙は検索バーのUI、巨大な見出し、医学的な補足2行、英語字幕、医師2人と、要素が6つ競合しています。</p>
       <ul>
         <li>表紙の文字は<b>3行・15文字以内</b>まで削る</li>
@@ -492,7 +669,7 @@
 
     <div class="act">
       <h3>3. 症例ビフォーアフターの型を作り直す</h3>
-      <p class="why">効果：大 ／ 工数：中 ／ 最大ボリュームの型が最下位という状態を放置しない</p>
+      <p class="why">再生への効果：大 ／ クリックへの効果：中 ／ 手間：中 ／ 本数が最も多い型が最下位、という状態を放置しない</p>
       <ul>
         <li>冒頭を「症例です」ではなく<b>「この症状、何だと思いますか？」</b>に変える（保存率トップの型）</li>
         <li>施術名の羅列（表ミッドフェイスリフト法、prp…）を冒頭から外す。患者は術式名で悩んでいない</li>
@@ -502,104 +679,255 @@
 
     <div class="act">
       <h3>4. クマ・目元は「戻す」より「広げすぎない」</h3>
-      <p class="why">効果：中 ／ 工数：企画の方針変更のみ ／ <b>再生とクリックでトレードオフがある</b></p>
+      <p class="why">再生への効果：逆効果 ／ クリックへの効果：小 ／ 手間：方針を決めるだけ ／ <b>再生とクリックで引っぱり合いがある</b></p>
       <p><b>クリックには効いている可能性があります。</b>クマ比率80%以上だった期間の平均リンククリックは<b>598件／月</b>、65%未満だった期間は<b>467件／月</b>です。</p>
-      <p><b>ただし再生には逆に働きます。</b>直近1年を投稿単位で見ると、クマ投稿の中央再生は<b>4,564</b>、クマ以外は<b>5,420</b>——<b>クマのほうが低い</b>。保存率（1.8対1.8）とエンゲージ率（1.04%対0.98%）はほぼ同じで、「クマのほうが濃い客を連れてくる」とも言い切れません。他院を見ても、クマ率が低い院ほど中央再生は高く出ています（セクション09）。</p>
-      <p>さらに、上のクリック相関は<b>そのままの強さでは受け取れません</b>。クマ比率もリンククリックも、どちらも時間とともに下がっているためです（時間×クマ比率 -0.75、時間×クリック -0.49）。この時間トレンドを差し引いた偏相関は<b>+0.24</b>。<b>関係は残りますが、見かけの+0.51よりかなり弱い</b>というのが正確なところです（n=13）。</p>
+      <p><b>ただし再生には逆に働きます。</b>直近1年を投稿単位で見ると、クマ投稿の中央再生は<b>4,564</b>、クマ以外は<b>5,420</b>——<b>クマのほうが低い</b>。保存率（1.8対1.8）と反応された割合（1.04%対0.98%）はほぼ同じで、「クマのほうが濃い客を連れてくる」とも言い切れません。他院を見ても、クマ率が低い院ほど中央再生は高く出ています（セクション07）。</p>
+      <p>さらに、この差を<b>そのまま「クマを増やせばクリックが増える」と読むことはできません。</b>クマ比率もクリック数も、<b>どちらも時間とともに下がってきている</b>からです。「クマが効いた」のではなく「昔のほうが両方とも高かった」だけ、という可能性が残ります。どちらなのかは、13期間ぶんのこのデータだけでは決められません。計算の中身は<a href="#caveat">末尾の注意書き</a>に置きました。</p>
       <p>したがって<b>「比率を戻す」を単独の打ち手にはしません。</b>再生とクリックの両方を上げたいなら、先に効くのは施策2（表紙と冒頭）です。そのうえで<b>クマ以外は月1〜2本の広げ役に留め、必ず目元・若見えの文脈に着地させる</b>——この運用は維持します（SNS投稿提案シートの「幅出しの原則」どおり）。</p>
     </div>
 
     <div class="act">
       <h3>5. 投稿本数を減らして、1本の質に寄せる</h3>
-      <p class="why">効果：中 ／ 工数：マイナス（作業が減る）</p>
-      <p>投稿本数とリンククリック数の相関は-0.47。本数を増やした期間ほど、中央再生もリンククリックも下がっています。<b>月8〜10本に絞り、企画と撮影に時間を戻す</b>ほうが数字が良かった実績があります。</p>
+      <p class="why">再生への効果：中 ／ クリックへの効果：中 ／ 手間：減る（作業はむしろ軽くなる）</p>
+      <p>本数を増やした期間ほど、普段の再生数（真ん中の1本の数字＝中央値）も公式LINEへのクリックも下がっています。<b>月8〜10本に絞り、企画と撮影に時間を戻す</b>ほうが数字が良かった実績があります。</p>
     </div>
 
     <div class="act">
       <h3>6. ストーリーの役割を見直す</h3>
-      <p class="why">効果：中 ／ 工数：小</p>
+      <p class="why">再生への効果：なし ／ クリックへの効果：中 ／ 手間：小</p>
       <ul>
-        <li>本数を絞り、<b>リールを見て来た人の受け皿</b>（症例まとめ・料金・予約導線のハイライト）として設計し直す</li>
+        <li>本数を絞り、<b>リールを見て来た人の受け皿</b>（症例まとめ・料金・予約への案内をハイライトに置く）として設計し直す</li>
         <li>ストーリーの数字は毎日自動で蓄積中。1か月後に本数と反応の関係を再評価する</li>
       </ul>
     </div>
 
     <div class="act">
       <h3>7. フォロワーを「見てくれる人」に変える</h3>
-      <p class="why">効果：大 ／ 工数：大 ／ 中長期</p>
-      <p>フォロワー由来のリーチが0.7%というのは、フォローされた後に何も届いていないということです。発見面だけに頼る限り、毎月ゼロからのギャンブルが続きます。コメント返信、質問箱、連続もの（シリーズ化）など、<b>「次も見たい」を作る仕掛け</b>が要ります。</p>
+      <p class="why">再生への効果：大 ／ クリックへの効果：中 ／ 手間：大（数か月がかり）</p>
+      <p>フォロワー由来のリーチが0.7%というのは、フォローされた後に何も届いていないということです。おすすめ欄・検索結果だけに頼る限り、毎月ゼロからのギャンブルが続きます。コメント返信、質問箱、連続もの（シリーズ化）など、<b>「次も見たい」を作る仕掛け</b>が要ります。</p>
     </div>
   </div>
 </section>
 
-<div class="caveat">
-  <h3>この数字について</h3>
+<div class="caveat" id="caveat">
+  <h3>この数字について（注意書き）</h3>
   <ul>
     <li>Instagram Graph APIから毎日自動取得しています。最終更新 2026.09.11。</li>
     <li><b>リールのフォロー獲得数とプロフィール遷移数はAPIが返しません。</b>フィード投稿とストーリーでは取れるので、Metaがリールだけ除外している仕様です。理由は公表されていません。セクション06はそのための推定です。</li>
-    <li><b>ストーリーのリンククリック数もAPIが返しません。</b>UTM＋GA4で代替する必要があります（施策1）。</li>
-    <li>スキップ率は年によって集計基準が違います（2023年の中央値0.9%に対し2026年は54.9%）。この指標での比較は直近1年に限定しています。</li>
+    <li><b>ストーリーのリンククリック数もAPIが返しません。</b>投稿ごとに違うリンクを使い、Googleアナリティクスで数えるしかありません（施策1）。</li>
+    <li>最後まで見ずに飛ばされた割合（スキップ率）は年によって集計基準が違います（2023年の真ん中の値0.9%に対し2026年は54.9%）。この指標での比較は直近1年に限定しています。</li>
     <li>ジャンル判定は冒頭2行と【本日の選択肢】欄のみで機械的に行っています（キャプション全文だとハッシュタグで大半がクマ判定になるため）。人の目での再確認の余地があります。</li>
-    <li>相関はn=13の期間データによるもので、因果を証明するものではありません。</li>
+    <li><b>「クマ比率とクリック」の計算の中身です（読みにくいので本文から外しました）。</b>
+      29日ごと13期間ぶんのデータで、2つの数字がどれだけ一緒に動いたかを表す値
+      （相関係数。+1なら完全に同じ動き、0なら無関係、−1なら完全に逆の動き）は、
+      クマ比率×クリック <span class="mono">+0.51</span>、
+      リーチ×クリック <span class="mono">-0.30</span>、
+      投稿本数×クリック <span class="mono">-0.47</span>。
+      ただしクマ比率（時間×クマ比率 <span class="mono">-0.75</span>）も
+      クリック数（時間×クリック <span class="mono">-0.49</span>）も
+      時間とともに下がっているため、この時間の影響を差し引くと
+      <span class="mono">+0.24</span> まで弱まります（偏相関）。
+      <b>13期間ぶんしかなく、どちらが原因かを示すものではありません。</b></li>
     <li>他院の数字は公開されている再生数・いいね・コメントのみです。<b>保存数・リーチ・視聴時間はアカウント所有者しか見られない</b>ため比較できません。取得日 2026-09-07（更新は月1回）。</li>
-    <li>このページは社外にも見える場所に置いてあるため、社内のKPI（予約率・来院率・成約率・客単価）の実数は伏せています。突き合わせる際は「Kuma CLI様_マーケティングKPIシート」を参照してください。</li>
+    <li>このページは社外にも見える場所に置いてあるため、社内のKPI（目標として追いかける数字）（予約率・来院率・成約率・客単価）の実数は伏せています。突き合わせる際は「Kuma CLI様_マーケティングKPIシート」を参照してください。</li>
   </ul>
 </div>
 
 </div>
 
+<a class="to-top" id="to-top" href="#toc">↑ ページの先頭へ</a>
+
 <script>
 (function(){
+  /* グラフ。以前は viewBox 880px 固定で、カード内側(約784px)からはみ出した
+     最新期間が枠の外に出ていた。幅を780pxに収め、狭い画面では
+     report_mobile.js が .svg-scroll で包んで「続きがある」と分かるようにする。
+
+     リーチ段は対数目盛。実数のままだと最大1.2M・最小2.4万で、
+     目盛が 0 / 100万 / 200万 になり12期間がすべてゼロの線に潰れていた。 */
   var svg=document.getElementById('chart'); if(!svg) return;
-  var D={"labels": ["25/9", "25/10", "25/11", "25/12", "26/1", "26/2", "26/3", "26/4", "26/5", "26/6", "26/7", "26/8", "26/9"], "clicks": [572, 460, 449, 739, 727, 672, 692, 547, 458, 356, 385, 434, 415], "reach": [74292, 59030, 24161, 31642, 28586, 26021, 70575, 60895, 151278, 68101, 48937, 134139, 1247146], "kuma": [88, 86, 100, 88, 100, 56, 93, 87, 53, 60, 69, 54, 47]};
+  var D={"labels": ["25/9", "25/10", "25/11", "25/12", "26/1", "26/2", "26/3", "26/4", "26/5", "26/6", "26/7", "26/8", "26/9"], "x": [["9月", "2025年"], ["10月", ""], ["11月", ""], ["12月", ""], ["1月", "2026年"], ["2月", ""], ["3月", ""], ["4月", ""], ["5月", ""], ["6月", ""], ["7月", ""], ["8月", ""], ["9月", ""]], "clicks": [572, 460, 449, 739, 727, 672, 692, 547, 458, 356, 385, 434, 415], "reach": [74292, 59030, 24161, 31642, 28586, 26021, 70575, 60895, 151278, 68101, 48937, 134139, 1247146], "kuma": [88, 86, 100, 88, 100, 56, 93, 87, 53, 60, 69, 54, 47]};
   var NS='http://www.w3.org/2000/svg';
-  var L=62,R=24,W=880-L-R,slot=W/D.labels.length,bw=Math.min(30,slot*0.52);
+  var L=54,R=16,W=780-L-R,slot=W/D.labels.length,bw=Math.min(30,slot*0.56);
   function el(n,a){var x=document.createElementNS(NS,n);for(var k in a)x.setAttribute(k,a[k]);return x;}
   function text(x,y,s,cls,anchor){var t=el('text',{x:x,y:y,'text-anchor':anchor||'middle',class:cls||'lbl'});t.textContent=s;svg.appendChild(t);return t;}
   var st=el('style',{});
-  st.textContent='#chart .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--ink-faint)}'+
+  st.textContent='#chart .lbl{font-family:"IBM Plex Mono",monospace;font-size:11px;fill:var(--ink-soft)}'+
+    '#chart .yr{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink-faint)}'+
     '#chart .axis{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink-faint)}'+
-    '#chart .ttl{font-family:"Zen Kaku Gothic New",sans-serif;font-size:12px;fill:var(--ink-soft);font-weight:700}'+
-    '#chart .val{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink-soft)}'+
-    '#chart .grid{stroke:var(--rule-soft);stroke-width:1}';
+    '#chart .ttl{font-family:"Zen Kaku Gothic New",sans-serif;font-size:12.5px;fill:var(--ink);font-weight:700}'+
+    '#chart .sub{font-family:"Zen Kaku Gothic New",sans-serif;font-size:10.5px;fill:var(--ink-faint)}'+
+    '#chart .val{font-family:"IBM Plex Mono",monospace;font-size:9.5px;fill:var(--ink-soft)}'+
+    '#chart .val.on{fill:var(--ink);font-weight:600}'+
+    '#chart .pct{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink);font-weight:600}'+
+    '#chart .grid{stroke:var(--rule-soft);stroke-width:1}'+
+    '#chart .base{stroke:var(--rule);stroke-width:1}';
   svg.appendChild(st);
   function nice(mx){var p=Math.pow(10,Math.floor(Math.log10(mx)));return Math.ceil(mx/p)*p;}
+  function man(v){
+    if(v>=1000000) return Math.round(v/10000)+'万';
+    if(v>=10000) return (v/10000).toFixed(1)+'万';
+    return v.toLocaleString();
+  }
+  function bx(i){ return L+slot*i+(slot-bw)/2; }
 
-  var aTop=30,aH=130,aMax=nice(Math.max.apply(null,D.clicks)*1.15);
-  text(L,aTop-12,'公式LINEへのリンククリック（件／29日）','ttl','start');
+  /* --- 1段目：公式LINEへのクリック（そのままの目盛） --- */
+  var aTop=40,aH=104,aMax=nice(Math.max.apply(null,D.clicks)*1.12)||1;
+  text(L,20,'公式LINEへのリンクを押した人（件／29日）','ttl','start');
+  text(L,33,'ふつうの目盛','sub','start');
   [0,aMax/2,aMax].forEach(function(v){
     var y=aTop+aH-v/aMax*aH;
-    svg.appendChild(el('line',{x1:L,y1:y,x2:L+W,y2:y,class:'grid'}));
-    text(L-8,y+3.5,Math.round(v).toLocaleString(),'axis','end');
+    svg.appendChild(el('line',{x1:L,y1:y,x2:L+W,y2:y,class:(v===0?'base':'grid')}));
+    text(L-7,y+3.5,Math.round(v).toLocaleString(),'axis','end');
   });
   var cMax=Math.max.apply(null,D.clicks);
   D.clicks.forEach(function(v,i){
-    var h=v/aMax*aH,x=L+slot*i+(slot-bw)/2,y=aTop+aH-h;
-    svg.appendChild(el('rect',{x:x,y:y,width:bw,height:h,fill:'var(--warn)',rx:1,opacity:(v===cMax?1:0.72)}));
-    if(v===cMax||i===D.clicks.length-1) text(x+bw/2,y-5,v,'val');
+    var h=Math.max(v/aMax*aH,1),x=bx(i),y=aTop+aH-h;
+    svg.appendChild(el('rect',{x:x,y:y,width:bw,height:h,fill:'var(--warn)',rx:1,opacity:(v===cMax||i===D.clicks.length-1?1:0.62)}));
+    text(x+bw/2,y-4,v.toLocaleString(),'val'+(v===cMax||i===D.clicks.length-1?' on':''));
   });
 
-  var bTop=218,bH=130,bMax=nice(Math.max.apply(null,D.reach)*1.1);
-  text(L,bTop-12,'リーチ（人／29日）','ttl','start');
-  [0,bMax/2,bMax].forEach(function(v){
-    var y=bTop+bH-v/bMax*bH;
-    svg.appendChild(el('line',{x1:L,y1:y,x2:L+W,y2:y,class:'grid'}));
-    text(L-8,y+3.5,v===0?'0':(Math.round(v/10000)+'万'),'axis','end');
-  });
+  /* --- 2段目：動画が届いた人数（対数目盛） --- */
+  var bTop=205,bH=104;
+  var pos=D.reach.filter(function(v){return v>0;});
+  var rMin=pos.length?Math.min.apply(null,pos):1;
+  var rMax=Math.max.apply(null,D.reach)||1;
+  var lo=Math.floor(Math.log10(rMin)),hi=Math.log10(rMax*1.45);
+  if(hi<=lo) hi=lo+1;
+  function ly(v){ return bTop+bH-(Math.log10(Math.max(v,Math.pow(10,lo)))-lo)/(hi-lo)*bH; }
+  text(L,185,'動画が届いた人数（人／29日）','ttl','start');
+  text(L,198,'※ここだけ目盛が違う。1目盛上がるごとに10倍','sub','start');
+  for(var d=lo;d<=Math.floor(hi);d++){
+    var v=Math.pow(10,d),y=ly(v);
+    svg.appendChild(el('line',{x1:L,y1:y,x2:L+W,y2:y,class:(d===lo?'base':'grid')}));
+    text(L-7,y+3.5,man(v),'axis','end');
+  }
+  var mxR=Math.max.apply(null,D.reach);
   D.reach.forEach(function(v,i){
-    var h=Math.max(v/bMax*bH,1),x=L+slot*i+(slot-bw)/2,y=bTop+bH-h;
-    svg.appendChild(el('rect',{x:x,y:y,width:bw,height:h,fill:'var(--accent)',rx:1,opacity:(i===D.reach.length-1?1:0.72)}));
-    if(i===D.reach.length-1) text(x+bw/2,y-5,(v>=10000?Math.round(v/10000)+'万':v),'val');
+    var y=ly(v),h=Math.max(bTop+bH-y,1),x=bx(i);
+    svg.appendChild(el('rect',{x:x,y:y,width:bw,height:h,fill:'var(--accent)',rx:1,opacity:(v===mxR||i===D.reach.length-1?1:0.62)}));
+    text(x+bw/2,y-4,man(v),'val'+(v===mxR||i===D.reach.length-1?' on':''));
   });
 
-  var sTop=372,sH=20;
-  text(L,sTop-8,'クマ・目元の投稿比率','ttl','start');
+  /* --- 3段目：クマ・目元の投稿比率 --- */
+  var sTop=352,sH=22;
+  text(L,345,'クマ・目元の投稿比率（%）','ttl','start');
   D.kuma.forEach(function(v,i){
-    var x=L+slot*i+(slot-bw)/2;
-    svg.appendChild(el('rect',{x:x,y:sTop,width:bw,height:sH,fill:'var(--ink-faint)',opacity:0.18+(v/100)*0.62,rx:1}));
-    text(x+bw/2,sTop+14,v,'axis');
+    var x=bx(i);
+    svg.appendChild(el('rect',{x:x,y:sTop,width:bw,height:sH,fill:'var(--ink-faint)',opacity:0.12+(v/100)*0.38,rx:1}));
+    text(x+bw/2,sTop+15,v,'pct');
   });
-  D.labels.forEach(function(s,i){ text(L+slot*i+slot/2,415,s,'lbl'); });
+
+  /* --- x軸：月。年は変わったところだけ --- */
+  D.x.forEach(function(p,i){
+    text(L+slot*i+slot/2,396,p[0],'lbl');
+    if(p[1]) text(L+slot*i+slot/2,410,p[1],'yr');
+  });
+  text(L+W,428,'← 左が古い ／ 右が新しい','yr','end');
+})();
+</script>
+<script>/* 表と横長グラフを、描画後に「スクロールできると分かる」形へ包み直す。
+   report_mobile.css と対で使う。各媒体の gen_report.py がインライン展開する。
+
+   各ページの表を生成しているコードは5媒体でバラバラなので、
+   生成側を触らずに済むよう、出来上がった DOM に対して後から適用する。 */
+(function () {
+  "use strict";
+
+  function wrap(el, cls) {
+    var p = el.parentNode;
+    if (p && p.classList && p.classList.contains(cls)) return p;  // 二重に包まない
+    var box = document.createElement("div");
+    box.className = cls;
+    p.insertBefore(box, el);
+    box.appendChild(el);
+    return box;
+  }
+
+  function hintFor(box) {
+    var h = box.nextElementSibling;
+    if (h && h.classList && h.classList.contains("tbl-hint")) return h;
+    h = document.createElement("p");
+    h.className = "tbl-hint";
+    h.textContent = "横にスクロールすると続きが見られます";
+    box.parentNode.insertBefore(h, box.nextSibling);
+    return h;
+  }
+
+  function sync(box, hint) {
+    // はみ出しているか。端数の丸めで1〜2pxずれることがあるので少し余裕を見る
+    // （余裕が無いと、実際には収まっている表にも案内が出てしまう）
+    var over = box.scrollWidth - box.clientWidth > 4;
+    box.classList.toggle("is-scrollable", over);
+    if (hint) hint.classList.toggle("is-on", over);
+    // 右端まで送ったらフェードを消す
+    var end = box.scrollLeft + box.clientWidth >= box.scrollWidth - 1;
+    box.classList.toggle("is-end", end);
+  }
+
+  function setup() {
+    var targets = [];
+
+    Array.prototype.forEach.call(document.querySelectorAll("table"), function (t) {
+      // すでに独自のスクロール枠を持っているものはクラスだけ足す（tiktok の .scroll）
+      var box = wrap(t, "tbl-scroll");
+      targets.push([box, hintFor(box)]);
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll("svg"), function (s) {
+      var w = parseFloat(s.getAttribute("width") || "0");
+      var vb = (s.getAttribute("viewBox") || "").split(/[\s,]+/);
+      var vw = vb.length === 4 ? parseFloat(vb[2]) : 0;
+      // 横長で、縮めると軸ラベルが潰れるものだけ対象にする
+      if (Math.max(w, vw) < 480) return;
+      var box = wrap(s, "svg-scroll");
+      targets.push([box, hintFor(box)]);
+    });
+
+    targets.forEach(function (pair) {
+      var box = pair[0], hint = pair[1];
+      sync(box, hint);
+      box.addEventListener("scroll", function () { sync(box, hint); }, { passive: true });
+    });
+
+    function resyncAll() {
+      targets.forEach(function (p) { sync(p[0], p[1]); });
+    }
+
+    var t = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(t);
+      t = setTimeout(resyncAll, 120);
+    });
+
+    // DOMContentLoaded の時点ではWebフォントがまだ届いておらず、
+    // あとからフォントが差し替わると表の幅が変わる。測り直さないと
+    // 「はみ出しているのに案内が出ない」状態のままになる。
+    window.addEventListener("load", resyncAll);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(resyncAll).catch(function () {});
+    }
+    setTimeout(resyncAll, 800);   // 上記が発火しない環境への保険
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setup);
+  } else {
+    setup();
+  }
+})();
+</script>
+<script>
+(function(){
+  /* 19画面ぶんあるので、下まで行ったら先頭に戻れるようにする */
+  var b=document.getElementById('to-top'); if(!b) return;
+  function sync(){ b.classList.toggle('is-on', window.scrollY > 700); }
+  b.addEventListener('click', function(e){
+    e.preventDefault();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+  window.addEventListener('scroll', sync, {passive:true});
+  sync();
 })();
 </script>
 </body>
