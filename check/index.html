@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>インスタ 今日やること｜@mohrimakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>/* ============================================================
+   診断レポート 共通スタイル（x / instagram）
+
+   各媒体の gen_report.py が、このファイル → 媒体の report.css の順に
+   読んで <style> に展開する。順番が意味を持つので入れ替えないこと。
+
+   ここに置いてよいのは「x と instagram で完全に同一」かつ
+   「媒体側のルールを上書きする必要がない」ものだけ。
+   媒体側が後から読まれるので、ここのルールは常に負ける側になる。
+
+   - 余白・フォントサイズ・角丸・box-shadow は媒体ごとに違う → 各 report.css
+   - --shadow は媒体ごとに違うので、ここでは定義しない（各 report.css で3箇所）
+   - @media (max-width:640px) は媒体側のルールを上書きするので各 report.css
+   - .summary 一式は x（.sum-cols/.sum-list）と instagram（.sum-table）で
+     マークアップ自体が別物なので共通化していない
+   - tiktok は配色・変数名・クラス名がまるごと別の設計なので参加していない
+     （詳細は sns/report_audit_2026-09-08.md）
+   ============================================================ */
+
+  :root{
+    --ground:#EEF1F4;
+    --surface:#FFFFFF;
+    --surface-2:#F6F8FA;
+    --ink:#16202B;
+    --ink-soft:#4B5C6B;
+    --ink-faint:#7C8B99;
+    --rule:#D7DFE6;
+    --rule-soft:#E7EDF2;
+    --accent:#1B6B66;
+    --accent-soft:#D6E7E5;
+    --warn:#A63A36;
+    --warn-soft:#F3DEDD;
+    --good:#2A6F52;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0E141A;
+      --surface:#161E26;
+      --surface-2:#1B242D;
+      --ink:#E4EBF1;
+      --ink-soft:#A3B2BF;
+      --ink-faint:#76858F;
+      --rule:#2A353F;
+      --rule-soft:#212B34;
+      --accent:#57B5AD;
+      --accent-soft:#1E3A38;
+      --warn:#D97B75;
+      --warn-soft:#3A2422;
+      --good:#5FB68C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0E141A;
+    --surface:#161E26;
+    --surface-2:#1B242D;
+    --ink:#E4EBF1;
+    --ink-soft:#A3B2BF;
+    --ink-faint:#76858F;
+    --rule:#2A353F;
+    --rule-soft:#212B34;
+    --accent:#57B5AD;
+    --accent-soft:#1E3A38;
+    --warn:#D97B75;
+    --warn-soft:#3A2422;
+    --good:#5FB68C;
+  }
+
+  *{box-sizing:border-box}
+  h1,h2,h3{font-family:"Shippori Mincho","Yu Mincho",serif;text-wrap:balance;letter-spacing:.01em}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+  /* ---- header ---- */
+  header{padding:56px 0 34px;border-bottom:2px solid var(--ink)}
+  .eyebrow{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:14px;
+    font-family:"IBM Plex Mono",monospace;
+  }
+  h1{font-size:40px;line-height:1.35;font-weight:700;margin:0 0 16px}
+  .lede{font-size:16px;color:var(--ink-soft);max-width:62ch;margin:0}
+  .provenance{
+    margin-top:24px;font-size:12.5px;color:var(--ink-faint);
+    display:flex;flex-wrap:wrap;gap:6px 20px;
+  }
+  .provenance span{white-space:nowrap}
+
+  /* ---- funnel ---- */
+  .funnel{display:flex;flex-direction:column;gap:2px;margin:26px 0}
+  .fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);padding:14px 18px;flex-wrap:wrap}
+  .fbar{height:26px;background:var(--accent);opacity:.85;flex:none;border-radius:2px;min-width:3px;max-width:100%}
+  .fmeta{flex:1;min-width:0}
+  .fname{font-size:14px;font-weight:500}
+  .fnote{font-size:12px;color:var(--ink-faint);line-height:1.6}
+  .fval{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;flex:none;font-variant-numeric:tabular-nums}
+  .fstep.est{border-style:dashed;opacity:.85}
+  .fstep.est .fbar{background:var(--ink-faint)}
+
+  /* ---- good-list ---- */
+  .good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
+  .good-item{background:var(--surface);padding:20px}
+  .good-item h3{font-size:15px;margin:0 0 8px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
+  .good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+/* 「今日やること」ページのスタイル。sns/report_base.css の後に読まれる。
+
+   作りの方針: 上から順に、やること → 数字 → 真似する本。
+   説明文を置かない。毎日見るページなので、読ませずに見せる。 */
+
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    font-size:15.5px; line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px 80px}
+  header{padding:44px 0 20px;border-bottom:none}
+  header h1{font-size:30px;margin:0}
+  .eyebrow{margin-bottom:10px}
+
+  /* ---- 今日やること（1つ目） ---- */
+  .job{
+    background:var(--surface);border:1px solid var(--rule);
+    border-left:5px solid var(--accent);border-radius:5px;
+    padding:26px 28px;margin:6px 0 14px;
+  }
+  .job h2{
+    font-size:24px;margin:0 0 12px;font-weight:700;line-height:1.45;
+    font-family:"Zen Kaku Gothic New",sans-serif;
+  }
+  .jfig{
+    display:inline-block;font-family:"IBM Plex Mono",monospace;
+    font-size:13px;font-weight:600;color:var(--accent);
+    background:var(--accent-soft);border-radius:12px;padding:3px 12px;margin-bottom:12px;
+  }
+  .job p{margin:0;font-size:15px;color:var(--ink-soft);line-height:1.8}
+
+  /* ---- 次にやること ---- */
+  .jrest{list-style:none;margin:0 0 44px;padding:0;display:flex;flex-direction:column;gap:1px;
+    background:var(--rule);border:1px solid var(--rule);border-radius:5px;overflow:hidden}
+  .jrest li{background:var(--surface);padding:16px 22px}
+  .jrest b{font-size:15.5px;font-weight:700;display:inline}
+  .jrest .fig{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);
+    margin-left:10px;white-space:nowrap;
+  }
+  .jrest .how{display:block;font-size:13.5px;color:var(--ink-soft);margin-top:3px;line-height:1.7}
+
+  /* ---- 見出し ---- */
+  section{margin-top:44px}
+  h2.sec{
+    font-size:17px;margin:0 0 12px;font-weight:700;
+    display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    padding-bottom:9px;border-bottom:2px solid var(--ink);
+  }
+  h2.sec span{
+    font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+    color:var(--ink-faint);font-weight:400;letter-spacing:.03em;
+  }
+  section h2.sec:not(:first-child){margin-top:34px}
+
+  /* ---- 表 ---- */
+  .tw{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);border-radius:5px}
+  table{border-collapse:collapse;width:100%;min-width:460px;font-size:14px}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--rule-soft)}
+  thead th{
+    background:var(--surface-2);font-size:11px;color:var(--ink-faint);
+    font-weight:700;border-bottom:1px solid var(--rule);white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:var(--surface-2)}
+  td.num{font-family:"IBM Plex Mono",monospace;text-align:right;
+    font-variant-numeric:tabular-nums;white-space:nowrap}
+  td.num.big{font-size:16px;font-weight:600}
+  td.num.sub{color:var(--ink-faint);font-size:12.5px}
+  td a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule)}
+  td a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+  .metrics .c-name{font-weight:700;white-space:nowrap}
+  .metrics .c-name .x{
+    display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;
+    color:var(--ink-faint);font-weight:400;margin-top:1px;
+  }
+  .metrics tr.good .num.big{color:var(--good)}
+  .metrics tr.bad .num.big{color:var(--warn)}
+  .c-sig{
+    width:1%;text-align:center;font-size:17px;font-weight:600;
+    font-family:"IBM Plex Mono",monospace;
+  }
+  .c-sig.good{color:var(--good)} .c-sig.bad{color:var(--warn)}
+  .c-sig.flat,.c-sig.na{color:var(--ink-faint)}
+
+  /* 前の期間からの動き。判定（ふだんとの比較）とは別軸の小さな印 */
+  .delta{margin-left:5px;font-size:10.5px;vertical-align:1px}
+  .delta.up{color:var(--good)} .delta.down{color:var(--warn)}
+
+  .tag{
+    display:inline-block;margin-left:9px;padding:1px 8px;border-radius:10px;
+    background:var(--accent-soft);color:var(--accent);
+    font-size:10.5px;font-weight:700;vertical-align:1px;white-space:nowrap;
+  }
+  .empty{color:var(--ink-faint);font-size:13.5px;padding:14px 0}
+
+  /* ---- 決まりごと（畳んでおく） ---- */
+  details.note{margin-top:44px;font-size:12.5px;color:var(--ink-faint)}
+  details.note summary{cursor:pointer;color:var(--ink-soft);padding:6px 0}
+  details.note ul{margin:8px 0 0;padding-left:1.15em}
+  details.note li{margin-bottom:5px;line-height:1.7}
+
+  @media (max-width:640px){
+    .wrap{padding:0 16px 56px}
+    header h1{font-size:25px}
+    .job{padding:20px 18px}
+    .job h2{font-size:20px}
+    .jrest li{padding:14px 16px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">@mohrimakes ／ 2026-09-13 03:10</div>
+  <h1>今日やること</h1>
+</header>
+
+<div class="job">
+  <div class="jmain">
+    <h2>ストーリーズに、質問ボックスを1日1本貼る</h2>
+    <div class="jfig">いま272人しか見ていない（目標 334人）</div>
+    <p>本数は増やさない。指1本で答えられるものを1本混ぜて、来た答えを翌日に紹介する。</p>
+  </div>
+</div>
+
+<ul class="jrest"><li><b>キャプションの1行目に、送る相手を書く</b><span class="fig">共有率 0.1%（まだ1本も入れていない）</span><span class="how">「目の下のクマには3種類あります」→「親にこれ教えてあげてください。目の下のクマ、年代で原因が違います」。</span></li><li><b>撮る前に、冒頭のひと言だけ先に決める</b><span class="fig">平均視聴 13.3秒（当たりは 20秒から）</span><span class="how">「一般の方が注意しなければならない、◯◯の話です」の形に当てはめてから中身を考える。</span></li></ul>
+
+<section>
+  <h2 class="sec">いまの数字<span>直近30日・リール14本</span></h2>
+  <div class="tw"><table class="metrics"><thead><tr>
+    <th>　</th><th class="num">いま</th><th class="num">その前</th><th class="num">ふだん</th><th>　</th>
+  </tr></thead><tbody><tr class="good">
+      <td class="c-name">保存率<span class="x">0.5%超え 3本</span></td>
+      <td class="num big">0.23%<span class="delta up">▲</span></td>
+      <td class="num sub">0.13%</td>
+      <td class="num sub">0.18%</td>
+      <td class="c-sig good">○</td>
+    </tr><tr class="good">
+      <td class="c-name">共有率</td>
+      <td class="num big">0.1%<span class="delta up">▲</span></td>
+      <td class="num sub">0.04%</td>
+      <td class="num sub">0.06%</td>
+      <td class="c-sig good">○</td>
+    </tr><tr class="good">
+      <td class="c-name">平均視聴<span class="x">20秒超え 1本</span></td>
+      <td class="num big">13.3秒<span class="delta down">▼</span></td>
+      <td class="num sub">16.3秒</td>
+      <td class="num sub">12.2秒</td>
+      <td class="c-sig good">○</td>
+    </tr><tr class="bad">
+      <td class="c-name">スキップ率</td>
+      <td class="num big">58%<span class="delta down">▲</span></td>
+      <td class="num sub">43.9%</td>
+      <td class="num sub">54.2%</td>
+      <td class="c-sig bad">×</td>
+    </tr><tr class="good">
+      <td class="c-name">いいね率</td>
+      <td class="num big">0.93%<span class="delta up">▲</span></td>
+      <td class="num sub">0.46%</td>
+      <td class="num sub">0.72%</td>
+      <td class="c-sig good">○</td>
+    </tr><tr class="bad">
+      <td class="c-name">ストーリーズ閲覧率<span class="x">1本目 272人</span></td>
+      <td class="num big">1.62%</td>
+      <td class="num sub">—</td>
+      <td class="num sub">2%</td>
+      <td class="c-sig bad">×</td>
+    </tr><tr class="bad">
+      <td class="c-name">フォロワーに届いた割合<span class="x">1本あたり</span></td>
+      <td class="num big">3.5%</td>
+      <td class="num sub">—</td>
+      <td class="num sub">10%</td>
+      <td class="c-sig bad">×</td>
+    </tr><tr class="good">
+      <td class="c-name">フォローされた割合<span class="x">プロフを見た人のうち</span></td>
+      <td class="num big">6%</td>
+      <td class="num sub">—</td>
+      <td class="num sub">4%</td>
+      <td class="c-sig good">○</td>
+    </tr></tbody></table></div>
+</section>
+
+<section>
+  <h2 class="sec">当たった本<span>この30日</span></h2>
+  <div class="tw"><table><thead><tr><th>投稿</th><th class="num">保存率</th><th class="num">平均視聴</th><th class="num">再生</th></tr></thead><tbody><tr><td><a href="https://www.instagram.com/reel/DdGZL5zv2qf/" target="_blank" rel="noopener">【40代必見】将来老けないために「やっておけ！」3選💡</a><span class="tag">保存</span></td><td class="num big">0.71%</td><td class="num">17.8秒</td><td class="num">3,510</td></tr><tr><td><a href="https://www.instagram.com/reel/DcnkLtlPq7d/" target="_blank" rel="noopener">クマ取りのカウンセリングで「絶対に聞いたほうがいいこと」3選⚠️</a><span class="tag">保存</span></td><td class="num big">0.66%</td><td class="num">15.7秒</td><td class="num">2,581</td></tr><tr><td><a href="https://www.instagram.com/reel/DdBQwgmP7tX/" target="_blank" rel="noopener">表ハムラ法で外反になりやすい人の共通点💡</a><span class="tag">保存</span></td><td class="num big">0.54%</td><td class="num">13.2秒</td><td class="num">1,867</td></tr><tr><td><a href="https://www.instagram.com/reel/DcS5Pj-vjxR/" target="_blank" rel="noopener">「イボって何種類あるの？」実はアンミカ状態なんです😂</a><span class="tag">視聴</span></td><td class="num big">0.07%</td><td class="num">23.5秒</td><td class="num">29,311</td></tr></tbody></table></div>
+</section>
+
+<section>
+  <h2 class="sec">真似する本<span>1年で一番保存された5本</span></h2>
+  <div class="tw"><table><thead><tr><th>投稿</th><th class="num">保存率</th><th class="num">平均視聴</th><th class="num">再生</th></tr></thead><tbody><tr><td><a href="https://www.instagram.com/reel/DPQsOLakUzN/" target="_blank" rel="noopener">【必見‼️】一般の方が注意しなればならないクマ治療界隈のフェイク最新版【絶対に見て‼️】</a></td><td class="num big">1.03%</td><td class="num">41.0秒</td><td class="num">18,228</td></tr><tr><td><a href="https://www.instagram.com/reel/DdGZL5zv2qf/" target="_blank" rel="noopener">【40代必見】将来老けないために「やっておけ！」3選💡</a></td><td class="num big">0.71%</td><td class="num">17.8秒</td><td class="num">3,510</td></tr><tr><td><a href="https://www.instagram.com/reel/DcnkLtlPq7d/" target="_blank" rel="noopener">クマ取りのカウンセリングで「絶対に聞いたほうがいいこと」3選⚠️</a></td><td class="num big">0.66%</td><td class="num">15.7秒</td><td class="num">2,581</td></tr><tr><td><a href="https://www.instagram.com/reel/DdBQwgmP7tX/" target="_blank" rel="noopener">表ハムラ法で外反になりやすい人の共通点💡</a></td><td class="num big">0.54%</td><td class="num">13.2秒</td><td class="num">1,867</td></tr><tr><td><a href="https://www.instagram.com/reel/DYoxoM-RZMm/" target="_blank" rel="noopener">「話題の&quot;まぶたの目薬&quot;アップニーク、買う前にこれだけは知ってください」</a></td><td class="num big">0.50%</td><td class="num">11.3秒</td><td class="num">3,609</td></tr></tbody></table></div>
+  <h2 class="sec">真似する本<span>1年で一番送られた5本</span></h2>
+  <div class="tw"><table><thead><tr><th>投稿</th><th class="num">共有率</th><th class="num">平均視聴</th><th class="num">再生</th></tr></thead><tbody><tr><td><a href="https://www.instagram.com/reel/DQv5CyNEQuT/" target="_blank" rel="noopener">——クマ治療で運命が変わる！？</a></td><td class="num big">0.56%</td><td class="num">5.7秒</td><td class="num">2,321</td></tr><tr><td><a href="https://www.instagram.com/reel/DWyIgd3ETfQ/" target="_blank" rel="noopener">ヤバいよヤバいよ‼️でお馴染み、出川哲郎さんのクマの倒し方🐻</a></td><td class="num big">0.51%</td><td class="num">6.9秒</td><td class="num">2,152</td></tr><tr><td><a href="https://www.instagram.com/reel/DWvhREIPV6D/" target="_blank" rel="noopener">Real Value Girl小島みゆとYouTubeコラボ✨</a></td><td class="num big">0.42%</td><td class="num">5.7秒</td><td class="num">2,147</td></tr><tr><td><a href="https://www.instagram.com/reel/DTfBg_JlI25/" target="_blank" rel="noopener">【目の下のたるみ】クマ治療した結果...</a></td><td class="num big">0.37%</td><td class="num">8.7秒</td><td class="num">3,753</td></tr><tr><td><a href="https://www.instagram.com/reel/DcVeFuYvBFU/" target="_blank" rel="noopener">◯◯クマから治し始めた人、たぶん遠回りしています。</a></td><td class="num big">0.28%</td><td class="num">11.4秒</td><td class="num">2,121</td></tr></tbody></table></div>
+</section>
+
+<details class="note">
+  <summary>数字の決まりごと</summary>
+  <ul>
+    <li>率は1本ごとに出した中央値。分母は再生（リーチではない）。</li>
+    <li>「ふだん」＝直近1年の中央値。他所の目安とは分母も年代も違うので比べない。</li>
+    <li>ストーリーズはその日の1本目だけ。2本目以降は必ず落ちるので混ぜない。</li>
+    <li>フォローされた割合は純増で計算。実際はもう少し高い。</li>
+    <li>社内KPI（予約率・来院率・成約率・客単価）はこのページに載せない。</li>
+  </ul>
+</details>
+
+</div>
+</body>
+</html>
