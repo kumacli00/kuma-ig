@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>今日の企画｜@mohrimakes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>/* ============================================================
+   診断レポート 共通スタイル（x / instagram）
+
+   各媒体の gen_report.py が、このファイル → 媒体の report.css の順に
+   読んで <style> に展開する。順番が意味を持つので入れ替えないこと。
+
+   ここに置いてよいのは「x と instagram で完全に同一」かつ
+   「媒体側のルールを上書きする必要がない」ものだけ。
+   媒体側が後から読まれるので、ここのルールは常に負ける側になる。
+
+   - 余白・フォントサイズ・角丸・box-shadow は媒体ごとに違う → 各 report.css
+   - --shadow は媒体ごとに違うので、ここでは定義しない（各 report.css で3箇所）
+   - @media (max-width:640px) は媒体側のルールを上書きするので各 report.css
+   - .summary 一式は x（.sum-cols/.sum-list）と instagram（.sum-table）で
+     マークアップ自体が別物なので共通化していない
+   - tiktok は配色・変数名・クラス名がまるごと別の設計なので参加していない
+     （詳細は sns/report_audit_2026-09-08.md）
+   ============================================================ */
+
+  :root{
+    --ground:#EEF1F4;
+    --surface:#FFFFFF;
+    --surface-2:#F6F8FA;
+    --ink:#16202B;
+    --ink-soft:#4B5C6B;
+    --ink-faint:#7C8B99;
+    --rule:#D7DFE6;
+    --rule-soft:#E7EDF2;
+    --accent:#1B6B66;
+    --accent-soft:#D6E7E5;
+    --warn:#A63A36;
+    --warn-soft:#F3DEDD;
+    --good:#2A6F52;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0E141A;
+      --surface:#161E26;
+      --surface-2:#1B242D;
+      --ink:#E4EBF1;
+      --ink-soft:#A3B2BF;
+      --ink-faint:#76858F;
+      --rule:#2A353F;
+      --rule-soft:#212B34;
+      --accent:#57B5AD;
+      --accent-soft:#1E3A38;
+      --warn:#D97B75;
+      --warn-soft:#3A2422;
+      --good:#5FB68C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0E141A;
+    --surface:#161E26;
+    --surface-2:#1B242D;
+    --ink:#E4EBF1;
+    --ink-soft:#A3B2BF;
+    --ink-faint:#76858F;
+    --rule:#2A353F;
+    --rule-soft:#212B34;
+    --accent:#57B5AD;
+    --accent-soft:#1E3A38;
+    --warn:#D97B75;
+    --warn-soft:#3A2422;
+    --good:#5FB68C;
+  }
+
+  *{box-sizing:border-box}
+  h1,h2,h3{font-family:"Shippori Mincho","Yu Mincho",serif;text-wrap:balance;letter-spacing:.01em}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+
+  /* ---- header ---- */
+  header{padding:56px 0 34px;border-bottom:2px solid var(--ink)}
+  .eyebrow{
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin-bottom:14px;
+    font-family:"IBM Plex Mono",monospace;
+  }
+  h1{font-size:40px;line-height:1.35;font-weight:700;margin:0 0 16px}
+  .lede{font-size:16px;color:var(--ink-soft);max-width:62ch;margin:0}
+  .provenance{
+    margin-top:24px;font-size:12.5px;color:var(--ink-faint);
+    display:flex;flex-wrap:wrap;gap:6px 20px;
+  }
+  .provenance span{white-space:nowrap}
+
+  /* ---- funnel ---- */
+  .funnel{display:flex;flex-direction:column;gap:2px;margin:26px 0}
+  .fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);padding:14px 18px;flex-wrap:wrap}
+  .fbar{height:26px;background:var(--accent);opacity:.85;flex:none;border-radius:2px;min-width:3px;max-width:100%}
+  .fmeta{flex:1;min-width:0}
+  .fname{font-size:14px;font-weight:500}
+  .fnote{font-size:12px;color:var(--ink-faint);line-height:1.6}
+  .fval{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;flex:none;font-variant-numeric:tabular-nums}
+  .fstep.est{border-style:dashed;opacity:.85}
+  .fstep.est .fbar{background:var(--ink-faint)}
+
+  /* ---- good-list ---- */
+  .good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
+  .good-item{background:var(--surface);padding:20px}
+  .good-item h3{font-size:15px;margin:0 0 8px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
+  .good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+/* 今日の企画 固有スタイル
+
+   sns/report_base.css の "後" に読まれる。配色（CSS変数）と header は共通側にある。
+   ここは「1本の企画を、上から読めば撮れる順に並べる」ための体裁だけを置く。 */
+
+  :root{ --shadow:0 1px 2px rgba(22,32,43,.04); }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --shadow:0 1px 2px rgba(0,0,0,.25); }
+  }
+  :root[data-theme="dark"]{ --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3); }
+
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    font-size:15.5px; line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px 96px}
+  header{padding:52px 0 26px}
+  .lede{max-width:64ch}
+  code{
+    font-family:"IBM Plex Mono",monospace;font-size:.92em;
+    background:var(--surface-2);border:1px solid var(--rule-soft);
+    border-radius:3px;padding:1px 5px;
+  }
+
+  /* ---- 日付の切り替え ---- */
+  .tabs{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px}
+  .tab{
+    font-family:"IBM Plex Mono",monospace;font-size:12px;
+    padding:6px 12px;border-radius:14px;cursor:pointer;
+    background:var(--surface);color:var(--ink-soft);
+    border:1px solid var(--rule);
+  }
+  .tab:hover{border-color:var(--accent);color:var(--accent)}
+  .tab.on{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+
+  /* ---- その日の見出し ---- */
+  .daybar{
+    display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+    margin:34px 0 18px;padding-bottom:12px;border-bottom:2px solid var(--ink);
+  }
+  .daybar b{font-family:"IBM Plex Mono",monospace;font-size:17px}
+  .daybar span{font-size:12.5px;color:var(--ink-faint)}
+  .daybar .nums{margin-left:auto;font-family:"IBM Plex Mono",monospace}
+
+  .warn{
+    background:var(--warn-soft);border:1px solid var(--warn);border-radius:4px;
+    padding:14px 18px;margin-bottom:18px;font-size:13.5px;color:var(--ink);
+  }
+  .warn b{display:block;margin-bottom:5px;color:var(--warn)}
+  .warn ul{margin:0;padding-left:1.15em}
+
+  /* ---- 企画1本 ---- */
+  .idea{
+    background:var(--surface);border:1px solid var(--rule);border-radius:5px;
+    padding:24px 26px;margin-bottom:16px;box-shadow:var(--shadow);
+  }
+  .ihead{display:flex;gap:16px;align-items:flex-start;margin-bottom:16px}
+  .no{
+    flex:none;width:30px;height:30px;border-radius:50%;
+    background:var(--ink);color:var(--ground);
+    font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;margin-top:3px;
+  }
+  .ititle{min-width:0}
+  .idea h3{font-size:21px;margin:0 0 7px;font-weight:700;line-height:1.45}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;color:var(--ink-faint)}
+  .aim{
+    padding:1px 9px;border-radius:10px;font-weight:700;
+    background:var(--accent-soft);color:var(--accent);
+  }
+  .aim-共有{background:var(--warn-soft);color:var(--warn)}
+  .aim-保存{background:var(--accent-soft);color:var(--accent)}
+
+  .k{
+    display:block;font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;letter-spacing:.1em;color:var(--ink-faint);
+    font-weight:700;margin-bottom:5px;
+  }
+
+  /* 冒頭の言葉は、そのまま口に出せる形で置く。ここが企画の本体 */
+  .say{
+    background:var(--surface-2);border-left:3px solid var(--accent);
+    border-radius:0 4px 4px 0;padding:13px 16px;margin-bottom:10px;
+  }
+  .say p{margin:0;font-size:16px;line-height:1.7;font-weight:500}
+  .say.send{border-left-color:var(--warn)}
+  .say.send p{font-size:14.5px;font-weight:400;color:var(--ink-soft)}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:18px 0 0}
+  .col p{margin:0 0 14px;font-size:14px;color:var(--ink-soft);line-height:1.8}
+  .col .cap{
+    background:var(--surface-2);border:1px solid var(--rule-soft);
+    border-radius:4px;padding:10px 13px;font-size:13.5px;white-space:pre-wrap;
+  }
+  ol.flow{margin:0;padding-left:1.3em}
+  ol.flow li{font-size:14px;margin-bottom:7px;line-height:1.75}
+  ol.flow li::marker{font-family:"IBM Plex Mono",monospace;color:var(--ink-faint);font-size:12px}
+
+  /* 根拠と注意は畳んでおく。撮るのに要るものだけを開いた状態で見せる */
+  .foot{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule-soft)}
+  .foot summary{
+    cursor:pointer;font-size:12px;color:var(--ink-faint);
+    font-family:"IBM Plex Mono",monospace;letter-spacing:.04em;
+  }
+  .foot summary:hover{color:var(--accent)}
+  .fbody{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:14px}
+  .foot p{margin:0;font-size:13px;color:var(--ink-soft);line-height:1.75}
+  .foot .care p{color:var(--warn)}
+
+  /* 1本目だけ印をつける。どれから撮るか迷わせない */
+  .no.first{background:var(--accent)}
+  .pick{
+    display:inline-block;margin-left:10px;padding:2px 10px;border-radius:11px;
+    background:var(--accent);color:var(--surface);
+    font-size:11px;font-weight:700;vertical-align:3px;white-space:nowrap;
+    font-family:"Zen Kaku Gothic New",sans-serif;
+  }
+
+  .empty{color:var(--ink-faint);padding:40px 0}
+
+  .caveat{
+    margin-top:60px;padding:18px 22px;background:var(--surface-2);
+    border:1px solid var(--rule);border-radius:3px;font-size:12.5px;color:var(--ink-soft);
+  }
+  .caveat summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--ink)}
+  .caveat ul{margin:12px 0 0;padding-left:1.15em}
+  .caveat li{margin-bottom:8px;max-width:78ch}
+  .caveat li:last-child{margin-bottom:0}
+
+  @media (max-width:720px){
+    .cols,.fbody{grid-template-columns:1fr;gap:14px}
+    .daybar .nums{margin-left:0;width:100%}
+    .idea{padding:20px 18px}
+    .idea h3{font-size:19px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">@mohrimakes ／ 毎朝5本</div>
+  <h1>撮る順に、5本。</h1>
+  <p class="lede">上から順に効きます。1本目から撮ってください。</p>
+  <div class="tabs"><button class="tab on" data-go="2026-09-13">2026-09-13</button></div>
+</header>
+
+
+<section class="day" data-day="2026-09-13" >
+  <div class="daybar">
+    <b>2026-09-13</b>
+    <span>狙いの内訳 共有3本／保存1本／視聴時間1本</span>
+    <span class="nums">保存0.23% ／ 共有0.10% ／ 視聴13.3秒</span>
+  </div>
+  
+  
+<article class="idea">
+  <div class="ihead">
+    <span class="no first">1</span>
+    <div class="ititle">
+      <h3>疲れてないのに疲れて見える人の共通点<span class="pick">まず1本目</span></h3>
+      <div class="meta">
+        <span class="aim aim-共有">共有狙い</span>
+        <span>クイズ・問いかけ</span>
+        <span>30代〜40代で「しっかり寝たのに周りから疲労感を心配される」人</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="say"><span class="k">冒頭で言う</span><p>「「今日疲れてる？」ってよく言われる方、実は寝不足のせいじゃないかもしれません。」</p></div>
+  <div class="say send"><span class="k">送る相手の一言</span><p>「疲れてないのに疲れてる？と聞かれがちな同僚や友人」に送ってあげてください</p></div>
+
+  <div class="cols">
+    <div class="col">
+      <span class="k">流れ</span>
+      <ol class="flow"><li>院長が「疲れてる？と聞かれる原因は寝不足ではなく目の下の段差影であること」を提示する</li><li>模型にペンライトを当て、上からの照明で目の下に黒い影が落ちる様子を実演する</li><li>皮膚の色ではなく立体的なふくらみが影を作っている仕組みを種明かしする</li><li>マッサージで悪化させず、影の原因を見極める大切さを伝える</li><li>「周りにこの悩みを持っている方がいたらシェアして教えてあげてください」と結ぶ</li></ol>
+    </div>
+    <div class="col">
+      <span class="k">演出</span>
+      <p>院長が診察室でペンライトを持ち、頭上照明を模して模型の目元に影を作る実験風の画角。影が出た瞬間に画面をアップにし、テロップで「原因は影」と強調。</p>
+      <span class="k">キャプションの冒頭</span>
+      <p class="cap">「疲れてないのに疲れてる？」とよく聞かれるお友達はいませんか？
+実はそれ、寝不足ではなく目の下の構造による影が原因かもしれません。</p>
+    </div>
+  </div>
+
+  <details class="foot">
+    <summary>根拠と、気をつける点</summary>
+    <div class="fbody">
+      <div><span class="k">なぜ効くか</span><p>「人に送られた本の手本」にある『◯◯クマから治し始めた人、たぶん遠回りしています。（共有率0.28）』や『クマ治療で運命が変わる！？（共有率0.56）』を踏まえ、誰かの顔が浮かぶ「周囲から疲れて見えると言われる悩み」をフックにして共有を促すため。</p></div>
+      <div class="care"><span class="k">気をつける点</span><p>「寝不足を解消すれば改善する」等の断定を避け、ふくらみによる影で疲れた印象に見えやすいメカニズムの説明に留める。</p></div>
+    </div>
+  </details>
+</article>
+<article class="idea">
+  <div class="ihead">
+    <span class="no">2</span>
+    <div class="ititle">
+      <h3>クマを隠そうとして逆に目立つNGメイク</h3>
+      <div class="meta">
+        <span class="aim aim-共有">共有狙い</span>
+        <span>禁止・警告</span>
+        <span>20代後半〜40代で、クマを隠すためにファンデやコンシーラーを厚塗りして崩れに悩む女性</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="say"><span class="k">冒頭で言う</span><p>「コンシーラーを重ねれば重ねるほど、夕方に目の下がシワシワになって老けて見えていませんか？」</p></div>
+  <div class="say send"><span class="k">送る相手の一言</span><p>「クマを隠そうと毎日メイクを頑張っている友達」に送ってあげてください</p></div>
+
+  <div class="cols">
+    <div class="col">
+      <span class="k">流れ</span>
+      <ol class="flow"><li>院長が手の甲に濃いコンシーラーを厚塗りし、皮膚を動かしてヨレる様子を実演する</li><li>色を消そうとするほど「段差」が強調されて小じわに入り込むメカニズムを解説する</li><li>ふくらみによる影はメイクで埋めることが難しい理由を模型で説明する</li><li>厚塗りをやめて立体感を整える視点を持つことの重要性を提示する</li><li>「メイク直しで悩んでいるお友達に共有して教えてあげてください」と呼びかける</li></ol>
+    </div>
+    <div class="col">
+      <span class="k">演出</span>
+      <p>院長の手元アップでコンシーラーのヨレを検証するビジュアル。ごとに手元アップと院長の解説バストアップを切り替え、テンポよく見せる。</p>
+      <span class="k">キャプションの冒頭</span>
+      <p class="cap">毎朝コンシーラーでクマを必死に隠しているお友達に教えてあげてください。
+実は厚塗りするほど夕方の小じわや影が目立ってしまうことがあります。</p>
+    </div>
+  </div>
+
+  <details class="foot">
+    <summary>根拠と、気をつける点</summary>
+    <div class="fbody">
+      <div><span class="k">なぜ効くか</span><p>「当たった本が1言目に実際に言っていた言葉」にある『頬の毛穴が汚すぎて辛いです〜（共有率0.11）』の共感型フックと、日常の失敗あるあるから「友達に教えてあげたい」と思わせる共有導線を組み合わせたため。</p></div>
+      <div class="care"><span class="k">気をつける点</span><p>特定の化粧品ブランドを否定せず、立体的なふくらみに対してペースト状のメイクを重ねる物理的なヨレやすさの説明に徹する。</p></div>
+    </div>
+  </details>
+</article>
+<article class="idea">
+  <div class="ihead">
+    <span class="no">3</span>
+    <div class="ititle">
+      <h3>写真の他撮りで目の下が暗い人の理由</h3>
+      <div class="meta">
+        <span class="aim aim-共有">共有狙い</span>
+        <span>指示語で引っかける</span>
+        <span>20代〜30代女性で、集合写真や他撮り写真で目元の影が気になり始めた人</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="say"><span class="k">冒頭で言う</span><p>「友達と撮った写真を見て、「あれ、私だけ目の下が暗い？」ってギクッとしたことありませんか？」</p></div>
+  <div class="say send"><span class="k">送る相手の一言</span><p>「他撮り写真の写りを気にしているお友達」に送ってあげてください</p></div>
+
+  <div class="cols">
+    <div class="col">
+      <span class="k">流れ</span>
+      <ol class="flow"><li>スマホカメラの画面を見せながら、自撮り（正面光）と他撮り（上からの自然光）での見え方の違いを実演する</li><li>正面から見ると目立たない段差が、角度によって濃い影として写り込む理由を解説する</li><li>自分で鏡を見る時と、人から見られる時・写真での見え方のギャップを検証する</li><li>自分の目元がどのタイプかチェックする方法を伝える</li><li>「写真写りを気にしているお友達に送ってあげてください」と結ぶ</li></ol>
+    </div>
+    <div class="col">
+      <span class="k">演出</span>
+      <p>院長が実際にスマホを持ってカメラ画角を切り替える動きのある構図。照明の位置を変えて目元の影の出方をリアルタイムで再現する実演演出。</p>
+      <span class="k">キャプションの冒頭</span>
+      <p class="cap">みんなで撮った写真を見て目の下の影を気にしているお友達はいませんか？
+自撮りでは気づきにくい「他撮りでの影の出方」について解説しました。</p>
+    </div>
+  </div>
+
+  <details class="foot">
+    <summary>根拠と、気をつける点</summary>
+    <div class="fbody">
+      <div><span class="k">なぜ効くか</span><p>「人に送られた本の手本」の『【目の下のたるみ】クマ治療した結果...（共有率0.37）』のように、ビジュアルでの共感性が高く「これ私たちのあるあるだよね」とDMで送り合えるテーマであるため。</p></div>
+      <div class="care"><span class="k">気をつける点</span><p>特になし。写真の光の当たり方と目元の陰影の出方についての解説。</p></div>
+    </div>
+  </details>
+</article>
+<article class="idea">
+  <div class="ihead">
+    <span class="no">4</span>
+    <div class="ititle">
+      <h3>目元の相談前に自分で見るべき３つの確認</h3>
+      <div class="meta">
+        <span class="aim aim-保存">保存狙い</span>
+        <span>依頼形</span>
+        <span>クマ取りや目元治療を考え始めており、失敗したくない30代〜50代</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="say"><span class="k">冒頭で言う</span><p>「目元のカウンセリングに行く前に、ご自身の手鏡でこれだけは確認しておいてください。」</p></div>
+  <div class="say send"><span class="k">送る相手の一言</span><p>目元の治療を検討し始めたご自身のために保存しておいてください</p></div>
+
+  <div class="cols">
+    <div class="col">
+      <span class="k">流れ</span>
+      <ol class="flow"><li>院長が手鏡を持ち、患者目線でチェックすべき3つのポイントを実演する</li><li>チェック1：上を向いた時にふくらみが引っ込むかどうか（脂肪の動き）</li><li>チェック2：指で頬を軽く持ち上げた時に影が薄くなるか（皮膚のたるみ）</li><li>チェック3：下まぶたを優しく引っ張った時に色が変わるか（血行・皮膚の色味）</li><li>「自分のタイプを知ってから相談に行くと納得度が変わります」とまとめる</li><li>「カウンセリング当日に見返せるよう保存しておいてください」とCTA</li></ol>
+    </div>
+    <div class="col">
+      <span class="k">演出</span>
+      <p>院長自身が鏡を持ちながら顔の角度を変えたり指で触れる動作を実演。画面右側に「チェック①・②・③」のチェックリストテロップを固定表示し、保存して見返したくなるデザインにする。</p>
+      <span class="k">キャプションの冒頭</span>
+      <p class="cap">目元のカウンセリングに行く前に、まずは自分でチェックしておきませんか？
+後から見返せるように「保存」して鏡の前で確認してみてください。</p>
+    </div>
+  </div>
+
+  <details class="foot">
+    <summary>根拠と、気をつける点</summary>
+    <div class="fbody">
+      <div><span class="k">なぜ効くか</span><p>「保存された本の手本」で高数値を記録した『カウンセリングで絶対に聞いたほうがいいこと3選（保存率0.66）』の「判断基準をあげる型」を直近実績から踏襲し、保存率を高める構成にしたため。</p></div>
+      <div class="care"><span class="k">気をつける点</span><p>自己診断で断定させず「医師の診察時に状態を正しく伝えるためのセルフチェック」という位置づけを明記する。</p></div>
+    </div>
+  </details>
+</article>
+<article class="idea">
+  <div class="ihead">
+    <span class="no">5</span>
+    <div class="ititle">
+      <h3>目の下のコレただのクマと思ってない？</h3>
+      <div class="meta">
+        <span class="aim aim-視聴時間">視聴時間狙い</span>
+        <span>指示語で引っかける</span>
+        <span>目の下のふくらみやポツポツが年々気になってきている全年代</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="say"><span class="k">冒頭で言う</span><p>「みなさん、目の下にできたこれ、単なる寝不足のクマだと思っていませんか？」</p></div>
+  <div class="say send"><span class="k">送る相手の一言</span><p>目の下にポツポツや独特のふくらみがある家族や友達に教えてあげてください</p></div>
+
+  <div class="cols">
+    <div class="col">
+      <span class="k">流れ</span>
+      <ol class="flow"><li>院長が目元の拡大イラストや模型を指差し、「クマに見えて実は違うもの」を提示する</li><li>「単なる脂肪のふくらみ」「皮膚のポツポツ（汗管腫など）」「たるみによる段差」の3つを比較する</li><li>それぞれの見分け方を模型を使いながら順番に種明かししていく</li><li>自己流でマッサージやクリームを塗っても変化を感じにくい理由を解説する</li><li>正しく見極めて適切なアプローチを選ぶ大切さを伝えて最後まで維持させる</li></ol>
+    </div>
+    <div class="col">
+      <span class="k">演出</span>
+      <p>冒頭で院長が指差す患部イラストにクエスチョンマークを配置。1つずつフリップや模型のパーツをめくりながら解説する「種明かし形式」で画面展開をテンポよく切り替える。</p>
+      <span class="k">キャプションの冒頭</span>
+      <p class="cap">目の下のポツポツやふくらみ、諦めていませんか？
+実はクマ以外の原因が隠れているケースも少なくありません。</p>
+    </div>
+  </div>
+
+  <details class="foot">
+    <summary>根拠と、気をつける点</summary>
+    <div class="fbody">
+      <div><span class="k">なぜ効くか</span><p>「当たった本が1言目に実際に言っていた言葉」で最も平均視聴秒が長かった『その白いポツポツ〜（23.・再生3.1万）』および『目の下のこのブツブツ、正体知ってますか？（20.・再生12.5万）』の「指示語フック＋種明かし構成」を完全再現し、離脱を防ぐため。</p></div>
+      <div class="care"><span class="k">気をつける点</span><p>疾患名や治療効果を断定せず、「状態によって見分け方や適したアプローチが異なる」という啓蒙に留める。</p></div>
+    </div>
+  </details>
+</article>
+</section>
+
+<details class="caveat">
+  <summary>この企画の作り方</summary>
+  <ul>
+    <li><b>うちの実測が一番の材料です。</b>保存された本・人に送られた本・当たった本の冒頭の実台詞から作っています。</li>
+    <li>他院の数字はApifyで月1回取ったぶんです。毎日は取り直しません（無料枠が月$5のため）。</li>
+    <li>「いま流行っている型」は、検索つきのGeminiと、インスタ運用チャンネルが直近に出した回のタイトルから見ています。
+        検索の無料枠が空いていない日は、手元の材料だけで作ります（その日は企画の根拠が自社寄りになります）。</li>
+    <li>効果を断定する言い回し・秒数の表記・直近の企画との重複は、機械で弾いてから出しています。
+        それでも残ったものは各日の先頭に赤字で出ます。<b>最後は人の目で見てください。</b></li>
+    <li>先生に出す前に <code>/mouri-check</code>、もう一周揉むなら <code>/kikaku</code> を使ってください。</li>
+  </ul>
+</details>
+
+</div>
+<script>
+document.querySelectorAll('.tab').forEach(function(b){
+  b.addEventListener('click', function(){
+    var go = b.dataset.go;
+    document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on', x === b); });
+    document.querySelectorAll('.day').forEach(function(s){ s.hidden = (s.dataset.day !== go); });
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+});
+</script>
+</body>
+</html>
