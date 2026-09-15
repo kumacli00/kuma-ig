@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="theme-glow">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,160 +7,380 @@
 <title>クマクリ Instagram 診断</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap">
 <style>/* ============================================================
-   診断レポート 共通スタイル（x / instagram）
+   クマクリ ダッシュボード 共通スタイル（全ページの土台）
 
-   各媒体の gen_report.py が、このファイル → 媒体の report.css の順に
-   読んで <style> に展開する。順番が意味を持つので入れ替えないこと。
+   どの gen_*.py も、まずこのファイルを <style> に展開してから
+   ページ固有の CSS を後ろに足す。順番が意味を持つので入れ替えないこと。
 
-   ここに置いてよいのは「x と instagram で完全に同一」かつ
-   「媒体側のルールを上書きする必要がない」ものだけ。
-   媒体側が後から読まれるので、ここのルールは常に負ける側になる。
+   ■ 2つの見た目（参考画像に合わせて 2026-09-15 に決めた）
+     1. 明るい管理画面（既定）
+        薄いグレーの地に白いタイル。数字は色つきで大きく。
+        上に .topbar があるページ（業務・経営・ネタ・議事録・KPI）は
+        .topbar が左の濃い色のサイドバーになる（ナビ・検索・絞り込みはそこに入る）。
+     2. ダークの光る版（<html class="theme-glow">）
+        紺の地に紫〜オレンジの光。診断レポート4本（IG / X / TikTok / YouTube）で使う。
+        色トークンを丸ごと差し替えているだけなので、部品のクラスは共通。
 
-   - 余白・フォントサイズ・角丸・box-shadow は媒体ごとに違う → 各 report.css
-   - --shadow は媒体ごとに違うので、ここでは定義しない（各 report.css で3箇所）
-   - @media (max-width:640px) は媒体側のルールを上書きするので各 report.css
-   - .summary 一式は x（.sum-cols/.sum-list）と instagram（.sum-table）で
-     マークアップ自体が別物なので共通化していない
-   - tiktok は配色・変数名・クラス名がまるごと別の設計なので参加していない
-     （詳細は sns/report_audit_2026-09-08.md）
+   ■ 書体
+     見出し・本文・数字すべてゴシック（Noto Sans JP）。明朝は使わない（読みにくい）。
+     等幅（IBM Plex Mono）はコードだけ。
+
+   ■ 旧変数の別名
+     各ページの古い CSS（--plane / --card / --s1 など）がそのまま動くよう、
+     末尾で新しい色に橋渡ししている。新しく書く CSS は新しい名前を使うこと。
    ============================================================ */
 
-  :root{
-    --ground:#EEF1F4;
-    --surface:#FFFFFF;
-    --surface-2:#F6F8FA;
-    --ink:#16202B;
-    --ink-soft:#4B5C6B;
-    --ink-faint:#7C8B99;
-    --rule:#D7DFE6;
-    --rule-soft:#E7EDF2;
-    --accent:#1B6B66;
-    --accent-soft:#D6E7E5;
-    --warn:#A63A36;
-    --warn-soft:#F3DEDD;
-    --good:#2A6F52;
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --ground:#0E141A;
-      --surface:#161E26;
-      --surface-2:#1B242D;
-      --ink:#E4EBF1;
-      --ink-soft:#A3B2BF;
-      --ink-faint:#76858F;
-      --rule:#2A353F;
-      --rule-soft:#212B34;
-      --accent:#57B5AD;
-      --accent-soft:#1E3A38;
-      --warn:#D97B75;
-      --warn-soft:#3A2422;
-      --good:#5FB68C;
-    }
-  }
-  :root[data-theme="dark"]{
-    --ground:#0E141A;
-    --surface:#161E26;
-    --surface-2:#1B242D;
-    --ink:#E4EBF1;
-    --ink-soft:#A3B2BF;
-    --ink-faint:#76858F;
-    --rule:#2A353F;
-    --rule-soft:#212B34;
-    --accent:#57B5AD;
-    --accent-soft:#1E3A38;
-    --warn:#D97B75;
-    --warn-soft:#3A2422;
-    --good:#5FB68C;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
-  *{box-sizing:border-box}
-  h1,h2,h3{font-family:"Shippori Mincho","Yu Mincho",serif;text-wrap:balance;letter-spacing:.01em}
-  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+:root{
+  color-scheme:light;
+  --ground:#EEF1F5;
+  --surface:#FFFFFF;
+  --surface-2:#F4F6F9;
+  --ink:#1E2430;
+  --ink-soft:#586273;
+  --ink-faint:#76808F;
+  --rule:#E2E6EC;
+  --rule-soft:#EDF0F4;
+  --zebra:#F8FAFC;
+  /* 主色：ティール（道具・肯定） */
+  --accent:#149E9B;
+  --accent-soft:#DCF3F2;
+  --accent-ink:#0F7D7A;
+  /* 副色：紫（診断・強調） */
+  --kuma:#7C5CFF;
+  --kuma-soft:#ECE7FF;
+  --kuma-ink:#5A3FE0;
+  /* 状態 */
+  --warn:#E14B50;
+  --warn-soft:#FDE8E9;
+  --good:#2FB36A;
+  --good-soft:#E2F6EA;
+  --gold:#D99A00;
+  --gold-soft:#FFF3D1;
+  /* タイルの数字を順に塗る色（参考画像2の色つき数字） */
+  --n1:#1E2430;--n2:#2FB36A;--n3:#E14B50;--n4:#149E9B;--n5:#7C5CFF;--n6:#F08A24;
+  /* サイドバー */
+  --side:#20434E;
+  --side-2:#183740;
+  --side-ink:rgba(255,255,255,.78);
+  --shadow:0 1px 2px rgba(30,36,48,.04),0 10px 30px rgba(30,36,48,.06);
+  --r:14px;
+  --glow:linear-gradient(90deg,#7C5CFF,#FF7A59);
+  --display:"Noto Sans JP","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --body:"Noto Sans JP","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --mono:"Noto Sans JP","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --code:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+/* ---- ダークの光る版（診断レポート） ---- */
+html.theme-glow{
+  color-scheme:dark;
+  --ground:#0F1326;
+  --surface:#171C35;
+  --surface-2:#1F2544;
+  --ink:#EEF0FA;
+  --ink-soft:#B5BBD4;
+  --ink-faint:#8A92B0;
+  --rule:#2B3358;
+  --rule-soft:#242B4C;
+  --zebra:rgba(255,255,255,.025);
+  --accent:#FF7A59;
+  --accent-soft:rgba(255,122,89,.16);
+  --accent-ink:#FF9E86;
+  --kuma:#A66CFF;
+  --kuma-soft:rgba(166,108,255,.18);
+  --kuma-ink:#C7A4FF;
+  --warn:#FF5C7A;
+  --warn-soft:rgba(255,92,122,.16);
+  --good:#3FE0A6;
+  --good-soft:rgba(63,224,166,.14);
+  --gold:#FFC857;
+  --gold-soft:rgba(255,200,87,.16);
+  --n1:#EEF0FA;--n2:#3FE0A6;--n3:#FF7A59;--n4:#5AD8FF;--n5:#C7A4FF;--n6:#FFC857;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.35);
+}
 
-  /* ---- header ---- */
-  header{padding:56px 0 34px;border-bottom:2px solid var(--ink)}
-  .eyebrow{
-    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--accent);font-weight:700;margin-bottom:14px;
-    font-family:"IBM Plex Mono",monospace;
-  }
-  h1{font-size:40px;line-height:1.35;font-weight:700;margin:0 0 16px}
-  .lede{font-size:16px;color:var(--ink-soft);max-width:62ch;margin:0}
-  .provenance{
-    margin-top:24px;font-size:12.5px;color:var(--ink-faint);
-    display:flex;flex-wrap:wrap;gap:6px 20px;
-  }
-  .provenance span{white-space:nowrap}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--body);font-size:15.5px;line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+html.theme-glow body{
+  background:var(--ground);
+  background-image:
+    radial-gradient(60% 40% at 15% 0%,rgba(124,92,255,.35),transparent 60%),
+    radial-gradient(45% 35% at 90% 5%,rgba(255,122,89,.28),transparent 60%),
+    radial-gradient(50% 40% at 60% 100%,rgba(90,216,255,.10),transparent 60%);
+  background-attachment:fixed;
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:700;text-wrap:balance;letter-spacing:-.005em;line-height:1.4;color:var(--ink)}
+a{color:var(--accent-ink)}
+b,strong{font-weight:700;color:var(--ink)}
+code,kbd{font-family:var(--code);font-size:.9em;background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:4px;padding:1px 5px}
+.mono{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+::selection{background:var(--accent-soft)}
 
-  /* ---- funnel ---- */
-  .funnel{display:flex;flex-direction:column;gap:2px;margin:26px 0}
-  .fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);padding:14px 18px;flex-wrap:wrap}
-  .fbar{height:26px;background:var(--accent);opacity:.85;flex:none;border-radius:2px;min-width:3px;max-width:100%}
-  .fmeta{flex:1;min-width:0}
-  .fname{font-size:14px;font-weight:500}
-  .fnote{font-size:12px;color:var(--ink-faint);line-height:1.6}
-  .fval{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;flex:none;font-variant-numeric:tabular-nums}
-  .fstep.est{border-style:dashed;opacity:.85}
-  .fstep.est .fbar{background:var(--ink-faint)}
+/* ---- ページ幅 ---- */
+.wrap{max-width:960px;margin:0 auto;padding:0 24px 88px}
 
-  /* ---- good-list ---- */
-  .good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:26px 0}
-  .good-item{background:var(--surface);padding:20px}
-  .good-item h3{font-size:15px;margin:0 0 8px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif}
-  .good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+/* ---- マストヘッド（レポート型・日次道具） ----
+   <header>
+     <span class="karte">Instagram 診断</span>   ← 小さな札になる
+     <div class="eyebrow">…</div> <h1>…</h1> <p class="lede">…</p> <div class="provenance">…</div>
+   </header> */
+header{position:relative;padding:44px 0 26px;margin:0 0 26px;border-bottom:1px solid var(--rule)}
+header > h1{font-size:32px;margin:0 0 16px;line-height:1.4;font-weight:900;letter-spacing:-.01em}
+.karte{
+  display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.12em;
+  padding:4px 12px;border-radius:999px;margin:0 0 14px;
+  color:#fff;background:var(--kuma);
+}
+.karte.tool{background:var(--accent)}
+.eyebrow{font-size:12.5px;letter-spacing:.06em;color:var(--ink-faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:16px;color:var(--ink-soft);max-width:64ch;margin:0 0 6px;line-height:1.85}
+.provenance{margin-top:20px;font-size:12.5px;color:var(--ink-faint);display:flex;flex-wrap:wrap;gap:6px 20px;font-variant-numeric:tabular-nums}
+.provenance span{white-space:nowrap}
+/* 光る版：見出しの下に光の線 */
+html.theme-glow header{border-bottom:0;padding-top:52px}
+html.theme-glow header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:2px;background:var(--glow)}
+html.theme-glow .karte{background:var(--glow);color:#fff}
+html.theme-glow header > h1{font-size:34px;color:#fff;text-shadow:0 2px 24px rgba(124,92,255,.35)}
+html.theme-glow .eyebrow{color:var(--kuma-ink)}
+
+/* ---- アプリ型（左サイドバー） ----
+   <div class="topbar">
+     <header class="app">
+       <span class="karte tool">業務ナレッジ</span>
+       <div class="app-t"><h1>…</h1><div class="sub">…</div></div>
+     </header>
+     <nav class="tabs"><button class="tab active">…</button>…</nav>
+     （#searchbar / .controls などもこの中に入れてよい）
+   </div>
+   <main>…</main>
+   広い画面では .topbar が左の縦長サイドバーに、狭い画面では上の帯になる。 */
+body:has(> .topbar){display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh;align-items:start}
+body:has(> .topbar) > main,body:has(> .topbar) > .wrap{grid-column:2;min-width:0}
+.topbar{
+  grid-column:1;grid-row:1 / span 20;position:sticky;top:0;height:100vh;overflow:auto;
+  background:var(--side);background-image:linear-gradient(180deg,var(--side),var(--side-2));
+  color:#fff;display:flex;flex-direction:column;gap:6px;padding:18px 14px 24px;
+  scrollbar-width:thin;
+}
+header.app{border:0;padding:6px 8px 14px;margin:0;display:block;border-bottom:1px solid rgba(255,255,255,.12)}
+header.app > .karte{
+  display:inline-block;background:rgba(255,255,255,.14);color:#fff;
+  font-size:10.5px;letter-spacing:.14em;padding:3px 10px;border-radius:999px;margin:0 0 12px;
+}
+header.app h1{font-size:18px;margin:0;line-height:1.35;font-weight:900;color:#fff}
+header.app .sub{color:var(--side-ink);font-size:12px;margin-top:6px;line-height:1.6;font-variant-numeric:tabular-nums}
+nav.tabs,nav.index{display:flex;flex-direction:column;gap:2px;padding:8px 0 4px}
+nav.tabs .tab,nav.index .tab{
+  appearance:none;border:0;background:transparent;color:var(--side-ink);cursor:pointer;text-align:left;
+  font-family:var(--body);font-size:14px;font-weight:700;padding:10px 12px;border-radius:9px;
+  text-decoration:none;line-height:1.4;display:flex;align-items:center;gap:10px;
+}
+nav.tabs .tab::before,nav.index .tab::before{content:"";width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.28);flex:none}
+nav.tabs .tab:hover,nav.index .tab:hover{background:rgba(255,255,255,.08);color:#fff}
+nav.tabs .tab.active,nav.index .tab.active{background:#fff;color:var(--side);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+nav.tabs .tab.active::before,nav.index .tab.active::before{background:var(--accent)}
+/* サイドバーの中の検索・絞り込み（work の #searchbar、neta の .controls） */
+.topbar #searchbar,.topbar .controls{padding:10px 6px 4px;background:transparent;border:0;display:block}
+.topbar input[type=search],.topbar input[type=text],.topbar #searchbar input,.topbar #kw{
+  width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#fff;
+  border-radius:9px;padding:9px 12px;font:inherit;font-size:13.5px;outline:none;
+}
+.topbar input::placeholder{color:rgba(255,255,255,.5)}
+.topbar input:focus,.topbar #searchbar input:focus,.topbar #kw:focus{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
+.topbar #searchinfo,.topbar .findhint{display:block;color:var(--side-ink);font-size:12px;margin-top:6px}
+.topbar .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.topbar .chip{
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--side-ink);
+  padding:4px 10px;border-radius:999px;font-size:12px;cursor:pointer;font-weight:700;font-family:var(--body);
+}
+.topbar .chip:hover{background:rgba(255,255,255,.12);color:#fff}
+.topbar .chip.active{background:#fff;color:var(--side);border-color:#fff}
+main{padding:28px 32px 80px}
+@media (max-width:900px){
+  body:has(> .topbar){display:block}
+  .topbar{position:sticky;top:0;z-index:10;height:auto;max-height:none;overflow:visible;grid-row:auto;padding:12px 14px 10px;gap:4px}
+  header.app{display:flex;align-items:center;gap:12px;padding:0 0 8px}
+  header.app > .karte{margin:0}
+  header.app h1{font-size:16px}
+  header.app .sub{display:none}
+  nav.tabs,nav.index{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:4px 0 2px;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar,nav.index::-webkit-scrollbar{display:none}
+  nav.tabs .tab,nav.index .tab{padding:7px 12px;font-size:13px;white-space:nowrap}
+  nav.tabs .tab::before,nav.index .tab::before{display:none}
+  .topbar .chips{margin-top:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  main{padding:18px 16px 70px}
+}
+
+/* ---- 節見出し ---- */
+section{margin-top:56px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-top:6px}
+.sec-num{font-size:12px;font-weight:900;color:#fff;background:var(--kuma);letter-spacing:.06em;flex:none;padding:3px 10px;border-radius:999px;line-height:1.5;font-variant-numeric:tabular-nums}
+html.theme-glow .sec-num{background:var(--glow)}
+h2{font-size:24px;margin:0;font-weight:900}
+.sec-sub{color:var(--ink-soft);margin:8px 0 24px;max-width:64ch;font-size:15px}
+h3{font-size:17px;margin:24px 0 8px}
+p{margin:0 0 18px}
+
+/* ---- カード ---- */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:20px 22px;margin:16px 0;box-shadow:var(--shadow)}
+html.theme-glow .card{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09);backdrop-filter:blur(8px)}
+
+/* ---- 数字タイル（白いタイル・色つきの数字） ---- */
+.stats,.kpis,.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:26px 0;background:none;border:0}
+.stat,.kpis>.kpi,.kpi-grid>.kpi{
+  background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:20px 20px 18px;margin:0;
+  box-shadow:var(--shadow);position:relative;min-width:0;
+}
+html.theme-glow .stat,html.theme-glow .kpis>.kpi,html.theme-glow .kpi-grid>.kpi{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.stat .k,.kpi .label,.kpi-label{font-size:12px;color:var(--ink-faint);letter-spacing:.02em;margin-bottom:10px;line-height:1.5;font-weight:700}
+.stat .v,.kpi .val,.kpi-val{font-size:34px;font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin:0;color:var(--n1)}
+.stat .n,.kpi .note,.kpi-sub{font-size:12.5px;color:var(--ink-soft);margin-top:10px;line-height:1.55}
+.stat:nth-child(6n+2) .v,.kpi:nth-child(6n+2) .val,.kpi:nth-child(6n+2) .kpi-val{color:var(--n2)}
+.stat:nth-child(6n+3) .v,.kpi:nth-child(6n+3) .val,.kpi:nth-child(6n+3) .kpi-val{color:var(--n3)}
+.stat:nth-child(6n+4) .v,.kpi:nth-child(6n+4) .val,.kpi:nth-child(6n+4) .kpi-val{color:var(--n4)}
+.stat:nth-child(6n+5) .v,.kpi:nth-child(6n+5) .val,.kpi:nth-child(6n+5) .kpi-val{color:var(--n5)}
+.stat:nth-child(6n+6) .v,.kpi:nth-child(6n+6) .val,.kpi:nth-child(6n+6) .kpi-val{color:var(--n6)}
+.v.warn,.val.warn,.stat .v.warn{color:var(--warn)!important} .v.good,.val.good,.stat .v.good{color:var(--good)!important} .v.acc,.val.acc{color:var(--accent)!important}
+
+/* ---- ファネル ---- */
+.funnel{display:flex;flex-direction:column;gap:10px;margin:26px 0}
+.fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:16px 20px;flex-wrap:wrap;box-shadow:var(--shadow)}
+html.theme-glow .fstep{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.fbar{height:26px;background:var(--glow);flex:none;border-radius:8px;min-width:4px;max-width:100%}
+.fmeta{flex:1;min-width:0}
+.fname{font-size:14.5px;font-weight:700}
+.fnote{font-size:12.5px;color:var(--ink-faint);line-height:1.6}
+.fval{font-size:22px;font-weight:900;flex:none;font-variant-numeric:tabular-nums}
+.fstep.est{border-style:dashed}
+.fstep.est .fbar{background:var(--ink-faint);opacity:.5}
+
+/* ---- 良い点リスト ---- */
+.good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:26px 0}
+.good-item{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+html.theme-glow .good-item{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.good-item h3{font-size:15px;margin:0 0 8px;font-weight:700}
+.good-item h3::before{content:"✓";color:var(--good);margin-right:8px;font-weight:900}
+.good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+
+/* ---- 表 ---- */
+.tw{overflow-x:auto;margin:26px 0;border:1px solid var(--rule);background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
+html.theme-glow .tw{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.09)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.6}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{background:var(--surface-2);font-size:12px;letter-spacing:.03em;color:var(--ink-soft);font-weight:700;border-bottom:1px solid var(--rule);white-space:nowrap}
+html.theme-glow thead th{background:rgba(255,255,255,.05)}
+tbody tr:nth-child(even) td{background:var(--zebra)}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+tr.hi td{background:var(--kuma-soft)!important}
+tr.lo td{background:var(--warn-soft)!important}
+
+/* ---- 目次 ---- */
+.toc{margin:28px 0 0;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);overflow:hidden;box-shadow:var(--shadow)}
+html.theme-glow .toc{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.toc-head,.toc>h2,.toc>b{display:block;padding:12px 20px;border-bottom:1px solid var(--rule);font-size:13px;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;margin:0}
+.toc ol{list-style:none;margin:0;padding:8px 0;display:grid;grid-template-columns:1fr 1fr;gap:0;columns:auto}
+.toc li{margin:0;font-size:14.5px;break-inside:avoid}
+.toc a{display:flex;gap:12px;align-items:baseline;padding:7px 20px;color:var(--ink);text-decoration:none;line-height:1.6}
+.toc a:hover{background:var(--surface-2);color:var(--accent-ink)}
+.toc .tn{font-size:12px;font-weight:900;color:var(--kuma-ink);flex:none;min-width:2.2em;font-variant-numeric:tabular-nums}
+@media (max-width:640px){.toc ol{grid-template-columns:1fr}}
+
+/* ---- 先頭へ戻る ---- */
+.to-top,.to-toc{
+  position:fixed;right:16px;bottom:16px;z-index:50;display:none;align-items:center;gap:7px;
+  padding:10px 15px;border-radius:999px;background:var(--surface);border:1px solid var(--rule);
+  box-shadow:var(--shadow);color:var(--ink);text-decoration:none;font:inherit;font-size:13px;font-weight:700;line-height:1;cursor:pointer;
+}
+.to-top.is-on,.to-toc.is-on{display:inline-flex}
+.to-top:hover,.to-toc:hover{color:var(--accent-ink);border-color:var(--accent)}
+
+/* ---- 札（タグ・状態） ---- */
+.tag,.badge,.pill,.chip{font-family:var(--body);font-weight:700;border-radius:999px}
+
+/* ---- ボタン ---- */
+button{font-family:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--body);font-size:14px;font-weight:700;padding:10px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;text-decoration:none;line-height:1.3}
+.btn:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent-ink)}
+.btn.ghost:hover{background:var(--accent-soft)}
+
+/* ---- 畳む ---- */
+details>summary{cursor:pointer}
+details>summary::-webkit-details-marker{display:none}
+
+/* ---- 注記の帯 ---- */
+.callout,.note-box{background:var(--surface-2);border-left:4px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin:14px 0;font-size:14px;color:var(--ink-soft)}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft);color:var(--ink)}
+
+/* ---- 印刷 ---- */
+@media print{
+  body{background:#fff}
+  .to-top,.to-toc{display:none!important}
+  .topbar{position:static;height:auto}
+}
+
+/* ---- 動きを抑える ---- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* ---- 狭い画面 ---- */
+@media (max-width:640px){
+  .wrap{padding:0 16px 64px}
+  header{padding:26px 0 20px;margin-bottom:22px}
+  header > h1{font-size:26px;overflow-wrap:anywhere}
+  html.theme-glow header > h1{font-size:27px}
+  h2{font-size:21px}
+  .stat .v,.kpi .val,.kpi-val{font-size:28px}
+  .stats,.kpis,.kpi-grid{gap:10px;grid-template-columns:repeat(2,1fr)}
+  th,td{padding:9px 11px}
+}
+
+/* ============================================================
+   旧変数の別名（各ページの既存 CSS を新しい色で動かすため）
+   ============================================================ */
+:root,html.theme-glow{
+  --plane:var(--ground);--border:var(--rule);--muted:var(--ink-faint);--ink2:var(--ink-soft);
+  --accentsoft:var(--accent-soft);--goodsoft:var(--good-soft);--bad:var(--warn);--badsoft:var(--warn-soft);
+  --warnsoft:var(--gold-soft);--goldsoft:var(--gold-soft);--done:var(--ink-faint);
+  --s1:var(--kuma);--s1soft:var(--kuma-soft);--grid:var(--rule-soft);--axis:var(--rule);--bd:var(--rule);
+  --bg:var(--ground);--card:var(--surface);--line:var(--rule);--line-soft:var(--rule-soft);--sub:var(--ink-faint);
+  --fg:var(--ink);--paper:var(--ground);--sunken:var(--surface-2);--faint:var(--ink-faint);
+  --accent-bg:var(--accent-soft);--gold-bg:var(--gold-soft);
+}
 /* Instagram診断レポート 固有スタイル
 
-   sns/report_base.css の "後" に読まれる。基本の配色（CSS変数）と
-   header / funnel / good-list は共通ファイル側にある。
+   sns/report_base.css の "後" に読まれる。配色・書体・マストヘッド（背表紙タブ）・
+   節見出し・数字タイル・表・目次・先頭へ戻る・funnel・good-list は共通ファイル側にある。
    ここには Instagram だけの値・レイアウトを置く。
    後から読まれるので、共通側のルールはここで上書きできる。 */
 
-  /* --shadow だけは媒体ごとに違うので、共通の配色とは別にここで定義する。
-     3つの順番（通常 → OS ダーク → 明示ダーク）は入れ替えないこと。 */
-  :root{ --shadow:0 1px 2px rgba(22,32,43,.04); }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){ --shadow:0 1px 2px rgba(0,0,0,.25); }
-  }
-  :root[data-theme="dark"]{ --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3); }
-
-  /* sns/report_mobile.css は --card / --line という別名で色を参照する。
-     この2つを用意しておかないと、固定した1列目だけが濃紺のまま（フォールバック値）
-     ライトモードに出てしまう。値は共通CSSの変数をそのまま指す。 */
-  :root{ --card:var(--surface); --line:var(--rule); }
-
-  /* --ink-faint は白背景でコントラスト比 3.5:1 しかなく、WCAG AA(4.5:1)に届かない。
-     注記・出典・表のキャプションが全部この色なので、ライトモードだけ濃くする。
-     ダークの定義（:root:not([data-theme="light"]) / :root[data-theme="dark"]）は
-     この :root より詳細度が高いので、暗い側には影響しない。 */
-  :root{ --ink-faint:#5F6E7B; }
-
-  body{
-    background:var(--ground);
-    color:var(--ink);
-    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
-    font-size:15.5px; line-height:1.9;
-    -webkit-font-smoothing:antialiased;
-  }
+  body{font-size:15.5px;line-height:1.9}
   .wrap{max-width:880px;margin:0 auto;padding:0 20px 96px}
-  /* 本文中のリンク（脚注へ飛ぶもの等）。概要表の .sum-table a は詳細度で勝つので影響しない */
-  a{color:var(--accent)}
   :target{scroll-margin-top:20px}
+
   /* ---- verdict ---- */
   .verdict{
     margin:40px 0 0;padding:30px 32px;background:var(--surface);
     border:1px solid var(--rule);border-left:4px solid var(--warn);
-    border-radius:4px;
+    border-radius:var(--r);
   }
   .verdict h2{font-size:21px;margin:0 0 14px;font-weight:700}
   .verdict p{margin:0 0 14px;font-size:15.5px;max-width:none}
   .verdict p:last-child{margin-bottom:0}
-  b{font-weight:700;color:var(--ink)}
 
   /* ---- summary (at-a-glance) ---- */
   .summary{
-    margin:34px 0 0;border:1px solid var(--rule);border-radius:4px;
+    margin:34px 0 0;border:1px solid var(--rule);border-radius:var(--r);
     background:var(--surface);overflow:hidden;
   }
   .sum-head{
@@ -170,7 +390,7 @@
   /* 子要素の「概要」だけに当てる。子孫セレクタだと、右の説明文中の
      <b>再生</b> <b>リンククリック</b> まで19pxの明朝になっていた。 */
   .sum-head > b{
-    font-family:"Shippori Mincho","Yu Mincho",serif;
+    font-family:var(--display);
     font-size:19px;font-weight:700;letter-spacing:.02em;
   }
   .sum-head span{font-size:12.5px;color:var(--ink-faint)}
@@ -183,7 +403,7 @@
   .sum-table .c-txt{width:auto}
   .sum-table .c-fig{
     width:1%;white-space:nowrap;text-align:right;
-    font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+    font-family:var(--mono);font-variant-numeric:tabular-nums;
     font-size:13.5px;font-weight:600;color:var(--ink-soft);padding-left:14px;
   }
   .sum-table .t{font-weight:700}
@@ -203,7 +423,7 @@
     padding:15px 26px 9px;border-bottom:1px solid var(--rule);
     background:var(--surface-2);
     font-size:11.5px;font-weight:700;letter-spacing:.12em;
-    font-family:"IBM Plex Mono",monospace;color:var(--ink-faint);
+    font-family:var(--mono);color:var(--ink-faint);
   }
   .sum-table tr.grp .tag{
     display:inline-block;width:8px;height:8px;border-radius:50%;
@@ -218,7 +438,7 @@
   .sum-table .fig-g{color:var(--good)}
   .sum-table .fig-b{color:var(--warn)}
   .sum-do-n{
-    font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-faint);
+    font-family:var(--mono);font-size:12px;color:var(--ink-faint);
     margin-right:9px;font-weight:600;
   }
 
@@ -235,53 +455,27 @@
     .sum-head{padding:16px}
   }
 
-  /* ---- sections ---- */
+  /* ---- sections（共通との差分だけ） ---- */
   section{margin-top:76px}
-  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:10px;
-    padding-top:22px;border-top:1px solid var(--rule)}
-  .sec-num{
-    font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;
-    color:var(--accent);letter-spacing:.1em;flex:none;padding-top:4px;
-  }
-  h2{font-size:25px;margin:0;font-weight:700;line-height:1.5}
-  .sec-sub{color:var(--ink-soft);margin:10px 0 28px 0;max-width:62ch;font-size:15px}
-
   p{max-width:64ch;margin:0 0 20px}
 
-  /* ---- stat row ---- */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin:28px 0;border-radius:4px;overflow:hidden}
-  .stat{background:var(--surface);padding:22px 20px}
-  .stat .k{font-size:11.5px;color:var(--ink-faint);letter-spacing:.04em;margin-bottom:8px;line-height:1.5}
-  .stat .v{font-family:"IBM Plex Mono",monospace;font-size:27px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
-  .stat .n{font-size:12px;color:var(--ink-soft);margin-top:8px;line-height:1.55}
-  .v.warn{color:var(--warn)} .v.good{color:var(--good)} .v.acc{color:var(--accent)}
-
   /* ---- chart ---- */
-  figure{margin:30px 0;background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:26px 22px 20px}
+  figure{margin:30px 0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:26px 22px 20px}
   figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:14px;padding-top:14px;border-top:1px solid var(--rule-soft);line-height:1.7}
   .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
   .legend i{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:1px}
 
-  /* ---- table ---- */
-  .tw{overflow-x:auto;margin:28px 0;border:1px solid var(--rule);background:var(--surface);border-radius:4px}
-  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px;line-height:1.6}
-  th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--rule-soft)}
-  thead th{
-    background:var(--surface-2);font-size:11.5px;letter-spacing:.05em;color:var(--ink-faint);
-    font-weight:700;border-bottom:1px solid var(--rule);white-space:nowrap;
-  }
-  tbody tr:last-child td{border-bottom:none}
+  /* ---- table（共通との差分だけ） ---- */
+  table{min-width:560px}
+  th,td{padding:13px 16px}
   tbody tr:hover td{background:var(--surface-2)}
   tr.hi:hover td,tr.lo:hover td{filter:brightness(.985)}
-  td.num{font-family:"IBM Plex Mono",monospace;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-  tr.hi td{background:var(--accent-soft)}
-  tr.lo td{background:var(--warn-soft)}
 
   /* ---- action list ---- */
   .actions{display:flex;flex-direction:column;gap:14px;margin:28px 0}
-  .act{background:var(--surface);border:1px solid var(--rule);border-radius:4px;padding:24px 26px}
+  .act{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:24px 26px}
   .act h3{font-size:18px;margin:0 0 5px;font-weight:700;line-height:1.5}
-  .act .why{font-size:12.5px;color:var(--accent);font-weight:500;margin:0 0 12px;font-family:"IBM Plex Mono",monospace}
+  .act .why{font-size:12.5px;color:var(--accent);font-weight:500;margin:0 0 12px;font-family:var(--mono)}
   .act p{margin:0 0 10px;font-size:14.5px}
   .act p:last-child{margin-bottom:0}
   .act ul{margin:10px 0 0;padding-left:1.15em}
@@ -290,9 +484,9 @@
 
   .caveat{
     margin-top:72px;padding:24px 26px;background:var(--surface-2);
-    border:1px solid var(--rule);border-radius:3px;font-size:13px;color:var(--ink-soft);
+    border:1px solid var(--rule);border-radius:var(--r);font-size:13px;color:var(--ink-soft);
   }
-  .caveat h3{font-size:14px;margin:0 0 12px;font-weight:700;font-family:"Zen Kaku Gothic New",sans-serif;color:var(--ink)}
+  .caveat h3{font-size:14px;margin:0 0 12px;font-weight:700;font-family:var(--body);color:var(--ink)}
   .caveat ul{margin:0;padding-left:1.15em}
   .caveat li{margin-bottom:8px;max-width:72ch}
   .caveat li:last-child{margin-bottom:0}
@@ -301,32 +495,8 @@
     h1{font-size:29px}
     h2{font-size:21px}
     .wrap{padding:0 16px 60px}
-    header{padding:36px 0 26px}
     .sec-head{gap:10px}
   }
-
-  /* ---- 目次 ---- */
-  .toc{
-    margin:30px 0 0;border:1px solid var(--rule);border-radius:4px;
-    background:var(--surface);padding:18px 24px 20px;
-  }
-  .toc h2{font-size:15px;margin:0 0 10px;font-family:"Zen Kaku Gothic New",sans-serif}
-  .toc ol{margin:0;padding-left:1.5em;columns:2;column-gap:34px}
-  .toc li{margin:0 0 6px;font-size:14px;break-inside:avoid}
-  .toc a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
-  @media (max-width:640px){ .toc ol{columns:1} .toc{padding:16px} }
-
-  /* ---- トップへ戻る ---- */
-  .to-top{
-    position:fixed;right:16px;bottom:16px;z-index:20;
-    display:none;align-items:center;gap:6px;
-    padding:9px 14px;border-radius:999px;
-    border:1px solid var(--rule);background:var(--surface);color:var(--ink);
-    font:inherit;font-size:12.5px;line-height:1;cursor:pointer;
-    box-shadow:var(--shadow);text-decoration:none;
-  }
-  .to-top.is-on{display:inline-flex}
-  .to-top:hover{border-color:var(--accent);color:var(--accent)}
 
   /* ---- 見出しの下に置く「何と比べた◯倍か」 ---- */
   .h1-note{
@@ -342,7 +512,7 @@
   /* ---- ファネルの「◯人に1人」 ---- */
   .fratio{
     font-size:12px;color:var(--accent);font-weight:700;
-    font-family:"IBM Plex Mono",monospace;margin-top:2px;
+    font-family:var(--mono);margin-top:2px;
   }
 
   /* ---- 施策の効き目ラベル（◎○△×− をやめて日本語にした） ---- */
@@ -440,7 +610,7 @@
 /* 冒頭の用語ボックス（report_terms.glossary_html が出すHTML） */
 .glossary{
   border:1px solid var(--rule, var(--line, #243039));
-  border-radius:10px;
+  border-radius:var(--r, 10px);
   padding:1rem 1.1rem 1.15rem;
   margin:1.4rem 0 1.8rem;
   background:var(--surface, var(--card, #131B23));
@@ -474,6 +644,7 @@
 <div class="wrap">
 
 <header>
+  <span class="karte">Instagram 診断</span>
   <div class="eyebrow">Instagram 診断レポート ／ 2026.09.15 更新</div>
   <h1>見られた人数は、<span class="nb">2025年11月〜12月</span>の41倍。<br>でも、LINEへのクリックは増えていない。</h1>
   <p class="h1-note">この「41倍」は、<b>公式LINEへのクリックがいちばん多かった2025年11月〜12月と比べた数字</b>です。ひとつ前の29日（2026年7月〜8月）と比べると9.2倍です。そしてこの増え方は、<b>8月25日に出た動画1本</b>（「指の横にできる「猛烈に痒いブツブツ」の正体⚡️」）でほぼ説明がつきます——直近29日に届いた1,325,353人のうち<b>93%がこの1本</b>です。この1本を外すと残りは97,331人で、2025年11月〜12月の3.0倍にとどまります。<b>アカウント全体が41倍強くなった、という意味ではありません。</b></p>
@@ -612,7 +783,7 @@
   <div class="sec-head"><div class="sec-num">06</div><h2>フォロワーは何本目から増えるのか</h2></div>
   <p class="sec-sub">APIはリールごとのフォロー獲得数を返しません（Metaがリールだけ除外している）。そこで1日に1本だけ投稿した149日を抜き出し、その日と翌日のフォロワー増加数から推定しました。対象は2025-09以降——それ以前はAPIがフォロワー増減を返さないため使えません。</p>
 
-  <div class="tw"><table><thead><tr><th class="">その日の再生数</th><th class="num">日数</th><th class="num">フォロワー増（真ん中の日）</th><th class="num">投稿ゼロの日との差</th></tr></thead><tbody><tr class="lo"><td>〜3,000</td><td class="num">26</td><td class="num">13人</td><td class="num">-2人</td></tr><tr class="lo"><td>3,000〜1万</td><td class="num">98</td><td class="num">14人</td><td class="num">-0人</td></tr><tr class=""><td>1万〜5万</td><td class="num">20</td><td class="num">20人</td><td class="num">+4人</td></tr><tr class="hi"><td>5万〜</td><td class="num">5</td><td class="num">23人</td><td class="num">+8人</td></tr></tbody></table></div>
+  <div class="tw"><table><thead><tr><th class="">その日の再生数</th><th class="num">日数</th><th class="num">フォロワー増（真ん中の日）</th><th class="num">投稿ゼロの日との差</th></tr></thead><tbody><tr class="lo"><td>〜3,000</td><td class="num">26</td><td class="num">13人</td><td class="num">-2人</td></tr><tr class="lo"><td>3,000〜1万</td><td class="num">98</td><td class="num">15人</td><td class="num">+0人</td></tr><tr class=""><td>1万〜5万</td><td class="num">20</td><td class="num">20人</td><td class="num">+4人</td></tr><tr class="hi"><td>5万〜</td><td class="num">5</td><td class="num">23人</td><td class="num">+8人</td></tr></tbody></table></div>
 
   <p>再生数が多い日ほどフォロワーも増えています（2つの数字がどれだけ一緒に動いたかを表す値は<b>+0.75</b>。+1に近いほど強く連動）。いっぽう<b>投稿がない日でも、真ん中の日で15人増えています</b>。つまり再生数の低い投稿は、フォロワーをほとんど増やしていません。<b>1万再生を超えて初めて効き始める</b>という線が見えます。</p>
 
