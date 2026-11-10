@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ja" class="theme-glow">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>伊藤先生 Instagram 診断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>/* ============================================================
+   クマクリ ダッシュボード 共通スタイル（全ページの土台）
+
+   どの gen_*.py も、まずこのファイルを <style> に展開してから
+   ページ固有の CSS を後ろに足す。順番が意味を持つので入れ替えないこと。
+
+   ■ 2つの見た目（参考画像に合わせて 2026-09-15 に決めた）
+     1. 明るい管理画面（既定）
+        薄いグレーの地に白いタイル。数字は色つきで大きく。
+        上に .topbar があるページ（業務・経営・ネタ・議事録・KPI）は
+        .topbar が左の濃い色のサイドバーになる（ナビ・検索・絞り込みはそこに入る）。
+     2. ダークの光る版（<html class="theme-glow">）
+        紺の地に紫〜オレンジの光。診断レポート4本（IG / X / TikTok / YouTube）で使う。
+        色トークンを丸ごと差し替えているだけなので、部品のクラスは共通。
+
+   ■ 書体
+     見出し・本文・数字すべてゴシック（Noto Sans JP）。明朝は使わない（読みにくい）。
+     等幅（IBM Plex Mono）はコードだけ。
+
+   ■ 旧変数の別名
+     各ページの古い CSS（--plane / --card / --s1 など）がそのまま動くよう、
+     末尾で新しい色に橋渡ししている。新しく書く CSS は新しい名前を使うこと。
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root{
+  color-scheme:light;
+  --ground:#EEF1F5;
+  --surface:#FFFFFF;
+  --surface-2:#F4F6F9;
+  --ink:#1E2430;
+  --ink-soft:#586273;
+  --ink-faint:#76808F;
+  --rule:#E2E6EC;
+  --rule-soft:#EDF0F4;
+  --zebra:#F8FAFC;
+  /* 主色：ティール（道具・肯定） */
+  --accent:#149E9B;
+  --accent-soft:#DCF3F2;
+  --accent-ink:#0F7D7A;
+  /* 副色：紫（診断・強調） */
+  --kuma:#7C5CFF;
+  --kuma-soft:#ECE7FF;
+  --kuma-ink:#5A3FE0;
+  /* 状態 */
+  --warn:#E14B50;
+  --warn-soft:#FDE8E9;
+  --good:#2FB36A;
+  --good-soft:#E2F6EA;
+  --gold:#D99A00;
+  --gold-soft:#FFF3D1;
+  /* タイルの数字を順に塗る色（参考画像2の色つき数字） */
+  --n1:#1E2430;--n2:#2FB36A;--n3:#E14B50;--n4:#149E9B;--n5:#7C5CFF;--n6:#F08A24;
+  /* サイドバー */
+  --side:#20434E;
+  --side-2:#183740;
+  --side-ink:rgba(255,255,255,.78);
+  --shadow:0 1px 2px rgba(30,36,48,.04),0 10px 30px rgba(30,36,48,.06);
+  --r:14px;
+  --glow:linear-gradient(90deg,#7C5CFF,#FF7A59);
+  --display:"Noto Sans JP","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --body:"Noto Sans JP","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --mono:"Noto Sans JP","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --code:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+/* ---- ダークの光る版（診断レポート） ---- */
+html.theme-glow{
+  color-scheme:dark;
+  --ground:#0F1326;
+  --surface:#171C35;
+  --surface-2:#1F2544;
+  --ink:#EEF0FA;
+  --ink-soft:#B5BBD4;
+  --ink-faint:#8A92B0;
+  --rule:#2B3358;
+  --rule-soft:#242B4C;
+  --zebra:rgba(255,255,255,.025);
+  --accent:#FF7A59;
+  --accent-soft:rgba(255,122,89,.16);
+  --accent-ink:#FF9E86;
+  --kuma:#A66CFF;
+  --kuma-soft:rgba(166,108,255,.18);
+  --kuma-ink:#C7A4FF;
+  --warn:#FF5C7A;
+  --warn-soft:rgba(255,92,122,.16);
+  --good:#3FE0A6;
+  --good-soft:rgba(63,224,166,.14);
+  --gold:#FFC857;
+  --gold-soft:rgba(255,200,87,.16);
+  --n1:#EEF0FA;--n2:#3FE0A6;--n3:#FF7A59;--n4:#5AD8FF;--n5:#C7A4FF;--n6:#FFC857;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--body);font-size:15.5px;line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+html.theme-glow body{
+  background:var(--ground);
+  background-image:
+    radial-gradient(60% 40% at 15% 0%,rgba(124,92,255,.35),transparent 60%),
+    radial-gradient(45% 35% at 90% 5%,rgba(255,122,89,.28),transparent 60%),
+    radial-gradient(50% 40% at 60% 100%,rgba(90,216,255,.10),transparent 60%);
+  background-attachment:fixed;
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:700;text-wrap:balance;letter-spacing:-.005em;line-height:1.4;color:var(--ink)}
+a{color:var(--accent-ink)}
+b,strong{font-weight:700;color:var(--ink)}
+code,kbd{font-family:var(--code);font-size:.9em;background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:4px;padding:1px 5px}
+.mono{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+::selection{background:var(--accent-soft)}
+
+/* ---- ページ幅 ---- */
+.wrap{max-width:960px;margin:0 auto;padding:0 24px 88px}
+
+/* ---- マストヘッド（レポート型・日次道具） ----
+   <header>
+     <span class="karte">Instagram 診断</span>   ← 小さな札になる
+     <div class="eyebrow">…</div> <h1>…</h1> <p class="lede">…</p> <div class="provenance">…</div>
+   </header> */
+header{position:relative;padding:44px 0 26px;margin:0 0 26px;border-bottom:1px solid var(--rule)}
+header > h1{font-size:32px;margin:0 0 16px;line-height:1.4;font-weight:900;letter-spacing:-.01em}
+.karte{
+  display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.12em;
+  padding:4px 12px;border-radius:999px;margin:0 0 14px;
+  color:#fff;background:var(--kuma);
+}
+.karte.tool{background:var(--accent)}
+.eyebrow{font-size:12.5px;letter-spacing:.06em;color:var(--ink-faint);font-weight:700;margin:0 0 10px}
+.lede{font-size:16px;color:var(--ink-soft);max-width:64ch;margin:0 0 6px;line-height:1.85}
+.provenance{margin-top:20px;font-size:12.5px;color:var(--ink-faint);display:flex;flex-wrap:wrap;gap:6px 20px;font-variant-numeric:tabular-nums}
+.provenance span{white-space:nowrap}
+/* 光る版：見出しの下に光の線 */
+html.theme-glow header{border-bottom:0;padding-top:52px}
+html.theme-glow header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:2px;background:var(--glow)}
+html.theme-glow .karte{background:var(--glow);color:#fff}
+html.theme-glow header > h1{font-size:34px;color:#fff;text-shadow:0 2px 24px rgba(124,92,255,.35)}
+html.theme-glow .eyebrow{color:var(--kuma-ink)}
+
+/* ---- アプリ型（左サイドバー） ----
+   <div class="topbar">
+     <header class="app">
+       <span class="karte tool">業務ナレッジ</span>
+       <div class="app-t"><h1>…</h1><div class="sub">…</div></div>
+     </header>
+     <nav class="tabs"><button class="tab active">…</button>…</nav>
+     （#searchbar / .controls などもこの中に入れてよい）
+   </div>
+   <main>…</main>
+   広い画面では .topbar が左の縦長サイドバーに、狭い画面では上の帯になる。 */
+body:has(> .topbar){display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh;align-items:start}
+body:has(> .topbar) > main,body:has(> .topbar) > .wrap{grid-column:2;min-width:0}
+.topbar{
+  grid-column:1;grid-row:1 / span 20;position:sticky;top:0;height:100vh;overflow:auto;
+  background:var(--side);background-image:linear-gradient(180deg,var(--side),var(--side-2));
+  color:#fff;display:flex;flex-direction:column;gap:6px;padding:18px 14px 24px;
+  scrollbar-width:thin;
+}
+header.app{border:0;padding:6px 8px 14px;margin:0;display:block;border-bottom:1px solid rgba(255,255,255,.12)}
+header.app > .karte{
+  display:inline-block;background:rgba(255,255,255,.14);color:#fff;
+  font-size:10.5px;letter-spacing:.14em;padding:3px 10px;border-radius:999px;margin:0 0 12px;
+}
+header.app h1{font-size:18px;margin:0;line-height:1.35;font-weight:900;color:#fff}
+header.app .sub{color:var(--side-ink);font-size:12px;margin-top:6px;line-height:1.6;font-variant-numeric:tabular-nums}
+nav.tabs,nav.index{display:flex;flex-direction:column;gap:2px;padding:8px 0 4px}
+nav.tabs .tab,nav.index .tab{
+  appearance:none;border:0;background:transparent;color:var(--side-ink);cursor:pointer;text-align:left;
+  font-family:var(--body);font-size:14px;font-weight:700;padding:10px 12px;border-radius:9px;
+  text-decoration:none;line-height:1.4;display:flex;align-items:center;gap:10px;
+}
+nav.tabs .tab::before,nav.index .tab::before{content:"";width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.28);flex:none}
+nav.tabs .tab:hover,nav.index .tab:hover{background:rgba(255,255,255,.08);color:#fff}
+nav.tabs .tab.active,nav.index .tab.active{background:#fff;color:var(--side);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+nav.tabs .tab.active::before,nav.index .tab.active::before{background:var(--accent)}
+/* サイドバーの中の検索・絞り込み（work の #searchbar、neta の .controls） */
+.topbar #searchbar,.topbar .controls{padding:10px 6px 4px;background:transparent;border:0;display:block}
+.topbar input[type=search],.topbar input[type=text],.topbar #searchbar input,.topbar #kw{
+  width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:#fff;
+  border-radius:9px;padding:9px 12px;font:inherit;font-size:13.5px;outline:none;
+}
+.topbar input::placeholder{color:rgba(255,255,255,.5)}
+.topbar input:focus,.topbar #searchbar input:focus,.topbar #kw:focus{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
+.topbar #searchinfo,.topbar .findhint{display:block;color:var(--side-ink);font-size:12px;margin-top:6px}
+.topbar .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.topbar .chip{
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--side-ink);
+  padding:4px 10px;border-radius:999px;font-size:12px;cursor:pointer;font-weight:700;font-family:var(--body);
+}
+.topbar .chip:hover{background:rgba(255,255,255,.12);color:#fff}
+.topbar .chip.active{background:#fff;color:var(--side);border-color:#fff}
+main{padding:28px 32px 80px}
+@media (max-width:900px){
+  body:has(> .topbar){display:block}
+  .topbar{position:sticky;top:0;z-index:10;height:auto;max-height:none;overflow:visible;grid-row:auto;padding:12px 14px 10px;gap:4px}
+  header.app{display:flex;align-items:center;gap:12px;padding:0 0 8px}
+  header.app > .karte{margin:0}
+  header.app h1{font-size:16px}
+  header.app .sub{display:none}
+  nav.tabs,nav.index{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding:4px 0 2px;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar,nav.index::-webkit-scrollbar{display:none}
+  nav.tabs .tab,nav.index .tab{padding:7px 12px;font-size:13px;white-space:nowrap}
+  nav.tabs .tab::before,nav.index .tab::before{display:none}
+  .topbar .chips{margin-top:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  main{padding:18px 16px 70px}
+}
+
+/* ---- 節見出し ---- */
+section{margin-top:56px}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-top:6px}
+.sec-num{font-size:12px;font-weight:900;color:#fff;background:var(--kuma);letter-spacing:.06em;flex:none;padding:3px 10px;border-radius:999px;line-height:1.5;font-variant-numeric:tabular-nums}
+html.theme-glow .sec-num{background:var(--glow)}
+h2{font-size:24px;margin:0;font-weight:900}
+.sec-sub{color:var(--ink-soft);margin:8px 0 24px;max-width:64ch;font-size:15px}
+h3{font-size:17px;margin:24px 0 8px}
+p{margin:0 0 18px}
+
+/* ---- カード ---- */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:20px 22px;margin:16px 0;box-shadow:var(--shadow)}
+html.theme-glow .card{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09);backdrop-filter:blur(8px)}
+
+/* ---- 数字タイル（白いタイル・色つきの数字） ---- */
+.stats,.kpis,.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:26px 0;background:none;border:0}
+.stat,.kpis>.kpi,.kpi-grid>.kpi{
+  background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:20px 20px 18px;margin:0;
+  box-shadow:var(--shadow);position:relative;min-width:0;
+}
+html.theme-glow .stat,html.theme-glow .kpis>.kpi,html.theme-glow .kpi-grid>.kpi{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.stat .k,.kpi .label,.kpi-label{font-size:12px;color:var(--ink-faint);letter-spacing:.02em;margin-bottom:10px;line-height:1.5;font-weight:700}
+.stat .v,.kpi .val,.kpi-val{font-size:34px;font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin:0;color:var(--n1)}
+.stat .n,.kpi .note,.kpi-sub{font-size:12.5px;color:var(--ink-soft);margin-top:10px;line-height:1.55}
+.stat:nth-child(6n+2) .v,.kpi:nth-child(6n+2) .val,.kpi:nth-child(6n+2) .kpi-val{color:var(--n2)}
+.stat:nth-child(6n+3) .v,.kpi:nth-child(6n+3) .val,.kpi:nth-child(6n+3) .kpi-val{color:var(--n3)}
+.stat:nth-child(6n+4) .v,.kpi:nth-child(6n+4) .val,.kpi:nth-child(6n+4) .kpi-val{color:var(--n4)}
+.stat:nth-child(6n+5) .v,.kpi:nth-child(6n+5) .val,.kpi:nth-child(6n+5) .kpi-val{color:var(--n5)}
+.stat:nth-child(6n+6) .v,.kpi:nth-child(6n+6) .val,.kpi:nth-child(6n+6) .kpi-val{color:var(--n6)}
+.v.warn,.val.warn,.stat .v.warn{color:var(--warn)!important} .v.good,.val.good,.stat .v.good{color:var(--good)!important} .v.acc,.val.acc{color:var(--accent)!important}
+
+/* ---- ファネル ---- */
+.funnel{display:flex;flex-direction:column;gap:10px;margin:26px 0}
+.fstep{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:16px 20px;flex-wrap:wrap;box-shadow:var(--shadow)}
+html.theme-glow .fstep{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.fbar{height:26px;background:var(--glow);flex:none;border-radius:8px;min-width:4px;max-width:100%}
+.fmeta{flex:1;min-width:0}
+.fname{font-size:14.5px;font-weight:700}
+.fnote{font-size:12.5px;color:var(--ink-faint);line-height:1.6}
+.fval{font-size:22px;font-weight:900;flex:none;font-variant-numeric:tabular-nums}
+.fstep.est{border-style:dashed}
+.fstep.est .fbar{background:var(--ink-faint);opacity:.5}
+
+/* ---- 良い点リスト ---- */
+.good-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:26px 0}
+.good-item{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+html.theme-glow .good-item{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.good-item h3{font-size:15px;margin:0 0 8px;font-weight:700}
+.good-item h3::before{content:"✓";color:var(--good);margin-right:8px;font-weight:900}
+.good-item p{font-size:13.5px;color:var(--ink-soft);margin:0}
+
+/* ---- 表 ---- */
+.tw{overflow-x:auto;margin:26px 0;border:1px solid var(--rule);background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
+html.theme-glow .tw{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.09)}
+table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.6}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{background:var(--surface-2);font-size:12px;letter-spacing:.03em;color:var(--ink-soft);font-weight:700;border-bottom:1px solid var(--rule);white-space:nowrap}
+html.theme-glow thead th{background:rgba(255,255,255,.05)}
+tbody tr:nth-child(even) td{background:var(--zebra)}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+tr.hi td{background:var(--kuma-soft)!important}
+tr.lo td{background:var(--warn-soft)!important}
+
+/* ---- 目次 ---- */
+.toc{margin:28px 0 0;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);overflow:hidden;box-shadow:var(--shadow)}
+html.theme-glow .toc{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09)}
+.toc-head,.toc>h2,.toc>b{display:block;padding:12px 20px;border-bottom:1px solid var(--rule);font-size:13px;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;margin:0}
+.toc ol{list-style:none;margin:0;padding:8px 0;display:grid;grid-template-columns:1fr 1fr;gap:0;columns:auto}
+.toc li{margin:0;font-size:14.5px;break-inside:avoid}
+.toc a{display:flex;gap:12px;align-items:baseline;padding:7px 20px;color:var(--ink);text-decoration:none;line-height:1.6}
+.toc a:hover{background:var(--surface-2);color:var(--accent-ink)}
+.toc .tn{font-size:12px;font-weight:900;color:var(--kuma-ink);flex:none;min-width:2.2em;font-variant-numeric:tabular-nums}
+@media (max-width:640px){.toc ol{grid-template-columns:1fr}}
+
+/* ---- 先頭へ戻る ---- */
+.to-top,.to-toc{
+  position:fixed;right:16px;bottom:16px;z-index:50;display:none;align-items:center;gap:7px;
+  padding:10px 15px;border-radius:999px;background:var(--surface);border:1px solid var(--rule);
+  box-shadow:var(--shadow);color:var(--ink);text-decoration:none;font:inherit;font-size:13px;font-weight:700;line-height:1;cursor:pointer;
+}
+.to-top.is-on,.to-toc.is-on{display:inline-flex}
+.to-top:hover,.to-toc:hover{color:var(--accent-ink);border-color:var(--accent)}
+
+/* ---- 札（タグ・状態） ---- */
+.tag,.badge,.pill,.chip{font-family:var(--body);font-weight:700;border-radius:999px}
+
+/* ---- ボタン ---- */
+button{font-family:var(--body)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--body);font-size:14px;font-weight:700;padding:10px 18px;border-radius:999px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;text-decoration:none;line-height:1.3}
+.btn:hover{background:var(--accent-ink);border-color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent-ink)}
+.btn.ghost:hover{background:var(--accent-soft)}
+
+/* ---- 畳む ---- */
+details>summary{cursor:pointer}
+details>summary::-webkit-details-marker{display:none}
+
+/* ---- 注記の帯 ---- */
+.callout,.note-box{background:var(--surface-2);border-left:4px solid var(--accent);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin:14px 0;font-size:14px;color:var(--ink-soft)}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft);color:var(--ink)}
+
+/* ---- 印刷 ---- */
+@media print{
+  body{background:#fff}
+  .to-top,.to-toc{display:none!important}
+  .topbar{position:static;height:auto}
+}
+
+/* ---- 動きを抑える ---- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* ---- 狭い画面 ---- */
+@media (max-width:640px){
+  .wrap{padding:0 16px 64px}
+  header{padding:26px 0 20px;margin-bottom:22px}
+  header > h1{font-size:26px;overflow-wrap:anywhere}
+  html.theme-glow header > h1{font-size:27px}
+  h2{font-size:21px}
+  .stat .v,.kpi .val,.kpi-val{font-size:28px}
+  .stats,.kpis,.kpi-grid{gap:10px;grid-template-columns:repeat(2,1fr)}
+  th,td{padding:9px 11px}
+}
+
+/* ============================================================
+   旧変数の別名（各ページの既存 CSS を新しい色で動かすため）
+   ============================================================ */
+:root,html.theme-glow{
+  --plane:var(--ground);--border:var(--rule);--muted:var(--ink-faint);--ink2:var(--ink-soft);
+  --accentsoft:var(--accent-soft);--goodsoft:var(--good-soft);--bad:var(--warn);--badsoft:var(--warn-soft);
+  --warnsoft:var(--gold-soft);--goldsoft:var(--gold-soft);--done:var(--ink-faint);
+  --s1:var(--kuma);--s1soft:var(--kuma-soft);--grid:var(--rule-soft);--axis:var(--rule);--bd:var(--rule);
+  --bg:var(--ground);--card:var(--surface);--line:var(--rule);--line-soft:var(--rule-soft);--sub:var(--ink-faint);
+  --fg:var(--ink);--paper:var(--ground);--sunken:var(--surface-2);--faint:var(--ink-faint);
+  --accent-bg:var(--accent-soft);--gold-bg:var(--gold-soft);
+}
+/* Instagram診断レポート 固有スタイル
+
+   sns/report_base.css の "後" に読まれる。配色・書体・マストヘッド（背表紙タブ）・
+   節見出し・数字タイル・表・目次・先頭へ戻る・funnel・good-list は共通ファイル側にある。
+   ここには Instagram だけの値・レイアウトを置く。
+   後から読まれるので、共通側のルールはここで上書きできる。 */
+
+  body{font-size:15.5px;line-height:1.9}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px 96px}
+  :target{scroll-margin-top:20px}
+
+  /* ---- verdict ---- */
+  .verdict{
+    margin:40px 0 0;padding:30px 32px;background:var(--surface);
+    border:1px solid var(--rule);border-left:4px solid var(--warn);
+    border-radius:var(--r);
+  }
+  .verdict h2{font-size:21px;margin:0 0 14px;font-weight:700}
+  .verdict p{margin:0 0 14px;font-size:15.5px;max-width:none}
+  .verdict p:last-child{margin-bottom:0}
+
+  /* ---- summary (at-a-glance) ---- */
+  .summary{
+    margin:34px 0 0;border:1px solid var(--rule);border-radius:var(--r);
+    background:var(--surface);overflow:hidden;
+  }
+  .sum-head{
+    padding:18px 26px 17px;border-bottom:1px solid var(--rule);
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  }
+  /* 子要素の「概要」だけに当てる。子孫セレクタだと、右の説明文中の
+     <b>再生</b> <b>リンククリック</b> まで19pxの明朝になっていた。 */
+  .sum-head > b{
+    font-family:var(--display);
+    font-size:19px;font-weight:700;letter-spacing:.02em;
+  }
+  .sum-head span{font-size:12.5px;color:var(--ink-faint)}
+  .sum-table{width:100%;border-collapse:collapse;min-width:0;font-size:14.5px}
+  .sum-table td{
+    padding:13px 26px;border-bottom:1px solid var(--rule-soft);
+    vertical-align:top;line-height:1.7;
+  }
+  .sum-table tr:last-child td{border-bottom:none}
+  .sum-table .c-txt{width:auto}
+  .sum-table .c-fig{
+    width:1%;white-space:nowrap;text-align:right;
+    font-family:var(--mono);font-variant-numeric:tabular-nums;
+    font-size:13.5px;font-weight:600;color:var(--ink-soft);padding-left:14px;
+  }
+  .sum-table .t{font-weight:700}
+  .sum-table .d{display:block;color:var(--ink-soft);font-size:13px;line-height:1.65;margin-top:1px}
+  /* hover でしか下線が出ないと、指で操作する端末では「押せる」と分からない。
+     常時リンクの見た目にして、矢印で飛び先があることも示す。 */
+  .sum-table a{color:inherit;text-decoration:none}
+  .sum-table a .t{
+    color:var(--accent);text-decoration:underline;
+    text-decoration-color:var(--rule);text-underline-offset:3px;
+  }
+  .sum-table a .t::after{content:" ↓";font-size:11px;opacity:.75}
+  .sum-table a:hover .t,.sum-table a:focus-visible .t{text-decoration-color:var(--accent)}
+
+  /* 区分の見出し行 */
+  .sum-table tr.grp td{
+    padding:15px 26px 9px;border-bottom:1px solid var(--rule);
+    background:var(--surface-2);
+    font-size:11.5px;font-weight:700;letter-spacing:.12em;
+    font-family:var(--mono);color:var(--ink-faint);
+  }
+  .sum-table tr.grp .tag{
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    margin-right:9px;vertical-align:1px;
+  }
+  .sum-table tr.grp.g .tag{background:var(--good)}
+  .sum-table tr.grp.b .tag{background:var(--warn)}
+  .sum-table tr.grp.d .tag{background:var(--accent)}
+  .sum-table tr.grp.g td{color:var(--good)}
+  .sum-table tr.grp.b td{color:var(--warn)}
+  .sum-table tr.grp.d td{color:var(--accent)}
+  .sum-table .fig-g{color:var(--good)}
+  .sum-table .fig-b{color:var(--warn)}
+  .sum-do-n{
+    font-family:var(--mono);font-size:12px;color:var(--ink-faint);
+    margin-right:9px;font-weight:600;
+  }
+
+  @media (max-width:640px){
+    .sum-table td{padding:12px 16px}
+    .sum-table tr.grp td{padding:14px 16px 8px}
+    .sum-table .c-fig{
+      width:auto;white-space:normal;text-align:left;
+      padding:0 16px 12px;border-bottom:1px solid var(--rule-soft);
+    }
+    .sum-table .c-txt{display:block;border-bottom:none;padding-bottom:3px}
+    .sum-table tr:not(.grp){display:block}
+    .sum-table tr:not(.grp) td{display:block}
+    .sum-head{padding:16px}
+  }
+
+  /* ---- sections（共通との差分だけ） ---- */
+  section{margin-top:76px}
+  p{max-width:64ch;margin:0 0 20px}
+
+  /* ---- chart ---- */
+  figure{margin:30px 0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:26px 22px 20px}
+  figcaption{font-size:12.5px;color:var(--ink-faint);margin-top:14px;padding-top:14px;border-top:1px solid var(--rule-soft);line-height:1.7}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
+  .legend i{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px;border-radius:1px}
+
+  /* ---- table（共通との差分だけ） ---- */
+  table{min-width:560px}
+  th,td{padding:13px 16px}
+  tbody tr:hover td{background:var(--surface-2)}
+  tr.hi:hover td,tr.lo:hover td{filter:brightness(.985)}
+
+  /* ---- action list ---- */
+  .actions{display:flex;flex-direction:column;gap:14px;margin:28px 0}
+  .act{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:24px 26px}
+  .act h3{font-size:18px;margin:0 0 5px;font-weight:700;line-height:1.5}
+  .act .why{font-size:12.5px;color:var(--accent);font-weight:500;margin:0 0 12px;font-family:var(--mono)}
+  .act p{margin:0 0 10px;font-size:14.5px}
+  .act p:last-child{margin-bottom:0}
+  .act ul{margin:10px 0 0;padding-left:1.15em}
+  .act li{margin-bottom:7px;font-size:14.5px;max-width:64ch}
+  .act li:last-child{margin-bottom:0}
+
+  .caveat{
+    margin-top:72px;padding:24px 26px;background:var(--surface-2);
+    border:1px solid var(--rule);border-radius:var(--r);font-size:13px;color:var(--ink-soft);
+  }
+  .caveat h3{font-size:14px;margin:0 0 12px;font-weight:700;font-family:var(--body);color:var(--ink)}
+  .caveat ul{margin:0;padding-left:1.15em}
+  .caveat li{margin-bottom:8px;max-width:72ch}
+  .caveat li:last-child{margin-bottom:0}
+
+  @media (max-width:640px){
+    h1{font-size:29px}
+    h2{font-size:21px}
+    .wrap{padding:0 16px 60px}
+    .sec-head{gap:10px}
+  }
+
+  /* ---- 見出しの下に置く「何と比べた◯倍か」 ---- */
+  .h1-note{
+    margin:0 0 18px;max-width:62ch;font-size:14.5px;line-height:1.8;
+    color:var(--ink-soft);border-left:3px solid var(--accent);padding-left:14px;
+  }
+  .h1-note b{color:var(--ink)}
+
+  /* 棒だけを1行占有させて、4段の左端と長さをまっすぐ比べられるようにする。
+     （共通CSSの .fstep は flex-wrap なので、長い棒だけが勝手に単独行になっていた） */
+  .funnel .fbarwrap{flex-basis:100%;width:100%;line-height:0}
+
+  /* ---- ファネルの「◯人に1人」 ---- */
+  .fratio{
+    font-size:12px;color:var(--accent);font-weight:700;
+    font-family:var(--mono);margin-top:2px;
+  }
+
+  /* ---- 施策の効き目ラベル（◎○△×− をやめて日本語にした） ---- */
+  .eff{display:block;font-size:12.5px;line-height:1.75;white-space:nowrap}
+  .eff i{font-style:normal;color:var(--ink-faint);font-weight:400}
+  .eff .up{color:var(--good)} .eff .dn{color:var(--warn)}
+
+  /* ---- 概要表を report_mobile.css の「データ表」ルールから外す ----
+     あちらは1列目固定・nowrap・13px という前提で書かれているが、概要表は
+     スマホで「1行＝1ブロック」に組み替えている別物。詳細度で明示的に戻す。 */
+  .summary .tbl-scroll table.sum-table{min-width:0;font-size:14.5px}
+  .summary .tbl-scroll table.sum-table td{white-space:normal;padding:13px 26px}
+  .summary .tbl-scroll table.sum-table td.c-fig{white-space:nowrap}
+  .summary .tbl-scroll table.sum-table tr:not(.grp) td:first-child{
+    position:static;background:none;box-shadow:none;
+  }
+  .summary .tbl-scroll table.sum-table tr.grp td{position:static;box-shadow:none;padding:15px 26px 9px}
+  @media (max-width:640px){
+    .summary .tbl-scroll table.sum-table td{padding:12px 16px}
+    .summary .tbl-scroll table.sum-table td.c-fig{white-space:normal;padding:0 16px 12px}
+    .summary .tbl-scroll table.sum-table tr.grp td{padding:14px 16px 8px}
+  }
+
+  /* 見出しの中で「2025年11月〜12月」が行またぎで割れるのを防ぐ */
+  .nb{white-space:nowrap}
+/* 狭い画面で表とグラフが「切れていることに気づけない」問題を消す共通部品。
+   report_mobile.js と対で使う。各媒体の gen_report.py がインライン展開する。
+
+   背景: スマホ(343px)に min-width:560px の表を入れているため右半分が画面外に出る。
+   横スクロールはできるが、影も矢印も無いので「切れている」と分からない。
+   数字の桁の途中で切れるため 5,362 が 5 に見えるなど、誤読も起きていた。 */
+
+/* JS が各 table / 横長SVG をこれで包む */
+.tbl-scroll{
+  position:relative;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  /* 右端にフェードを出して「まだ続きがある」と分かるようにする。スクロールしきると消える（JSが is-end を付ける） */
+}
+.tbl-scroll::after{
+  content:"";
+  position:absolute; top:0; right:0; bottom:0; width:34px;
+  pointer-events:none;
+  background:linear-gradient(to right, transparent, var(--ground, #0E141A));
+  opacity:1; transition:opacity .18s;
+}
+.tbl-scroll.is-end::after{opacity:0}
+.tbl-scroll:not(.is-scrollable)::after{opacity:0}
+
+/* 「→ 横にスクロールできます」の案内。はみ出している時だけ出す */
+.tbl-hint{
+  display:none;
+  font-size:12.5px; line-height:1.6;
+  margin:.1rem 0 .45rem;
+  color:var(--ink-soft, #9BA9B6);
+}
+.tbl-scroll.is-scrollable + .tbl-hint,
+.tbl-hint.is-on{display:block}
+.tbl-hint::before{content:"→ "; font-weight:700}
+
+/* 横に振っても「どの行か」を見失わないように1列目を固定 */
+@media (max-width:640px){
+  .tbl-scroll table th:first-child,
+  .tbl-scroll table td:first-child{
+    position:sticky; left:0; z-index:2;
+    background:var(--surface, var(--card, #131B23));
+    /* 固定列と本体の境目 */
+    box-shadow:1px 0 0 var(--rule, var(--line, #243039));
+  }
+  .tbl-scroll table thead th{
+    position:sticky; top:0; z-index:3;
+    background:var(--surface, var(--card, #131B23));
+  }
+  .tbl-scroll table thead th:first-child{z-index:4}
+
+  /* 最小文字サイズの底上げ。10〜11px が多用されていて読めなかった */
+  .tbl-scroll table{font-size:13px}
+  .tbl-scroll table th,
+  .tbl-scroll table td{padding:.5rem .55rem; white-space:nowrap}
+}
+
+/* 型名などが1文字ずつ縦に割れるのを防ぐ（「症状の見分け・雑学」が9行になっていた） */
+.tbl-scroll table td:first-child,
+.tbl-scroll table th:first-child{white-space:nowrap}
+
+/* 横長SVGが縮んで軸ラベルが3〜4pxになる問題。縮めずに横スクロールさせる */
+.svg-scroll{position:relative; overflow-x:auto; -webkit-overflow-scrolling:touch}
+.svg-scroll > svg{max-width:none}   /* width:100% による強制縮小をやめる */
+
+@media (max-width:640px){
+  /* グラフは縮小せず、実寸のまま横に送る */
+  .svg-scroll > svg{height:auto}
+}
+
+/* 冒頭の用語ボックス（report_terms.glossary_html が出すHTML） */
+.glossary{
+  border:1px solid var(--rule, var(--line, #243039));
+  border-radius:var(--r, 10px);
+  padding:1rem 1.1rem 1.15rem;
+  margin:1.4rem 0 1.8rem;
+  background:var(--surface, var(--card, #131B23));
+}
+.glossary h2{font-size:15px; margin:0 0 .2rem}
+.glossary .g-lead{
+  font-size:12.5px; margin:0 0 .8rem;
+  color:var(--ink-soft, #9BA9B6);
+}
+.glossary dl{margin:0}
+.glossary .g-row{
+  display:grid; grid-template-columns:9.5rem 1fr;
+  gap:.3rem .9rem; padding:.42rem 0;
+  border-top:1px solid var(--rule, var(--line, #243039));
+}
+.glossary .g-row:first-child{border-top:0}
+.glossary dt{font-weight:700; font-size:14px}
+.glossary dd{margin:0; font-size:14px; line-height:1.7}
+.glossary .g-note{
+  display:block; font-size:12.5px; margin-top:.12rem;
+  color:var(--ink-soft, #9BA9B6);
+}
+@media (max-width:640px){
+  .glossary .g-row{grid-template-columns:1fr; gap:.1rem}
+  .glossary dt{font-size:13.5px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <span class="karte">Instagram 診断（伊藤先生）</span>
+  <div class="eyebrow">Instagram 診断レポート ／ 2026.11.10 更新</div>
+  <h1>数字を取り始めて20日。届いた人は25,267人、<br>フォロワーは281人。</h1>
+  <p class="h1-note">届いた人の大半は<b>11/4のリール1本</b>（「ミニ切開リフトは、皮膚の下をどこまで剥がす？手術中に伊藤先生」）によるもので、投稿が届いた人数の<b>69%</b>を占めます。1本当たれば数字は動く、ということと同時に、<b>まだ1本に頼っている</b>ということです。</p>
+  <p class="lede">@kumacli_ito（10月19日開設・10月22日から数字あり）のリール3本・フィード1本と、日ごとのアカウントの数字をInstagram Graph APIから取り出しています。立ち上げ期なので、2年ぶんの推移や他院比較ではなく<b>「いま何が起きていて、次に何をするか」</b>に絞っています。<b>毎日自動で更新されます。</b></p>
+  <div class="provenance">
+    <span>投稿 4本</span>
+    <span>アカウント日次 19日分</span>
+    <span>フォロワー 281人</span>
+    <span>出典: Instagram Graph API</span>
+  </div>
+</header>
+
+<section class='glossary'><h2>このページで使う言葉</h2><p class='g-lead'>この3〜5語だけ押さえれば、以下は読めます。</p><dl><div class='g-row'><dt>リーチ</dt><dd>動画が届いた人の数<span class='g-note'>同じ人が2回見ても1人と数える。「何人に届いたか」</span></dd></div><div class='g-row'><dt>リンククリック</dt><dd>プロフィールのリンクが押された回数<span class='g-note'>ここではLINEへの入口。ここが増えないと来院に繋がらない</span></dd></div><div class='g-row'><dt>中央値</dt><dd>ちょうど真ん中の1本の数字<span class='g-note'>本数ぶんを良い順に並べて真ん中を採る。大当たり1本に引っ張られないので、平均より「普段の実力」に近い</span></dd></div><div class='g-row'><dt>保存率</dt><dd>後でまた見たいと思われた割合<span class='g-note'>「良かった」より本気度が高い反応とされる</span></dd></div><div class='g-row'><dt>発見面</dt><dd>フォローしていない人に表示される場所<span class='g-note'>おすすめ欄や検索結果のこと</span></dd></div></dl></section>
+
+<nav class="toc" id="toc"><h2>このページの中身</h2><ol><li><a href="#summary">概要（この表だけで要点は足ります）</a></li><li><a href="#verdict">結論</a></li><li><a href="#s01">01 開設からの歩み</a></li><li><a href="#s02">02 投稿ごとの成績</a></li><li><a href="#s03">03 誰に届いているか</a></li><li><a href="#s04">04 ストーリー</a></li><li><a href="#s05">05 旧アカウントとの比較</a></li><li><a href="#s06">06 やるべきこと（5つ）</a></li><li><a href="#caveat">この数字について（注意書き）</a></li></ol></nav>
+
+<div class="summary" id="summary">
+  <div class="sum-head"><b>概要</b><span>この表だけで要点は足ります。立ち上げ期の目標は<b>フォロワー</b>と<b>届く人数</b>の2つ。緑の下線がある見出しを押すと、その根拠のセクションに飛びます。</span></div>
+  <table class="sum-table">
+
+    <tr class="grp g"><td colspan="2"><span class="tag"></span>いい点 ／ このまま続けること</td></tr>
+    <tr><td class="c-txt"><a href="#s02"><span class="t">リールは、届く</span><span class="d">いちばん届いたリールは16,509人。フォロワーが281人しかいなくても、おすすめ欄・検索結果（フォローしていない人に表示される場所）に載れば届く。届いた人の99.7%がフォロワー以外。</span></a></td><td class="c-fig fig-g">リーチの96%がリール</td></tr>
+    <tr><td class="c-txt"><a href="#s03"><span class="t">年齢層が施術と噛み合っている</span><span class="d">35-44歳 42%、25-34歳 23%、45-54歳 22%。45歳以上が34%。切開リフトを検討する年齢の人がフォローしている。</span></a></td><td class="c-fig fig-g">45歳以上 34%</td></tr>
+    <tr><td class="c-txt"><a href="#s04"><span class="t">ストーリーはフォロワーに届いている</span><span class="d">1日3本前後のストーリーが届いているのは、1本あたり<b>92人</b>——フォロワー281人の33%です（11日分・34本の中央値）。</span></a></td><td class="c-fig fig-g">フォロワーの33%</td></tr>
+
+    <tr class="grp b"><td colspan="2"><span class="tag"></span>課題 ／ いま起きていること</td></tr>
+    <tr><td class="c-txt"><a href="#s01"><span class="t">投稿の本数が少ない</span><span class="d">開設20日で4本＝週1.4本。投稿がない日はリーチがほぼゼロになる（下のグラフ）。</span></a></td><td class="c-fig fig-b">週1.4本</td></tr>
+    <tr><td class="c-txt"><a href="#s02"><span class="t">1本に頼っている</span><span class="d">届いた人の69%が1本。次の1本が同じ型かどうかで、偶然か実力かが分かる。</span></a></td><td class="c-fig fig-b">上位1本 69%</td></tr>
+    <tr><td class="c-txt"><a href="#s05"><span class="t">旧アカウントのフォロワーが移っていない</span><span class="d">移行元の @dr_ito_yasuhiro にはフォロワーが<b>1,220人</b>いますが、新アカは281人——<b>23%</b>しか移っていません。</span></a></td><td class="c-fig fig-b">移行 23%</td></tr>
+    <tr><td class="c-txt"><a href="#s01"><span class="t">プロフィールから先が細い</span><span class="d">直近29日で動画や投稿が届いた21,181人のうち、プロフィールまで来たのは1,717人（<b>8.1%</b>）、そこからリンクを押したのは60人（プロフィールを見た人の<b>3.5%</b>）です。</span></a></td><td class="c-fig fig-b">プロフィール到達 8.1%</td></tr>
+
+    <tr class="grp d"><td colspan="2"><span class="tag"></span>改善点 ／ やること（効く順）</td></tr>
+    <tr><td class="c-txt"><a href="#s06"><span class="t"><span class="sum-do-n">1</span>リールを週2本以上にする</span><span class="d">届いた人数の96%はリール。本数が揃うまで、型の良し悪しは判断できない。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b class="up">大</b></span><span class="eff"><i>クリックへの効果：</i><b>中</b></span><span class="eff"><i>手間：</i><b>中</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s06"><span class="t"><span class="sum-do-n">2</span>当たった型を続ける</span><span class="d">「ミニ切開リフトは、皮膚の下をどこまで剥がす？手術中に伊藤先生」の型（手術中・びっくり動画の解説）をまず3本そろえる。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b class="up">大</b></span><span class="eff"><i>クリックへの効果：</i><b>小</b></span><span class="eff"><i>手間：</i><b>小</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s06"><span class="t"><span class="sum-do-n">3</span>旧アカウントから新アカウントへ呼ぶ</span><span class="d">1,220人のフォロワーに、新アカの存在を繰り返し知らせる（固定投稿・ストーリー・コラボ投稿）。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><b>小</b></span><span class="eff"><i>クリックへの効果：</i><b>中</b></span><span class="eff"><i>手間：</i><b>小</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s06"><span class="t"><span class="sum-do-n">4</span>プロフィールの導線をそろえる</span><span class="d">見に来た人の3%しかリンクを押していない。ハイライト（症例・料金・予約）と1行目の言葉を整える。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><i>なし</i></span><span class="eff"><i>クリックへの効果：</i><b class="up">大</b></span><span class="eff"><i>手間：</i><b>小</b></span></td></tr>
+    <tr><td class="c-txt"><a href="#s06"><span class="t"><span class="sum-do-n">5</span>計測をつなぐ</span><span class="d">どの投稿からLINEに来たかを追えるようにする。毛利先生のアカウントと同じ課題。</span></a></td><td class="c-fig"><span class="eff"><i>再生への効果：</i><i>なし</i></span><span class="eff"><i>クリックへの効果：</i><b class="up">大</b></span><span class="eff"><i>手間：</i><b>半日</b></span></td></tr>
+
+  </table>
+</div>
+
+<div class="verdict" id="verdict">
+  <h2>結論</h2>
+  <p>10月22日の開設から20日で、投稿が届いた人は累計<b>25,267人</b>、フォロワーは<b>281人</b>です。届いた人の大半は<b>11/4のリール1本</b>（「ミニ切開リフトは、皮膚の下をどこまで剥がす？手術中に伊藤先生」）によるもので、投稿が届いた人数の<b>69%</b>を占めます。1本当たれば数字は動く、ということと同時に、<b>まだ1本に頼っている</b>ということです。</p>
+  <p>届いた人の<b>99.7%はフォロワー以外</b>で、フォロワーの少なさは届く人数の足かせになっていません。足かせになっているのは<b>本数</b>です——開設20日で4本、週に1.4本。投稿のない日のリーチはほぼゼロで、まだ「アカウントが見られている」状態ではなく「投稿した日だけ見られる」状態です。</p>
+  <p>直近29日で動画や投稿が届いた21,181人のうち、プロフィールまで来たのは1,717人（<b>8.1%</b>）、そこからリンクを押したのは60人（プロフィールを見た人の<b>3.5%</b>）です。見に来た人がリンクを押す割合は毛利先生のアカウントより高く、先に増やすべきは届く人数で、そのための最短は<b>リールの本数</b>です。</p>
+</div>
+
+<section id="s01">
+  <div class="sec-head"><div class="sec-num">01</div><h2>開設からの歩み</h2></div>
+  <p class="sec-sub">10月22日から今日までの、日ごとのリーチです。▲の日に投稿しています。</p>
+
+  <div class="stats">
+    <div class="stat"><div class="k">累計リーチ</div><div class="v good">25,267</div><div class="n">20日間の合計（ユニークではなく日ごとの足し上げ）</div></div>
+    <div class="stat"><div class="k">フォロワー</div><div class="v good">281</div><div class="n">開設からの増加 +263人（APIの日次。100人未満の期間は返らない）</div></div>
+    <div class="stat"><div class="k">プロフィールを見た人（直近29日）</div><div class="v warn">1,717</div><div class="n">届いた人の8.1%</div></div>
+    <div class="stat"><div class="k">リンクを押した人（直近29日）</div><div class="v good">60</div><div class="n">プロフィールを見た人の3.5%</div></div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 780 300" width="780" height="300" role="img" aria-label="開設からの日ごとのリーチ" style="max-width:100%;height:auto"><style>.lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--ink-soft)}.ax{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--ink-faint)}.ttl{font-family:"Zen Kaku Gothic New",sans-serif;font-size:12.5px;fill:var(--ink);font-weight:700}.val{font-family:"IBM Plex Mono",monospace;font-size:9.5px;fill:var(--ink);font-weight:600}.grid{stroke:var(--rule-soft);stroke-width:1}.base{stroke:var(--rule);stroke-width:1}.tri{fill:var(--warn)}</style><text x="54" y="18" class="ttl">1日に届いた人数（リーチ）</text><text x="54" y="32" class="ax">▲＝リールかフィードを投稿した日</text><line x1="54" y1="244.0" x2="764" y2="244.0" class="base"/><text x="48" y="247.5" text-anchor="end" class="ax">0</text><line x1="54" y1="194.0" x2="764" y2="194.0" class="grid"/><text x="48" y="197.5" text-anchor="end" class="ax">5,000</text><line x1="54" y1="144.0" x2="764" y2="144.0" class="grid"/><text x="48" y="147.5" text-anchor="end" class="ax">10,000</text><line x1="54" y1="94.0" x2="764" y2="94.0" class="grid"/><text x="48" y="97.5" text-anchor="end" class="ax">15,000</text><line x1="54" y1="44.0" x2="764" y2="44.0" class="grid"/><text x="48" y="47.5" text-anchor="end" class="ax">20,000</text><rect x="61.7" y="243.5" width="22.0" height="0.5" rx="1" fill="var(--accent)" opacity="0.55"/><text x="72.7" y="272" text-anchor="middle" class="lbl">10/22</text><rect x="99.1" y="243.5" width="22.0" height="0.5" rx="1" fill="var(--accent)" opacity="0.55"/><rect x="136.4" y="241.7" width="22.0" height="2.3" rx="1" fill="var(--accent)" opacity="0.55"/><text x="147.4" y="272" text-anchor="middle" class="lbl">10/24</text><rect x="173.8" y="237.3" width="22.0" height="6.7" rx="1" fill="var(--accent)" opacity="0.55"/><polygon points="180.8,256 188.8,256 184.8,248" class="tri"/><rect x="211.2" y="240.6" width="22.0" height="3.4" rx="1" fill="var(--accent)" opacity="0.55"/><text x="222.2" y="272" text-anchor="middle" class="lbl">10/26</text><rect x="248.5" y="243.0" width="22.0" height="1.0" rx="1" fill="var(--accent)" opacity="0.55"/><rect x="285.9" y="242.9" width="22.0" height="1.1" rx="1" fill="var(--accent)" opacity="0.55"/><text x="296.9" y="272" text-anchor="middle" class="lbl">10/28</text><rect x="323.3" y="240.8" width="22.0" height="3.2" rx="1" fill="var(--accent)" opacity="0.55"/><rect x="360.6" y="241.1" width="22.0" height="2.9" rx="1" fill="var(--accent)" opacity="0.55"/><text x="371.6" y="272" text-anchor="middle" class="lbl">10/30</text><rect x="398.0" y="242.8" width="22.0" height="1.2" rx="1" fill="var(--accent)" opacity="0.55"/><rect x="435.4" y="242.8" width="22.0" height="1.2" rx="1" fill="var(--accent)" opacity="0.55"/><text x="446.4" y="272" text-anchor="middle" class="lbl">11/1</text><rect x="472.7" y="242.7" width="22.0" height="1.3" rx="1" fill="var(--accent)" opacity="0.55"/><rect x="510.1" y="242.5" width="22.0" height="1.5" rx="1" fill="var(--accent)" opacity="0.55"/><text x="521.1" y="272" text-anchor="middle" class="lbl">11/3</text><rect x="547.5" y="82.1" width="22.0" height="161.9" rx="1" fill="var(--accent)" opacity="1"/><text x="558.5" y="78.1" text-anchor="middle" class="val">16,186</text><polygon points="554.5,256 562.5,256 558.5,248" class="tri"/><rect x="584.8" y="241.9" width="22.0" height="2.0" rx="1" fill="var(--accent)" opacity="0.55"/><text x="595.8" y="272" text-anchor="middle" class="lbl">11/5</text><rect x="622.2" y="242.6" width="22.0" height="1.4" rx="1" fill="var(--accent)" opacity="0.55"/><rect x="659.6" y="241.8" width="22.0" height="2.2" rx="1" fill="var(--accent)" opacity="0.55"/><text x="670.6" y="272" text-anchor="middle" class="lbl">11/7</text><rect x="696.9" y="225.7" width="22.0" height="18.3" rx="1" fill="var(--accent)" opacity="0.55"/><polygon points="703.9,256 711.9,256 707.9,248" class="tri"/><rect x="734.3" y="203.5" width="22.0" height="40.5" rx="1" fill="var(--accent)" opacity="1"/><polygon points="741.3,256 749.3,256 745.3,248" class="tri"/><text x="745.3" y="272" text-anchor="middle" class="lbl">11/9</text><text x="764" y="290" text-anchor="end" class="ax">← 左が古い ／ 右が新しい</text></svg>
+    <figcaption>日ごとに届いた人数（Instagram Graph API の日次リーチ）。投稿した日と翌日に山ができ、それ以外の日はほぼゼロです。</figcaption>
+  </figure>
+
+  <div class="tw"><table><thead><tr><th class="">週</th><th class="num">投稿</th><th class="num">届いた人数（合計）</th><th class="num">フォロワー増</th></tr></thead><tbody><tr class=""><td>10/19の週</td><td class="num">1</td><td class="num">953</td><td class="num">+87</td></tr><tr class=""><td>10/26の週</td><td class="num">0</td><td class="num">1,402</td><td class="num">+125</td></tr><tr class="hi"><td>11/2の週</td><td class="num">2</td><td class="num">18,859</td><td class="num">+51</td></tr><tr class=""><td>11/9の週</td><td class="num">1</td><td class="num">4,053</td><td class="num">+0</td></tr></tbody></table></div>
+</section>
+
+<section id="s02">
+  <div class="sec-head"><div class="sec-num">02</div><h2>投稿ごとの成績</h2></div>
+  <p class="sec-sub">本数が少ないうちは平均を出さず、1本ずつ並べます。保存率（後でまた見たいと思われた割合）は「後でまた見たい」と思われた割合、スキップ率は冒頭で飛ばされた割合です。</p>
+
+  <div class="tw"><table><thead><tr><th class="">投稿</th><th class="num">再生</th><th class="num">届いた人数</th><th class="num">いいね</th><th class="num">保存</th><th class="num">保存／千再生</th><th class="num">平均視聴</th><th class="num">スキップ率</th><th class="num">フォロー獲得</th></tr></thead><tbody><tr class=""><td>10/25<br><span class="mono" style="font-size:11px">フィード</span><br><a href="https://www.instagram.com/p/De59yC1CbkP/" target="_blank" rel="noopener" style="font-size:12px">小さく切ってしっかりあげる。70歳の方の症例です。</a></td><td class="num">3,295</td><td class="num">1,372</td><td class="num">27</td><td class="num">7</td><td class="num">2.1</td><td class="num">—</td><td class="num">—</td><td class="num">6</td></tr><tr class="hi"><td>11/4<br><span class="mono" style="font-size:11px">リール</span><br><a href="https://www.instagram.com/reel/DfT-WGCiRr2/" target="_blank" rel="noopener" style="font-size:12px">ミニ切開リフトは、皮膚の下をどこまで剥がす？手術中に伊藤先生</a></td><td class="num">23,872</td><td class="num">16,509</td><td class="num">67</td><td class="num">18</td><td class="num">0.8</td><td class="num">19秒</td><td class="num">29%</td><td class="num">取れない</td></tr><tr class=""><td>11/8<br><span class="mono" style="font-size:11px">リール</span><br><a href="https://www.instagram.com/reel/DfeRncSGbzW/" target="_blank" rel="noopener" style="font-size:12px">顔中に縫い目…このびっくり動画の正体、分かりますか？⚡️</a></td><td class="num">2,844</td><td class="num">1,897</td><td class="num">22</td><td class="num">5</td><td class="num">1.8</td><td class="num">22秒</td><td class="num">32%</td><td class="num">取れない</td></tr><tr class=""><td>11/9<br><span class="mono" style="font-size:11px">リール</span><br><a href="https://www.instagram.com/reel/Dfg2UyfARoQ/" target="_blank" rel="noopener" style="font-size:12px">フル切開リフトとミニ切開リフト、何が違うか知っていますか？⚡</a></td><td class="num">4,915</td><td class="num">4,017</td><td class="num">34</td><td class="num">24</td><td class="num">4.9</td><td class="num">42秒</td><td class="num">38%</td><td class="num">取れない</td></tr></tbody></table></div>
+
+  <p>届いた人の大半は<b>11/4のリール1本</b>（「ミニ切開リフトは、皮膚の下をどこまで剥がす？手術中に伊藤先生」）によるもので、投稿が届いた人数の<b>69%</b>を占めます。1本当たれば数字は動く、ということと同時に、<b>まだ1本に頼っている</b>ということです。リールの中央再生（ちょうど真ん中の1本の数字）は<b>4,915</b>、平均視聴は22秒、スキップ率32%です。フィード投稿は再生では負けますが、<b>フォロー獲得数が取れる</b>のが強みです（リールはAPIが返さない）。フィードからのフォローは6人でした。</p>
+</section>
+
+<section id="s03">
+  <div class="sec-head"><div class="sec-num">03</div><h2>誰に届いているか</h2></div>
+  <p class="sec-sub">直近29日のリーチを、フォロー有無と投稿種別で分解し、フォロワーの属性を並べました。</p>
+
+  <div class="stats">
+    <div class="stat"><div class="k">フォロワー以外からのリーチ</div><div class="v good">99.7%</div><div class="n">20,911人。おすすめ欄・検索結果から</div></div>
+    <div class="stat"><div class="k">フォロワーからのリーチ</div><div class="v acc">1.3%</div><div class="n">270人</div></div>
+    <div class="stat"><div class="k">リールが占めるリーチ</div><div class="v acc">96%</div><div class="n">20,411人。フィードは1,392人、ストーリーは697人</div></div>
+    <div class="stat"><div class="k">45歳以上のフォロワー</div><div class="v good">34%</div><div class="n">35-44歳 42%、25-34歳 23%、45-54歳 22%</div></div>
+  </div>
+
+  <p>フォロワーは女性61%・男性39%（性別が分かる人のうち）。住んでいる街が分かった201人のうち東京52%、首都圏で77%です。銀座に通える人が主力です。ただしこれは<b>フォロワーの</b>属性で、届いた21,181人の属性ではありません。</p>
+</section>
+
+<section id="s04">
+  <div class="sec-head"><div class="sec-num">04</div><h2>ストーリー</h2></div>
+  <p class="sec-sub">毎朝のストーリーの数字は、1日3回の回収で1本ずつ蓄積しています（APIは24時間分しか返さないため）。</p>
+
+  <div class="stats">
+    <div class="stat"><div class="k">ストーリー1本あたりのリーチ</div><div class="v good">92</div><div class="n">34本の中央値。フォロワーの33%</div></div>
+    <div class="stat"><div class="k">1日の本数</div><div class="v ">3本</div><div class="n">11日分</div></div>
+    <div class="stat"><div class="k">ストーリーからプロフィールへ</div><div class="v ">98</div><div class="n">合計</div></div>
+    <div class="stat"><div class="k">投稿の多い時刻</div><div class="v ">10時</div><div class="n">日本時間</div></div>
+  </div>
+
+  <p>1日3本前後のストーリーが届いているのは、1本あたり<b>92人</b>——フォロワー281人の33%です（11日分・34本の中央値）。毛利先生のアカウント（フォロワーの1〜2%）と比べると、割合では大きく上です。フォロワーが少ないうちは1人1人に届きやすい、ということでもあります。</p>
+</section>
+
+<section id="s05">
+  <div class="sec-head"><div class="sec-num">05</div><h2>旧アカウントとの比較</h2></div>
+  <p class="sec-sub">移行元の @dr_ito_yasuhiro（先生個人のアカウント）と、院所有の新アカ @kumacli_ito を並べました。</p>
+
+  <div class="tw"><table><thead><tr><th class=""></th><th class="num">旧 @dr_ito_yasuhiro</th><th class="num">新 @kumacli_ito</th></tr></thead><tbody><tr class=""><td>フォロワー</td><td class="num">1,220</td><td class="num">281</td></tr><tr class=""><td>投稿数</td><td class="num">5</td><td class="num">4</td></tr><tr class="hi"><td>直近29日に届いた人数（日次の合計）</td><td class="num">14,890</td><td class="num">25,267</td></tr><tr class=""><td>ストーリー1本あたりのリーチ</td><td class="num">158</td><td class="num">92</td></tr><tr class=""><td>ストーリーがフォロワーに届く割合</td><td class="num">13%</td><td class="num">33%</td></tr><tr class=""><td>フィード1本あたりの届いた人数（中央値）</td><td class="num">1,008</td><td class="num">1,372</td></tr></tbody></table></div>
+
+  <p>移行元の @dr_ito_yasuhiro にはフォロワーが<b>1,220人</b>いますが、新アカは281人——<b>23%</b>しか移っていません。一方で、届いている人数は新アカのほうが多く、リールを出せる新アカのほうが伸びしろがあります。旧アカの1,220人は、新アカの固定投稿・ストーリー・コラボ投稿で<b>繰り返し</b>案内しないと移りません（1回の告知では23%止まり）。</p>
+</section>
+
+<section id="s06">
+  <div class="sec-head"><div class="sec-num">06</div><h2>やるべきこと（5つ）</h2></div>
+  <p class="sec-sub">立ち上げ期の目標は<b>届く人数</b>と<b>フォロワー</b>。その先の<b>リンククリック</b>は、人数が揃ってから効かせます。効く順に並べました。</p>
+
+  <div class="actions">
+
+    <div class="act">
+      <h3>1. リールを週2本以上にする</h3>
+      <p class="why">再生への効果：大 ／ クリックへの効果：中 ／ 手間：中 ／ 本数が揃うまで、型の良し悪しは判断できない</p>
+      <p>開設20日で4本、週1.4本です。届いた人数の96%はリールで、投稿のない日のリーチはほぼゼロ。<b>まず本数</b>です。</p>
+      <ul>
+        <li>毛利先生のアカウントの実測では、1本あたりの再生が下がらない上限は<b>週3本（月13本）</b>。新アカはそこまで要らないが、<b>週2本</b>を割ると「投稿した日だけ見られる」状態から抜けられない</li>
+        <li>撮影は1回で2〜3本ぶんまとめて撮る（手術中の解説・びっくり動画の解説・症例の3型）</li>
+      </ul>
+    </div>
+
+    <div class="act">
+      <h3>2. 当たった型を、まず3本そろえる</h3>
+      <p class="why">再生への効果：大 ／ クリックへの効果：小 ／ 手間：小</p>
+      <p>届いた人の大半は<b>11/4のリール1本</b>（「ミニ切開リフトは、皮膚の下をどこまで剥がす？手術中に伊藤先生」）によるもので、投稿が届いた人数の<b>69%</b>を占めます。1本当たれば数字は動く、ということと同時に、<b>まだ1本に頼っている</b>ということです。</p>
+      <ul>
+        <li>「ミニ切開リフトは、皮膚の下をどこまで剥がす？手術中に伊藤先生」と同じ型（リール）を続けて出し、偶然か実力かを確かめる</li>
+        <li>1本ごとの平均視聴（いま22秒）とスキップ率（32%）を見て、<b>冒頭で飛ばされていないか</b>だけを毎回確認する</li>
+      </ul>
+    </div>
+
+    <div class="act">
+      <h3>3. 旧アカウントから新アカウントへ呼ぶ</h3>
+      <p class="why">再生への効果：小 ／ クリックへの効果：中 ／ 手間：小 ／ 1回の告知では移らない</p>
+      <p>旧アカのフォロワー1,220人に対し、新アカは281人。移行の告知は<b>1回では足りません</b>。</p>
+      <ul>
+        <li>旧アカの<b>固定投稿</b>に新アカへの案内を置く（消さない）</li>
+        <li>旧アカのストーリーで週1回、新アカの最新リールを紹介する</li>
+        <li>新アカのリールを<b>旧アカとのコラボ投稿</b>にする（両方のフォロワーに同じ投稿が出る）</li>
+      </ul>
+    </div>
+
+    <div class="act">
+      <h3>4. プロフィールの導線をそろえる</h3>
+      <p class="why">再生への効果：なし ／ クリックへの効果：大 ／ 手間：小</p>
+      <p>直近29日で動画や投稿が届いた21,181人のうち、プロフィールまで来たのは1,717人（<b>8.1%</b>）、そこからリンクを押したのは60人（プロフィールを見た人の<b>3.5%</b>）です。</p>
+      <ul>
+        <li>ハイライトを<b>症例・料金・予約</b>の3つにそろえる（リールを見て来た人の受け皿）</li>
+        <li>プロフィールの1行目は「ミニ切開リフト」で何が変わるかを一言で。術式名だけで終わらせない</li>
+        <li>リンクの文言を「予約」ではなく「<b>無料カウンセリング</b>」など、押す理由が分かる言葉にする</li>
+      </ul>
+    </div>
+
+    <div class="act">
+      <h3>5. 計測をつなぐ</h3>
+      <p class="why">再生への効果：なし ／ クリックへの効果：大 ／ 手間：半日 ／ 毛利先生のアカウントと同じ課題</p>
+      <ul>
+        <li>投稿ごとに違うリンク（末尾に印を足したもの。UTMパラメータ）を使い、どの投稿からLINEに来たかを追えるようにする</li>
+        <li>ストーリーのリンククリック数はAPIが返さないので、Googleアナリティクス側で見る</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="caveat" id="caveat">
+  <h3>この数字について（注意書き）</h3>
+  <ul>
+    <li>Instagram Graph APIから毎日自動取得しています。最終更新 2026.11.10。</li>
+    <li>開設直後のアカウントなので、<b>本数が少なく、1本の当たり外れで数字が大きく動きます。</b>傾向と呼べるのは投稿が20本を超えてからです。</li>
+    <li><b>フォロワー100人未満の期間はAPIが一部の数字（日次のフォロワー増など）を返しません。</b>「開設からの増加」は実際より少なく出ます。フォロワー数そのものは正確です。</li>
+    <li><b>リールのフォロー獲得数とプロフィール遷移数はAPIが返しません</b>（フィード投稿とストーリーでは取れます）。</li>
+    <li>累計リーチは日ごとの人数の足し上げで、同じ人が複数日に見れば重複して数えています。</li>
+    <li>旧アカウントの数字は、院のアプリに連携した日以降に取れた範囲です。</li>
+    <li>このページは社外にも見える場所に置いてあるため、社内のKPI（目標として追いかける数字）の実数は伏せています。</li>
+  </ul>
+</div>
+
+</div>
+
+<a class="to-top" id="to-top" href="#toc">↑ ページの先頭へ</a>
+
+<script>/* 表と横長グラフを、描画後に「スクロールできると分かる」形へ包み直す。
+   report_mobile.css と対で使う。各媒体の gen_report.py がインライン展開する。
+
+   各ページの表を生成しているコードは5媒体でバラバラなので、
+   生成側を触らずに済むよう、出来上がった DOM に対して後から適用する。 */
+(function () {
+  "use strict";
+
+  function wrap(el, cls) {
+    var p = el.parentNode;
+    if (p && p.classList && p.classList.contains(cls)) return p;  // 二重に包まない
+    var box = document.createElement("div");
+    box.className = cls;
+    p.insertBefore(box, el);
+    box.appendChild(el);
+    return box;
+  }
+
+  function hintFor(box) {
+    var h = box.nextElementSibling;
+    if (h && h.classList && h.classList.contains("tbl-hint")) return h;
+    h = document.createElement("p");
+    h.className = "tbl-hint";
+    h.textContent = "横にスクロールすると続きが見られます";
+    box.parentNode.insertBefore(h, box.nextSibling);
+    return h;
+  }
+
+  function sync(box, hint) {
+    // はみ出しているか。端数の丸めで1〜2pxずれることがあるので少し余裕を見る
+    // （余裕が無いと、実際には収まっている表にも案内が出てしまう）
+    var over = box.scrollWidth - box.clientWidth > 4;
+    box.classList.toggle("is-scrollable", over);
+    if (hint) hint.classList.toggle("is-on", over);
+    // 右端まで送ったらフェードを消す
+    var end = box.scrollLeft + box.clientWidth >= box.scrollWidth - 1;
+    box.classList.toggle("is-end", end);
+  }
+
+  function setup() {
+    var targets = [];
+
+    Array.prototype.forEach.call(document.querySelectorAll("table"), function (t) {
+      // すでに独自のスクロール枠を持っているものはクラスだけ足す（tiktok の .scroll）
+      var box = wrap(t, "tbl-scroll");
+      targets.push([box, hintFor(box)]);
+    });
+
+    Array.prototype.forEach.call(document.querySelectorAll("svg"), function (s) {
+      var w = parseFloat(s.getAttribute("width") || "0");
+      var vb = (s.getAttribute("viewBox") || "").split(/[\s,]+/);
+      var vw = vb.length === 4 ? parseFloat(vb[2]) : 0;
+      // 横長で、縮めると軸ラベルが潰れるものだけ対象にする
+      if (Math.max(w, vw) < 480) return;
+      var box = wrap(s, "svg-scroll");
+      targets.push([box, hintFor(box)]);
+    });
+
+    targets.forEach(function (pair) {
+      var box = pair[0], hint = pair[1];
+      sync(box, hint);
+      box.addEventListener("scroll", function () { sync(box, hint); }, { passive: true });
+    });
+
+    function resyncAll() {
+      targets.forEach(function (p) { sync(p[0], p[1]); });
+    }
+
+    var t = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(t);
+      t = setTimeout(resyncAll, 120);
+    });
+
+    // DOMContentLoaded の時点ではWebフォントがまだ届いておらず、
+    // あとからフォントが差し替わると表の幅が変わる。測り直さないと
+    // 「はみ出しているのに案内が出ない」状態のままになる。
+    window.addEventListener("load", resyncAll);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(resyncAll).catch(function () {});
+    }
+    setTimeout(resyncAll, 800);   // 上記が発火しない環境への保険
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", setup);
+  } else {
+    setup();
+  }
+})();
+</script>
+<script>
+(function(){
+  var b=document.getElementById('to-top'); if(!b) return;
+  function sync(){ b.classList.toggle('is-on', window.scrollY > 700); }
+  b.addEventListener('click', function(e){ e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); });
+  window.addEventListener('scroll', sync, {passive:true});
+  sync();
+})();
+</script>
+</body>
+</html>
